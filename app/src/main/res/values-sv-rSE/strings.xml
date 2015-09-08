@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Matjakt</string>
+    <string name="action_settings">Inställningar</string>
+
+    <string name="codeTextDefault">Ingen skannad kod</string>
+    <string name="codeTypeDefault">Ingen skannand typ</string>
+    <string name="dialog_newProductNameText">Den här produkten verkar inte ha ett namn i databasen. Vill du lägga till den?</string>
+    <string name="dialog_OK">OK</string>
+    <string name="dialog_CancelText">Avbryt</string>
+    <string name="dialog_NoProductFound">Ingen produkt hittad</string>
+
+    <string name="preference_file_key">matjaktprefs</string>
+
+    <string name="action_edit">Redigera</string>
+
+    <string-array name="weight_types_array">
+        <item>g</item>
+        <item>kg</item>
+        <item>ml</item>
+        <item>cl</item>
+        <item>l</item>
+        <item>st</item>
+    </string-array>
+
+    <string name="title_activity_view_product">Visa produkt</string>
+    <string name="debug_fragmentNullLog">Fragmentet var null!</string>
+    <string name="dialog_RetrievingProduct">Hämtar produktinformation...</string>
+    <string name="prompt_ScanACode">Skanna en streckkod</string>
+    <string name="debug_placeholder">platshållare</string>
+    <string name="title_activity_new_product">Ny produkt</string>
+    <string name="debug_NoValue">N/A</string>
+    <string name="debug_howDidYouGetHere">Hur hamnade du här?</string>
+    <string name="debug_imageUploadFailed">Bilduppladdning misslyckades :(</string>
+    <string name="debug_locationFromGPS">Från GPS:</string>
+    <string name="debug_locationFromStorage">Från lagring:</string>
+    <string name="dialog_No">Nej</string>
+    <string name="dialog_Yes">Ja</string>
+    <string name="dialog_confirm">Bekräfta</string>
+    <string name="dialog_productDataChanged">Du har ändrat eller lagt till information. Vill du verkligen avbryta?</string>
+    <string name="dialog_updatingProductInfo">Uppdaterar produktinformation...</string>
+    <string name="prompt_addNewPrice">Lägg till ett pris</string>
+    <string name="prompt_fillOutField">Det här fältet måste fyllas i.</string>
+    <string name="prompt_productUpdateFailed">Hoppsan! Kunde inte uppdatera produktinformationen.</string>
+    <string name="title_activity_edit_product">Redigera produkt</string>
+    <string name="title_activity_scanned_product">Skannad produkt</string>
+    <string name="ui_addAttributeButton">Lägg till...</string>
+    <string name="ui_brandHint">ACME</string>
+    <string name="ui_defaultProductTitle">Märke Produkt Namn Mängd</string>
+    <string name="ui_editBrand">Märke:</string>
+    <string name="ui_editName">Namn:</string>
+    <string name="ui_editWeight">Mängd:</string>
+    <string name="ui_nameHint">Fullkornsbröd</string>
+    <string name="ui_scanButton">Skanna</string>
+    <string name="ui_weightHint">100</string>
+</resources>

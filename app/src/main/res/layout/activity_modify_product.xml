@@ -1,0 +1,106 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="com.nihlus.matjakt.UI.EditProductActivity">
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:onClick="onClickOKButton"
+        android:text="@string/dialog_OK"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:text="@string/ui_editBrand"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/manufacturerEdit"
+        android:text="@string/ui_editName"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/manufacturerEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView3"
+        android:hint="@string/ui_brandHint"
+        android:imeOptions="actionNext"
+        android:maxLines="1"/>
+
+    <EditText
+        android:id="@+id/productNameEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/manufacturerEdit"
+        android:layout_alignLeft="@+id/manufacturerEdit"
+        android:layout_alignRight="@+id/manufacturerEdit"
+        android:layout_alignStart="@+id/manufacturerEdit"
+        android:layout_alignTop="@+id/textView2"
+        android:hint="@string/ui_nameHint"
+        android:imeOptions="actionNext"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/productNameEdit"
+        android:text="@string/ui_editWeight"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <EditText
+        android:id="@+id/productWeightEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/productNameEdit"
+        android:layout_alignStart="@+id/productNameEdit"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_toLeftOf="@+id/button4"
+        android:layout_toStartOf="@+id/button4"
+        android:hint="@string/ui_weightHint"
+        android:imeOptions="actionDone"
+        android:inputType="number|numberDecimal"
+        android:maxLines="1"/>
+
+    <Spinner
+        android:id="@+id/weightSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/productWeightEdit"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/productWeightEdit"
+        android:layout_toEndOf="@+id/productWeightEdit"
+        android:layout_toRightOf="@+id/productWeightEdit"
+        android:entries="@array/weight_types_array"
+        android:focusable="false"
+        android:spinnerMode="dialog"/>
+
+</RelativeLayout>
