@@ -17,7 +17,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +61,8 @@ public class OutpanAPI2
                 post.setEntity(entity);
                 HttpResponse response = httpClient.execute(post);
 
-                String content = EntityUtils.toString(response.getEntity(), Constants.UTF8);
+                // TODO: 9/8/15 Investigate if needed or purpose
+                //String content = EntityUtils.toString(response.getEntity(), Constants.UTF8);
                 httpClient.close();
 
                 if (response.getStatusLine().getStatusCode() == 400)

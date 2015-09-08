@@ -6,10 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.nihlus.matjakt.Constants.Constants;
 
 import java.util.ArrayList;
 
@@ -21,7 +17,7 @@ public class MainActivityFragment extends Fragment
 {
 
     public ArrayAdapter<String> listAdapter;
-    ArrayList<String> listItems = new ArrayList<String>();
+    ArrayList<String> listItems = new ArrayList<>();
 
     public MainActivityFragment()
     {
@@ -37,10 +33,6 @@ public class MainActivityFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null)
-        {
-            //load data
-        }
     }
 
     @Override
@@ -48,7 +40,7 @@ public class MainActivityFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
 
-        listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listItems);
+        listAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listItems);
     }
 
     @Override

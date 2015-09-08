@@ -12,11 +12,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onLocationChanged(Location location)
         {
-            SharedPreferences preferences = getSharedPreferences(getString(R.string.preference_file_key),
+            SharedPreferences preferences = getSharedPreferences(Constants.PREFERENCE_FILE_KEY,
                     Context.MODE_MULTI_PROCESS);
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity
             editor.putLong(Constants.LATITUDE_ID, Double.doubleToLongBits(location.getLatitude()));
             editor.putLong(Constants.LONGITUDE_ID, Double.doubleToLongBits(location.getLongitude()));
 
-            editor.commit();
+            editor.apply();
 
             long latitude = 0;
             preferences.getLong(Constants.LATITUDE_ID, latitude);
@@ -316,7 +314,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             //launch product view activity
-            if (result.getProductName() != getResources().getString(R.string.dialog_NoProductFound))
+            if (!result.getProductName().equals(getResources().getString(R.string.dialog_NoProductFound)))
             {
                 Intent intent = new Intent(activity, ViewProductActivity.class);
 
@@ -335,14 +333,7 @@ public class MainActivity extends AppCompatActivity
 
         private boolean isNameValid(String name)
         {
-            if (name.isEmpty() || name == "null" || name == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !(name.isEmpty() || name.equals("null"));
         }
     }
 

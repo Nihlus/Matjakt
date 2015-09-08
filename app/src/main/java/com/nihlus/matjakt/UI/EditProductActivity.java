@@ -162,11 +162,7 @@ public class EditProductActivity extends AppCompatActivity
             bHasIncompleteFields = true;
         }
 
-        if (bHasIncompleteFields)
-        {
-            return false;
-        }
-        return true;
+        return !bHasIncompleteFields;
     }
 
     private boolean haveFieldsChanged()
@@ -198,11 +194,7 @@ public class EditProductActivity extends AppCompatActivity
             bFieldsHaveChanged = true;
         }
 
-        if (bFieldsHaveChanged)
-        {
-            return true;
-        }
-        return false;
+        return bFieldsHaveChanged;
     }
 
     private String getFinalProductString()
@@ -212,12 +204,10 @@ public class EditProductActivity extends AppCompatActivity
         EditText productWeight = (EditText) findViewById(R.id.productWeightEdit);
         Spinner weightTypeSpinner = (Spinner) findViewById(R.id.weightSpinner);
 
-        String finalProductString = manufacturerName.getText().toString() + " " +
+        return manufacturerName.getText().toString() + " " +
                 productTitle.getText().toString() + " " +
                 productWeight.getText().toString() +
                 weightTypeSpinner.getSelectedItem().toString();
-
-        return finalProductString;
     }
 
     //async posting of the update to the database

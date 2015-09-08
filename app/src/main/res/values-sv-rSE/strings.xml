@@ -24,7 +24,7 @@
 
     <string name="title_activity_view_product">Visa produkt</string>
     <string name="debug_fragmentNullLog">Fragmentet var null!</string>
-    <string name="dialog_RetrievingProduct">Hämtar produktinformation...</string>
+    <string name="dialog_RetrievingProduct">Hämtar produktinformation…</string>
     <string name="prompt_ScanACode">Skanna en streckkod</string>
     <string name="debug_placeholder">platshållare</string>
     <string name="title_activity_new_product">Ny produkt</string>
@@ -37,13 +37,13 @@
     <string name="dialog_Yes">Ja</string>
     <string name="dialog_confirm">Bekräfta</string>
     <string name="dialog_productDataChanged">Du har ändrat eller lagt till information. Vill du verkligen avbryta?</string>
-    <string name="dialog_updatingProductInfo">Uppdaterar produktinformation...</string>
+    <string name="dialog_updatingProductInfo">Uppdaterar produktinformation…</string>
     <string name="prompt_addNewPrice">Lägg till ett pris</string>
     <string name="prompt_fillOutField">Det här fältet måste fyllas i.</string>
     <string name="prompt_productUpdateFailed">Hoppsan! Kunde inte uppdatera produktinformationen.</string>
     <string name="title_activity_edit_product">Redigera produkt</string>
     <string name="title_activity_scanned_product">Skannad produkt</string>
-    <string name="ui_addAttributeButton">Lägg till...</string>
+    <string name="ui_addAttributeButton">Lägg till…</string>
     <string name="ui_brandHint">ACME</string>
     <string name="ui_defaultProductTitle">Märke Produkt Namn Mängd</string>
     <string name="ui_editBrand">Märke:</string>

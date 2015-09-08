@@ -12,8 +12,8 @@
     <string name="dialog_No">No</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_NoProductFound">No product found</string>
-    <string name="dialog_RetrievingProduct">Retrieving product information...</string>
-    <string name="dialog_updatingProductInfo">Updating product information...</string>
+    <string name="dialog_RetrievingProduct">Retrieving product information…</string>
+    <string name="dialog_updatingProductInfo">Updating product information…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>
 
     <string name="prompt_ScanACode">Scan a barcode</string>
@@ -38,7 +38,7 @@
     <string name="ui_weightHint">100</string>
 
     <string name="ui_defaultProductTitle">Brand Product Name Amount</string>
-    <string name="ui_addAttributeButton">Add...</string>
+    <string name="ui_addAttributeButton">Add…</string>
     <string name="ui_scanButton">Scan</string>
 
     <string name="preference_file_key">matjaktprefs</string>

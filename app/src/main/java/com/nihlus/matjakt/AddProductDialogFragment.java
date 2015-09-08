@@ -17,7 +17,6 @@ import com.nihlus.matjakt.UI.EditProductActivity;
  */
 public class AddProductDialogFragment extends DialogFragment
 {
-    private String userInput = "";
     private String ean = "";
     private Activity activity;
 
@@ -31,11 +30,6 @@ public class AddProductDialogFragment extends DialogFragment
     public AddProductDialogFragment()
     {
         // Required empty public constructor
-    }
-
-    public String getUserInput()
-    {
-        return userInput;
     }
 
     @Override

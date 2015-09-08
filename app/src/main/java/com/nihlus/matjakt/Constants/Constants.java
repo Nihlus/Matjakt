@@ -1,9 +1,9 @@
 package com.nihlus.matjakt.Constants;
 
-import android.annotation.SuppressLint;
-
 /**
  * Created by jarl on 9/8/15.
+ *
+ * Contains constants used across the application to unify access and output.
  */
 
 @SuppressWarnings("HardCodedStringLiteral")
@@ -43,4 +43,6 @@ public final class Constants
     public static final String PRICEMAPID_LON = "LON";
     public static final String PRICEMAPID_LOC = "LOC";
     public static final String PRICEMAPID_TIMESTAMP = "NIXTIME";
+
+    public static final String PREFERENCE_FILE_KEY = "MATJAKTPREFS";
 }

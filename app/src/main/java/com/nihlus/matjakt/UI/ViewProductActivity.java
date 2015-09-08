@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.MainActivity;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.UI.Lists.PriceViewAdapter;
 
@@ -22,11 +21,10 @@ import java.util.List;
 
 public class ViewProductActivity extends AppCompatActivity
 {
-    final ArrayList<HashMap<String, String>> priceList = new ArrayList<HashMap<String, String>>();
-    final PriceViewAdapter adapter = new PriceViewAdapter(this, priceList);
+    private final ArrayList<HashMap<String, String>> priceList = new ArrayList<>();
+    private final PriceViewAdapter adapter = new PriceViewAdapter(this, priceList);
 
-    String ean;
-    String eanType;
+    private String ean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -73,17 +71,12 @@ public class ViewProductActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean setVisibleProductTitle(String title)
+    private void setVisibleProductTitle(String title)
     {
         TextView productTitle = (TextView) findViewById(R.id.textView_ProductTitle);
         if (productTitle != null && !title.isEmpty())
         {
             productTitle.setText(title);
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
@@ -92,8 +85,6 @@ public class ViewProductActivity extends AppCompatActivity
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
         if (priceView != null)
         {
-            //Dummy entry
-            priceList.add(PriceEntry.getExampleEntry().getHashMap());
             priceList.add(PriceEntry.getAddEntry().getHashMap());
 
             priceView.setOnItemClickListener(new onPriceClicked());
@@ -176,7 +167,7 @@ public class ViewProductActivity extends AppCompatActivity
         public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
         {
             String chainName = adapter.getItem(position).get(Constants.PRICEMAPID_CHAIN);
-            if (chainName == "+")
+            if (chainName.equals("+"))
             {
                 //add new price
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();

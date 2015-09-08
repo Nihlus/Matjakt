@@ -2,6 +2,8 @@ package com.nihlus.matjakt.Outpan;
 
 /**
  * Created by Jarl on 2015-08-21.
+ *
+ * Contains endpoints for the Outpan database API
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class OutpanEndpoints

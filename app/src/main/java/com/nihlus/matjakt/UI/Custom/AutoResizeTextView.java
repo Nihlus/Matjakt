@@ -32,7 +32,7 @@ import android.widget.TextView;
 public class AutoResizeTextView extends TextView
 {
     private static final int NO_LINE_LIMIT = -1;
-    private RectF mTextRect = new RectF();
+    private final RectF mTextRect = new RectF();
 
     private RectF mAvailableSpaceRect;
 
@@ -257,7 +257,7 @@ public class AutoResizeTextView extends TextView
     /**
      * Set the lower text size limit and invalidate the view
      *
-     * @param minTextSize
+     * @param minTextSize The minimum text sixe in sp units.
      */
     public void setMinTextSize(float minTextSize)
     {
@@ -352,6 +352,6 @@ public class AutoResizeTextView extends TextView
          * text, it takes less space than {@code availableSpace}, > 0
          * otherwise
          */
-        public int onTestSize(int suggestedSize, RectF availableSpace);
+        int onTestSize(int suggestedSize, RectF availableSpace);
     }
 }

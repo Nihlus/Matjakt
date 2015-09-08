@@ -31,7 +31,7 @@ public class URLParameterEncoder
 
     private static boolean isUnsafe(char ch)
     {
-        if (ch > 128 || ch < 0)
+        if (ch < 0 || ch > 128)
         {
             return true;
         }

@@ -7,8 +7,8 @@ package com.nihlus.matjakt;
  */
 public class EAN
 {
-    private String Type;
-    private String RawEAN;
+    private final String Type;
+    private final String RawEAN;
 
     public EAN(String EANString, String Type)
     {

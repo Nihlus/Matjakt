@@ -1,13 +1,13 @@
 package com.nihlus.matjakt.UI;
 
 import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.MainActivity;
-import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
 
 /**
  * Created by jarl on 9/7/15.
+ *
+ * Represents a retrieved entry from the price database
  */
 @SuppressWarnings("HardCodedStringLiteral")
 public class PriceEntry
@@ -79,11 +79,11 @@ public class PriceEntry
 
     public HashMap<String, String> getHashMap()
     {
-        HashMap<String, String> hashMap = new HashMap<String, String>();
+        HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put(Constants.PRICEMAPID_CHAIN, Chain);
 
         //if the entry is an "Add" entry (i.e, just a plus sign), don't add the price or the comma
-        if (Chain != "+")
+        if (!Chain.equals("+"))
         {
             hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
             hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));

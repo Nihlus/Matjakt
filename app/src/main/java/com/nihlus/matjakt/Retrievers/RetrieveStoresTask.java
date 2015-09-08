@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 /**
  * Created by Jarl on 2015-08-20.
+ *
+ * Retrieves and sorts stores from the database
  */
 public class RetrieveStoresTask extends AsyncTask<Void, Void, HashMap<String, String>>
 {
@@ -15,12 +17,13 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, HashMap<String, St
         //set first list item to show a loading message
     }
 
+    // TODO: 9/8/15 Stub function - implement loading and sorting of stores
     @Override
     protected HashMap<String, String> doInBackground(Void... nothing)
     {
-        HashMap<String, String> list = new HashMap<>();
+        //HashMap<String, String> list = new HashMap<>();
 
-        return list;
+        return null;
     }
 
     @Override

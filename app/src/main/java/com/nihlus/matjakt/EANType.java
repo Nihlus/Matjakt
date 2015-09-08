@@ -2,6 +2,8 @@ package com.nihlus.matjakt;
 
 /**
  * Created by Jarl on 2015-08-16.
+ *
+ * Contains different types for EAN codes.
  */
 public enum EANType
 {
