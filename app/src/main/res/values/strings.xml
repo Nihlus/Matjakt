@@ -12,6 +12,8 @@
     <string name="dialog_No">No</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_NoProductFound">No product found</string>
+    <string name="dialog_BrokenProduct">Invalid or broken product</string>
+    <string name="dialog_brokenProductBody">This product is in the database, but is missing some information. Would you like to add it?</string>
     <string name="dialog_RetrievingProduct">Retrieving product information…</string>
     <string name="dialog_updatingProductInfo">Updating product information…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>

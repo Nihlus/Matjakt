@@ -24,7 +24,8 @@ public final class Constants
     public static final String MATJAKT_IMAGE_PREFIX = "MAT_";
     public static final String JPEGSUFFIX = ".jpg";
     public static final String WEBFORMAT_JPEG = "image/jpeg";
-    public static final String ADDPRODUCTFRAGMENT_ID = "PRODUCTDIALOG";
+    public static final String DIALOG_ADDPRODUCTFRAGMENT_ID = "ADD_PRODUCT_DIALOG";
+    public static final String DIALOG_REPAIRPRODUCTFRAGMENT_ID = "REPAIR_PRODUCT_DIALOG";
 
     public static final String PRODUCT_TITLE_EXTRA = "PRODUCT_TITLE";
     public static final String PRODUCT_EAN_EXTRA = "EAN";
@@ -37,6 +38,7 @@ public final class Constants
     public static final String PRODUCT_FAIRTRADE_ATTRIBUTE = "Fairtrade";
     public static final String PRODUCT_ORGANIC_ATTRIBUTE = "Organic";
     public static final String PRODUCT_FLUID_ATTRIBUTE = "Fluid";
+    public static final String PRODUCT_BUNDLE_EXTRA = "PRODUCTDATA";
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
     public static final String OutpanBaseURL = "https://api.outpan.com/v1/products/";

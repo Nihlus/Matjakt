@@ -61,6 +61,8 @@ public class ModifyProductActivity extends AppCompatActivity
         {
             setTitle(getResources().getString(R.string.title_activity_edit_product));
 
+            Bundle productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
             EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
@@ -77,35 +79,35 @@ public class ModifyProductActivity extends AppCompatActivity
             //load input data from the intent
 
             //brand
-            brandName.setText(intent.getStringExtra(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            brandName.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
             //name
-            productTitle.setText(intent.getStringExtra(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            productTitle.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
             //weight or volume
-            if (intent.hasExtra(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+            if (productData.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
             {
-                HashMap<String, String> splitValue = splitAmountValue(intent.getStringExtra(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
+                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
                 productNetWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
                 netWeightTypeSpinner.setSelection(((ArrayAdapter)netWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
-            if (intent.hasExtra(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
+            if (productData.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
             {
-                HashMap<String, String> splitValue = splitAmountValue(intent.getStringExtra(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
+                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
                 productGrossWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
                 grossWeightTypeSpinner.setSelection(((ArrayAdapter)grossWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
-            if (intent.hasExtra(Constants.PRODUCT_FLUID_ATTRIBUTE))
+            if (productData.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
             {
-                HashMap<String, String> splitValue = splitAmountValue(intent.getStringExtra(Constants.PRODUCT_VOLUME_ATTRIBUTE));
+                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE));
                 productFluidVolume.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
                 fluidVolumeTypeSpinner.setSelection(((ArrayAdapter)fluidVolumeTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
             //organic
-            isOrganic.setChecked(intent.getBooleanExtra(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
+            isOrganic.setChecked(productData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
             //fairtrade
-            isFairtrade.setChecked(intent.getBooleanExtra(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
+            isFairtrade.setChecked(productData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
         }
         else
         {
@@ -466,12 +468,12 @@ public class ModifyProductActivity extends AppCompatActivity
                 resultIntent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result);
                 resultIntent.putExtra(Constants.PRODUCT_EAN_EXTRA, ModifyProductActivity.this.ean);
 
-                setResult(RESULT_OK, resultIntent);
+                parentActivity.setResult(RESULT_OK, resultIntent);
                 parentActivity.finish();
             }
             else
             {
-                setResult(RESULT_CANCELED);
+                parentActivity.setResult(RESULT_CANCELED);
                 this.dialog.dismiss();
 
                 Toast.makeText(parentActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();

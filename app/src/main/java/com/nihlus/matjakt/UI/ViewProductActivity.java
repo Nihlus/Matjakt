@@ -70,6 +70,7 @@ public class ViewProductActivity extends AppCompatActivity
 
         if (id == R.id.action_edit)
         {
+
             return true;
         }
 

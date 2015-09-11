@@ -26,6 +26,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.Constants.Constants;
 import com.nihlus.matjakt.Outpan.OutpanAPI2;
+import com.nihlus.matjakt.UI.RepairProductDialogFragment;
 import com.nihlus.matjakt.UI.ViewProductActivity;
 
 import java.io.File;
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class AsyncProductResolver extends AsyncTask<EAN, Integer, EANProduct>
+    private class AsyncProductResolver extends AsyncTask<EAN, Integer, OutpanObject>
     {
         private Activity activity;
         private String ean;
@@ -285,7 +286,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected EANProduct doInBackground(EAN... inEans)
+        protected OutpanObject doInBackground(EAN... inEans)
         {
             this.ean = inEans[0].getCode();
             this.type = inEans[0].getType();
@@ -294,19 +295,11 @@ public class MainActivity extends AppCompatActivity
             OutpanAPI api = new OutpanAPI(Constants.OutpanAPIKey);
             OutpanObject outpanEntry = api.getProduct(ean);
 
-            if (isNameValid(outpanEntry.name))
-            {
-                Product.setProductName(outpanEntry.name);
-            }
-            else
-            {
-                Product.setProductName(getResources().getString(R.string.dialog_NoProductFound));
-            }
-            return Product;
+            return outpanEntry;
         }
 
         @Override
-        protected void onPostExecute(EANProduct result)
+        protected void onPostExecute(OutpanObject result)
         {
             if (progressDialog.isShowing())
             {
@@ -314,26 +307,123 @@ public class MainActivity extends AppCompatActivity
             }
 
             //launch product view activity
-            if (!result.getProductName().equals(getResources().getString(R.string.dialog_NoProductFound)))
+            if (isProductValid(result))
             {
                 Intent intent = new Intent(activity, ViewProductActivity.class);
 
-                intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.getProductName());
+                intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.name);
                 intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
 
                 startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
+            }
+            else if (isNameValid(result.name))
+            {
+                //broken product, ask if the user wants to edit it
+                RepairProductDialogFragment dialog = new RepairProductDialogFragment(activity, ean, getOutpanBundle(result));
+                dialog.show(getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
             }
             else
             {
                 //ask the user if they want to add a new product
                 AddProductDialogFragment dialog = new AddProductDialogFragment(activity, ean);
-                dialog.show(getFragmentManager(), Constants.ADDPRODUCTFRAGMENT_ID);
+                dialog.show(getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
             }
+        }
+
+        private Bundle getOutpanBundle(OutpanObject outpanObject)
+        {
+            Bundle productData = new Bundle();
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_VOLUME_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_VOLUME_ATTRIBUTE));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FLUID_ATTRIBUTE)));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+            }
+
+            if (outpanObject.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+            }
+
+            return productData;
         }
 
         private boolean isNameValid(String name)
         {
-            return !(name.isEmpty() || name.equals("null"));
+            //if name is empty or says null, return false
+            boolean nameIsEmpty = name.isEmpty();
+            boolean nameIsNull = name.equals("null");
+
+
+            if (nameIsEmpty || nameIsNull)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private boolean isProductValid(OutpanObject outpanObject)
+        {
+            boolean isMissingRequiredAttributes = false;
+
+            if (!isNameValid(outpanObject.name))
+            {
+                isMissingRequiredAttributes = true;
+            }
+
+            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+            {
+                isMissingRequiredAttributes = true;
+            }
+
+            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+            {
+                isMissingRequiredAttributes = true;
+            }
+
+
+            boolean grossWeightMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE);
+            boolean netWeightMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE);
+            boolean volumeMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE);
+
+            if ((grossWeightMissing && netWeightMissing) && volumeMissing)
+            {
+                isMissingRequiredAttributes = true;
+            }
+
+            return !isMissingRequiredAttributes;
         }
     }
 
