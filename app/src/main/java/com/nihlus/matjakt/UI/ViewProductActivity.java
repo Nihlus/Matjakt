@@ -7,7 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ public class ViewProductActivity extends AppCompatActivity
     private final PriceViewAdapter adapter = new PriceViewAdapter(this, priceList);
 
     private String ean;
+    private Bundle productData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,7 +39,9 @@ public class ViewProductActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         String productTitle = intent.getStringExtra(Constants.PRODUCT_TITLE_EXTRA);
+
         this.ean = intent.getStringExtra(Constants.PRODUCT_EAN_EXTRA);
+        this.productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
 
         setVisibleProductTitle(productTitle);
 
@@ -70,7 +75,13 @@ public class ViewProductActivity extends AppCompatActivity
 
         if (id == R.id.action_edit)
         {
+            Intent intent = new Intent(this, ModifyProductActivity.class);
+            intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.MODIFY_EXISTING_PRODUCT);
+            intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
+            intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, productData);
 
+            startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
+            this.finish();
             return true;
         }
 
@@ -82,8 +93,39 @@ public class ViewProductActivity extends AppCompatActivity
     {
         if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
         {
-            //update from bundle
-            Bundle productData = data.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+            if (data.getIntExtra(Constants.GENERIC_INTENT_ID, -1) != Constants.REQUEST_BARCODE_SCAN)
+            {
+                //update from bundle
+                this.productData = data.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+
+                setVisibleProductTitle(getFinalProductString(productData));
+            }
+            else
+            {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(Constants.GENERIC_INTENT_ID, Constants.REQUEST_BARCODE_SCAN);
+
+                setResult(RESULT_OK, resultIntent);
+                this.finish();
+            }
+        }
+    }
+
+    private String getFinalProductString(Bundle inProductData)
+    {
+        if (inProductData.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE) && inProductData.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE))
+        {
+            //use the fluid volume for the final title
+            return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
+                    inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
+                    inProductData.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE);
+        }
+        else
+        {
+            //use the gross weight for the final title
+            return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
+                    inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
+                    inProductData.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE);
         }
     }
 

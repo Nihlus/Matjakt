@@ -260,10 +260,66 @@ public class MainActivity extends AppCompatActivity
                 InitiateScan();
             }
         }
+        else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
+        {
+            int request = data.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
+            if (request == Constants.REQUEST_BARCODE_SCAN)
+            {
+                InitiateScan();
+            }
+        }
         else
         {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    //HACK: This should be in its own class or in OutpanObject as getBundle()
+    public static Bundle getOutpanBundle(OutpanObject outpanObject)
+    {
+        Bundle productData = new Bundle();
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_VOLUME_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_VOLUME_ATTRIBUTE));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
+        {
+            productData.putBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FLUID_ATTRIBUTE)));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+        {
+            productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+        }
+
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+        {
+            productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+        }
+
+        return productData;
     }
 
     private class AsyncProductResolver extends AsyncTask<EAN, Integer, OutpanObject>
@@ -310,6 +366,7 @@ public class MainActivity extends AppCompatActivity
 
                 intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.name);
                 intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
+                intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, getOutpanBundle(result));
 
                 startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
             }
@@ -325,53 +382,6 @@ public class MainActivity extends AppCompatActivity
                 AddProductDialogFragment dialog = new AddProductDialogFragment(activity, ean);
                 dialog.show(getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
             }
-        }
-
-        private Bundle getOutpanBundle(OutpanObject outpanObject)
-        {
-            Bundle productData = new Bundle();
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
-            {
-                productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
-            {
-                productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
-            {
-                productData.putString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
-            {
-                productData.putString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE))
-            {
-                productData.putString(Constants.PRODUCT_VOLUME_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_VOLUME_ATTRIBUTE));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
-            {
-                productData.putBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FLUID_ATTRIBUTE)));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-            {
-                productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
-            }
-
-            if (outpanObject.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-            {
-                productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
-            }
-
-            return productData;
         }
 
         private boolean isNameValid(String name)
