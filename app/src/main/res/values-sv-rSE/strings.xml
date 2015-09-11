@@ -63,4 +63,6 @@
     <string name="ui_isAFluid">Den här produkten är en dryck eller vätska</string>
     <string name="ui_isFairtrade">Fairtrade</string>
     <string name="ui_isOrganic">Ekologisk</string>
+    <string name="dialog_brokenProductBody">Den här produkten finns i databasen, men saknar nödvändig information. Vill du lägga till informationen?</string>
+    <string name="dialog_BrokenProduct">Ogiltig eller trasig produkt</string>
 </resources>

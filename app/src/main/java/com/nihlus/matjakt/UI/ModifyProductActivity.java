@@ -44,18 +44,6 @@ public class ModifyProductActivity extends AppCompatActivity
         if (bIsNewProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
-
-            EditText fluidVolumeEdit = (EditText)findViewById(R.id.productFluidVolumeEdit);
-            Spinner fluidTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
-
-            if (fluidVolumeEdit != null && fluidTypeSpinner != null)
-            {
-                if (!isFluidChecked())
-                {
-                    fluidVolumeEdit.setEnabled(false);
-                    fluidTypeSpinner.setEnabled(false);
-                }
-            }
         }
         else if (bIsModifyingProduct)
         {
@@ -71,7 +59,8 @@ public class ModifyProductActivity extends AppCompatActivity
 
             Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
             Spinner grossWeightTypeSpinner = (Spinner) findViewById(R.id.grossWeightSpinner);
-            Spinner fluidVolumeTypeSpinner = (Spinner) findViewById(R.id.fluidVolumeSpinner);
+            Spinner fluidVolumeTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
+
 
             CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
@@ -112,6 +101,17 @@ public class ModifyProductActivity extends AppCompatActivity
         else
         {
             setTitle(getResources().getString(R.string.debug_howDidYouGetHere));
+        }
+
+        EditText fluidVolumeEdit = (EditText)findViewById(R.id.productFluidVolumeEdit);
+        Spinner fluidTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
+        if (fluidVolumeEdit != null && fluidTypeSpinner != null)
+        {
+            if (!isFluidChecked())
+            {
+                fluidVolumeEdit.setEnabled(false);
+                fluidTypeSpinner.setEnabled(false);
+            }
         }
     }
 
@@ -438,7 +438,6 @@ public class ModifyProductActivity extends AppCompatActivity
             if (data.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
             {
                 api.setProductAttribute(ean, Constants.PRODUCT_VOLUME_ATTRIBUTE, data.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE));
-                api.setProductAttribute(ean, Constants.PRODUCT_FLUID_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE)));
             }
 
             if (data.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
@@ -451,6 +450,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 api.setProductAttribute(ean, Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, data.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
             }
 
+            api.setProductAttribute(ean, Constants.PRODUCT_FLUID_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE)));
             api.setProductAttribute(ean, Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
             api.setProductAttribute(ean, Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
 
