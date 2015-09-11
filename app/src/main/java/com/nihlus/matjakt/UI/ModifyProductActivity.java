@@ -41,6 +41,10 @@ public class ModifyProductActivity extends AppCompatActivity
 
         boolean bIsNewProduct = incomingIntent == Constants.INSERT_NEW_PRODUCT;
         boolean bIsModifyingProduct = incomingIntent == Constants.MODIFY_EXISTING_PRODUCT;
+
+        EditText productFluidVolume = (EditText)findViewById(R.id.productFluidVolumeEdit);
+        Spinner fluidVolumeTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
+
         if (bIsNewProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
@@ -55,12 +59,9 @@ public class ModifyProductActivity extends AppCompatActivity
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
             EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
             EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
-            EditText productFluidVolume = (EditText)findViewById(R.id.productFluidVolumeEdit);
 
             Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
             Spinner grossWeightTypeSpinner = (Spinner) findViewById(R.id.grossWeightSpinner);
-            Spinner fluidVolumeTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
-
 
             CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
@@ -76,21 +77,21 @@ public class ModifyProductActivity extends AppCompatActivity
             {
                 HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
                 productNetWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                netWeightTypeSpinner.setSelection(((ArrayAdapter)netWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
+                netWeightTypeSpinner.setSelection(((ArrayAdapter<String>)netWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
             if (productData.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
             {
                 HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
                 productGrossWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                grossWeightTypeSpinner.setSelection(((ArrayAdapter)grossWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
+                grossWeightTypeSpinner.setSelection(((ArrayAdapter<String>)grossWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
             if (productData.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
             {
                 HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE));
                 productFluidVolume.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                fluidVolumeTypeSpinner.setSelection(((ArrayAdapter)fluidVolumeTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
+                fluidVolumeTypeSpinner.setSelection(((ArrayAdapter<String>)fluidVolumeTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
             //organic
@@ -103,14 +104,12 @@ public class ModifyProductActivity extends AppCompatActivity
             setTitle(getResources().getString(R.string.debug_howDidYouGetHere));
         }
 
-        EditText fluidVolumeEdit = (EditText)findViewById(R.id.productFluidVolumeEdit);
-        Spinner fluidTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
-        if (fluidVolumeEdit != null && fluidTypeSpinner != null)
+        if (productFluidVolume != null && fluidVolumeTypeSpinner != null)
         {
             if (!isFluidChecked())
             {
-                fluidVolumeEdit.setEnabled(false);
-                fluidTypeSpinner.setEnabled(false);
+                productFluidVolume.setEnabled(false);
+                fluidVolumeTypeSpinner.setEnabled(false);
             }
         }
     }
@@ -285,12 +284,8 @@ public class ModifyProductActivity extends AppCompatActivity
     private boolean isFluidChecked()
     {
 
-        CheckBox isFluid = (CheckBox)findViewById(R.id.isFluidCheckbox);
-        if (isFluid != null)
-        {
-            return isFluid.isChecked();
-        }
-        return false;
+        CheckBox isFluid = (CheckBox) findViewById(R.id.isFluidCheckbox);
+        return isFluid != null && isFluid.isChecked();
     }
 
     private boolean verifyRequiredFields()
@@ -408,7 +403,7 @@ public class ModifyProductActivity extends AppCompatActivity
         private final String ean;
         private final Bundle data;
 
-        private ProgressDialog dialog;
+        private final ProgressDialog dialog;
 
         UpdateProductTitle(Activity parentActivity, String inEan, Bundle inData)
         {

@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         locationManager.removeUpdates(locationListener);
     }
 
-    public void setFragment(Fragment fragment)
+    private void setFragment(Fragment fragment)
     {
         if (fragment != null)
         {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity
 
     private class AsyncProductResolver extends AsyncTask<EAN, Integer, OutpanObject>
     {
-        private Activity activity;
+        private final Activity activity;
         private String ean;
         private String type;
 
@@ -291,11 +291,8 @@ public class MainActivity extends AppCompatActivity
             this.ean = inEans[0].getCode();
             this.type = inEans[0].getType();
 
-            EANProduct Product = new EANProduct(inEans[0]);
             OutpanAPI api = new OutpanAPI(Constants.OutpanAPIKey);
-            OutpanObject outpanEntry = api.getProduct(ean);
-
-            return outpanEntry;
+            return api.getProduct(ean);
         }
 
         @Override

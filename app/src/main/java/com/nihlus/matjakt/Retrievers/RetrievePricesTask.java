@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import com.nihlus.matjakt.UI.PriceEntry;
 import com.nihlus.matjakt.UI.ViewProductActivity;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**

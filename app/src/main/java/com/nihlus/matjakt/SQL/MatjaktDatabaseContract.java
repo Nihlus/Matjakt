@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * <p/>
  * This class defines database tables for Matjakt, prices and stores.
  */
-public final class MatjaktDatabaseContract
+final class MatjaktDatabaseContract
 {
     //Empty constructor. This class should never be instantiated.
     public MatjaktDatabaseContract()

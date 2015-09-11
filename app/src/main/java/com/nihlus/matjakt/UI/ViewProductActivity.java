@@ -82,7 +82,8 @@ public class ViewProductActivity extends AppCompatActivity
     {
         if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
         {
-
+            //update from bundle
+            Bundle productData = data.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
         }
     }
 

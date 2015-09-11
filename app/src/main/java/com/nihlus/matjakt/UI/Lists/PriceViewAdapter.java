@@ -22,8 +22,8 @@ import java.util.HashMap;
 public class PriceViewAdapter extends BaseAdapter
 {
 
-    public ArrayList<HashMap<String, String>> list;
-    Activity activity;
+    public final ArrayList<HashMap<String, String>> list;
+    final Activity activity;
     TextView txtFirst;
     TextView txtSecond;
     TextView txtThird;
