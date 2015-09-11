@@ -6,7 +6,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.nihlus.matjakt.UI.EditProductActivity">
+                tools:context="com.nihlus.matjakt.UI.ModifyProductActivity">
 
     <Button
         android:id="@+id/button4"
@@ -28,7 +28,19 @@
         android:layout_marginEnd="64dp"
         android:layout_marginRight="64dp"
         android:text="@string/ui_editBrand"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/brandEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView3"
+        android:hint="@string/ui_brandHint"
+        android:imeOptions="actionNext"
+        android:maxLines="1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/textView2"
@@ -36,71 +48,163 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/manufacturerEdit"
+        android:layout_below="@+id/brandEdit"
         android:text="@string/ui_editName"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <EditText
-        android:id="@+id/manufacturerEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView3"
-        android:hint="@string/ui_brandHint"
-        android:imeOptions="actionNext"
-        android:maxLines="1"/>
 
     <EditText
         android:id="@+id/productNameEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/manufacturerEdit"
-        android:layout_alignLeft="@+id/manufacturerEdit"
-        android:layout_alignRight="@+id/manufacturerEdit"
-        android:layout_alignStart="@+id/manufacturerEdit"
+        android:layout_alignLeft="@+id/brandEdit"
+        android:layout_alignStart="@+id/brandEdit"
         android:layout_alignTop="@+id/textView2"
         android:hint="@string/ui_nameHint"
         android:imeOptions="actionNext"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/ui_editNetWeight"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/productGrossWeightEdit"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/productNameEdit"
-        android:text="@string/ui_editWeight"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        />
 
     <EditText
-        android:id="@+id/productWeightEdit"
+        android:id="@+id/productNetWeightEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/productNameEdit"
-        android:layout_alignStart="@+id/productNameEdit"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_toLeftOf="@+id/button4"
-        android:layout_toStartOf="@+id/button4"
         android:hint="@string/ui_weightHint"
         android:imeOptions="actionDone"
         android:inputType="number|numberDecimal"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_toLeftOf="@+id/netWeightSpinner"
+        android:layout_toEndOf="@+id/textView4"
+        android:layout_alignLeft="@+id/productGrossWeightEdit"
+        android:layout_alignStart="@+id/productGrossWeightEdit"/>
 
     <Spinner
-        android:id="@+id/weightSpinner"
+        android:id="@+id/netWeightSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/productWeightEdit"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/productWeightEdit"
-        android:layout_toEndOf="@+id/productWeightEdit"
-        android:layout_toRightOf="@+id/productWeightEdit"
-        android:entries="@array/weight_types_array"
+        android:entries="@array/ui_weight_types"
         android:focusable="false"
+        android:spinnerMode="dialog"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_alignBottom="@+id/productNetWeightEdit"
+        android:layout_alignLeft="@+id/button4"
+        android:layout_alignStart="@+id/button4"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/isFluidCheckbox"
+        android:checked="false"
+        android:layout_above="@+id/isOrganicCheckbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onIsFluidToggle"
+        android:text="@string/ui_isAFluid"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_isFairtrade"
+        android:id="@+id/isFairtradeCheckbox"
+        android:checked="false"
+        android:layout_alignTop="@+id/isOrganicCheckbox"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_isOrganic"
+        android:id="@+id/isOrganicCheckbox"
+        android:checked="false"
+        android:layout_above="@+id/button4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="86dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/ui_editGrossWeight"
+        android:id="@+id/textView"
+        android:layout_below="@+id/productNameEdit"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/productGrossWeightEdit"
+        android:layout_below="@+id/productNameEdit"
+        android:layout_alignLeft="@+id/productNameEdit"
+        android:layout_alignStart="@+id/productNameEdit"
+        android:hint="@string/ui_weightHint"
+        android:layout_toLeftOf="@+id/grossWeightSpinner"
+        android:layout_toStartOf="@+id/grossWeightSpinner"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/ui_editFluidVolume"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/productNetWeightEdit"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/productFluidVolumeEdit"
+        android:layout_below="@+id/productNetWeightEdit"
+        android:layout_toLeftOf="@+id/netWeightSpinner"
+        android:hint="@string/ui_weightHint"
+        android:layout_alignLeft="@+id/productNetWeightEdit"
+        android:layout_alignStart="@+id/productNetWeightEdit"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/grossWeightSpinner"
+        android:layout_alignTop="@+id/productGrossWeightEdit"
+        android:layout_alignLeft="@+id/netWeightSpinner"
+        android:layout_alignStart="@+id/netWeightSpinner"
+        android:layout_alignBottom="@+id/productGrossWeightEdit"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:entries="@array/ui_weight_types"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fluidVolumeSpinner"
+        android:layout_alignTop="@+id/productFluidVolumeEdit"
+        android:layout_alignLeft="@+id/netWeightSpinner"
+        android:layout_alignStart="@+id/netWeightSpinner"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/productFluidVolumeEdit"
+        android:entries="@array/ui_volume_types"
         android:spinnerMode="dialog"/>
 
 </RelativeLayout>

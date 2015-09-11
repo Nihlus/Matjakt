@@ -1,5 +1,6 @@
 package com.nihlus.matjakt.Retrievers;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import java.util.HashMap;
@@ -11,6 +12,22 @@ import java.util.HashMap;
  */
 public class RetrieveStoresTask extends AsyncTask<Void, Void, HashMap<String, String>>
 {
+    final Activity parentActivity;
+    final String chain;
+    final double latitude;
+    final double longitude;
+    final double distance;
+
+
+    public RetrieveStoresTask(Activity activity, String chain, double latitude, double longitude, double distance)
+    {
+        this.parentActivity = activity;
+        this.chain = chain;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.distance = distance;
+    }
+
     @Override
     protected void onPreExecute()
     {

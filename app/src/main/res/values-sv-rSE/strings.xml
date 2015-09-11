@@ -13,13 +13,17 @@
 
     <string name="action_edit">Redigera</string>
 
-    <string-array name="weight_types_array">
+    <string-array name="ui_weight_types">
         <item>g</item>
         <item>kg</item>
-        <item>ml</item>
-        <item>cl</item>
+        <item>mg</item>
+        <item>pcs</item>
+    </string-array>
+
+    <string-array name="ui_volume_types">
         <item>l</item>
-        <item>st</item>
+        <item>cl</item>
+        <item>ml</item>
     </string-array>
 
     <string name="title_activity_view_product">Visa produkt</string>
@@ -48,8 +52,15 @@
     <string name="ui_defaultProductTitle">Märke Produkt Namn Mängd</string>
     <string name="ui_editBrand">Märke:</string>
     <string name="ui_editName">Namn:</string>
-    <string name="ui_editWeight">Mängd:</string>
     <string name="ui_nameHint">Fullkornsbröd</string>
     <string name="ui_scanButton">Skanna</string>
     <string name="ui_weightHint">100</string>
+    <string name="ui_pricesLoading">Laddar...</string>
+    <string name="prompt_fillOutAtLeastOneField">Minst ett av fälten måste vara ifyllda.</string>
+    <string name="ui_editFluidVolume">Vätskevolym:</string>
+    <string name="ui_editGrossWeight">Grossvikt:</string>
+    <string name="ui_editNetWeight">Nettovikt:</string>
+    <string name="ui_isAFluid">Den här produkten är en dryck eller vätska</string>
+    <string name="ui_isFairtrade">Fairtrade</string>
+    <string name="ui_isOrganic">Ekologisk</string>
 </resources>

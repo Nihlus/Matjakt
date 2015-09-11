@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.UI.EditProductActivity;
+import com.nihlus.matjakt.UI.ModifyProductActivity;
 
 
 /**
@@ -63,7 +63,7 @@ public class AddProductDialogFragment extends DialogFragment
                 //   new UpdateProductTitle().execute(userInput);
                 //}
 
-                Intent intent = new Intent(activity, EditProductActivity.class);
+                Intent intent = new Intent(activity, ModifyProductActivity.class);
                 intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.INSERT_NEW_PRODUCT);
                 intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
 

@@ -1,6 +1,9 @@
 package com.nihlus.matjakt.UI;
 
+import android.content.Context;
+
 import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
 
@@ -67,6 +70,20 @@ public class PriceEntry
     {
         PriceEntry entry = new PriceEntry();
         entry.Chain = "+";
+        entry.Extra = "";
+        entry.Latitude = 0;
+        entry.Longitude = 0;
+        entry.Location = "";
+        entry.Price = 0;
+        entry.Timestamp = "0";
+
+        return entry;
+    }
+
+    public static PriceEntry getLoadingEntry(Context context)
+    {
+        PriceEntry entry = new PriceEntry();
+        entry.Chain = context.getResources().getString(R.string.ui_pricesLoading);
         entry.Extra = "";
         entry.Latitude = 0;
         entry.Longitude = 0;

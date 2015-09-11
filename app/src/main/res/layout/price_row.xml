@@ -3,37 +3,37 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
+    <com.nihlus.matjakt.UI.Custom.AutoResizeTextView
         android:id="@+id/chain"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:textSize="16sp"
         android:ellipsize="none"
         android:maxLines="1"
-        android:textSize="16sp"
         android:textStyle="bold"/>
 
-    <TextView
+    <com.nihlus.matjakt.UI.Custom.AutoResizeTextView
         android:id="@+id/extra"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         android:layout_weight="1"
+        android:textSize="16sp"
         android:ellipsize="none"
-        android:maxLines="1"
-        android:textSize="16sp"/>
+        android:maxLines="1"/>
 
-    <TextView
+    <com.nihlus.matjakt.UI.Custom.AutoResizeTextView
         android:id="@+id/price"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         android:layout_weight="0.5"
+        android:textSize="16sp"
         android:ellipsize="none"
-        android:maxLines="1"
-        android:textSize="16sp"/>
+        android:maxLines="1"/>
 </LinearLayout>

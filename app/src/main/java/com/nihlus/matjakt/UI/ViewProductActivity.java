@@ -68,7 +68,21 @@ public class ViewProductActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_edit)
+        {
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
+        {
+
+        }
     }
 
     private void setVisibleProductTitle(String title)
@@ -85,6 +99,7 @@ public class ViewProductActivity extends AppCompatActivity
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
         if (priceView != null)
         {
+            priceList.add(PriceEntry.getExampleEntry().getHashMap());
             priceList.add(PriceEntry.getAddEntry().getHashMap());
 
             priceView.setOnItemClickListener(new onPriceClicked());
@@ -93,13 +108,26 @@ public class ViewProductActivity extends AppCompatActivity
         }
     }
 
-    // TODO: 9/7/15 Stub function - adds all relevant provided prices to the visible list
-    private void addPrices(List<PriceEntry> entries)
+    public void setListStatusLoading()
     {
-
+        clearPrices();
+        priceList.add(PriceEntry.getLoadingEntry(this).getHashMap());
+        resetListViewAdapter();
     }
 
-    private void addPriceItem(PriceEntry entry)
+    // TODO: 9/7/15 Stub function - adds all relevant provided prices to the visible list
+    public void addPrices(List<PriceEntry> entries)
+    {
+        clearPrices();
+
+        //add the prices
+        for (PriceEntry entry : entries)
+        {
+            addPriceItem(entry);
+        }
+    }
+
+    public void addPriceItem(PriceEntry entry)
     {
         if (adapter != null && priceList != null)
         {

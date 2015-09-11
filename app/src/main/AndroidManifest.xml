@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.EditProductActivity"
+            android:name=".UI.ModifyProductActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_new_product"
             android:parentActivityName=".MainActivity"
