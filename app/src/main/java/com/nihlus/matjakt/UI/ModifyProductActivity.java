@@ -29,6 +29,7 @@ import io.github.johncipponeri.outpanapi.OutpanObject;
 public class ModifyProductActivity extends AppCompatActivity
 {
     private String ean = "";
+    private Bundle productData = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,7 +56,7 @@ public class ModifyProductActivity extends AppCompatActivity
         {
             setTitle(getResources().getString(R.string.title_activity_edit_product));
 
-            Bundle productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+            this.productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
 
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
@@ -346,7 +347,7 @@ public class ModifyProductActivity extends AppCompatActivity
         else
         {
             boolean isNetWeightNotFilledOut = productNetWeight.getText().toString().isEmpty();
-            boolean isGrossWeightNotFilledOut = productNetWeight.getText().toString().isEmpty();
+            boolean isGrossWeightNotFilledOut = productGrossWeight.getText().toString().isEmpty();
 
             if (isNetWeightNotFilledOut && isGrossWeightNotFilledOut)
             {
@@ -359,31 +360,32 @@ public class ModifyProductActivity extends AppCompatActivity
         return !bHasIncompleteFields;
     }
 
+    // TODO: 9/11/15 Update to reflect new Bundle model (match values with Bundle instead of default values
     private boolean haveFieldsChanged()
     {
         boolean bFieldsHaveChanged = false;
 
         EditText productBrand = (EditText) findViewById(R.id.brandEdit);
         EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-        EditText productWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-        Spinner weightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
+        EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
+        Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
 
-        if (!productBrand.getText().toString().isEmpty())
+        if (!productBrand.getText().toString().equals(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if (!productTitle.getText().toString().isEmpty())
+        if (!productTitle.getText().toString().equals(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if (!productWeight.getText().toString().isEmpty())
+        if (!productNetWeight.getText().toString().equals(productData.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if ((weightTypeSpinner.getSelectedItemPosition() != 0))
+        if ((netWeightTypeSpinner.getSelectedItemPosition() != 0))
         {
             bFieldsHaveChanged = true;
         }
