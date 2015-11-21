@@ -214,7 +214,7 @@ public class ViewProductActivity extends AppCompatActivity
 
     public void LoadPrices()
     {
-        // TODO: Clean this crap up
+        //TODO: Clean this crap up (GPS Service)
         RetrievePricesTask pricesTask = new RetrievePricesTask(this, ean,
                 GPS.getCurrentLocation().getLatitude(),
                 GPS.getCurrentLocation().getLongitude(), 2);
@@ -222,7 +222,6 @@ public class ViewProductActivity extends AppCompatActivity
         pricesTask.execute();
     }
 
-    // TODO: 9/7/15 Stub function - adds all relevant provided prices to the visible list
     public void addPrices(List<MatjaktPrice> entries)
     {
         clearPrices();
@@ -297,15 +296,8 @@ public class ViewProductActivity extends AppCompatActivity
             {
                 //add new price
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
+
                 //TODO: Add InsertPriceTask handler here
-
-                //TODO: Clean up this crap
-                // Retrieve stores in a 200m range. Extends the search to 2km if nothing is found.
-                RetrieveStoresTask retrieveStoresTask = new RetrieveStoresTask(ViewProductActivity.this,
-                        GPS.getCurrentLocation().getLatitude(),
-                        GPS.getCurrentLocation().getLongitude(), 0.2);
-
-                retrieveStoresTask.execute();
             }
             else
             {
@@ -320,7 +312,7 @@ public class ViewProductActivity extends AppCompatActivity
     {
         Stores.size();
 
-        //TODO: Real values instead of test values
+        //TODO: Clean this crap up (GPS Service)
         AddPriceDialogFragment addPriceDialogFragment = new AddPriceDialogFragment(this, Stores,
                 GPS.getCurrentLocation().getLatitude(),
                 GPS.getCurrentLocation().getLongitude());

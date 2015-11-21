@@ -81,7 +81,6 @@ public class AddPriceDialogFragment extends DialogFragment
             @Override
             public void onClick(View v)
             {
-                //TODO: Invoke store add dialog
                 AddStoreDialogFragment storeDialogFragment = new AddStoreDialogFragment(ParentActivity,
                         AddPriceDialogFragment.this,
                         Latitude,

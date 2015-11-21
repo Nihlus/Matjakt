@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity
             // We inserted a new product
             Intent intent = new Intent(this, ViewProductActivity.class);
 
-            // TODO: 9/8/15 Implement static names for extras
             intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, data.getStringExtra(Constants.PRODUCT_TITLE_EXTRA));
             intent.putExtra(Constants.PRODUCT_EAN_EXTRA, data.getStringExtra(Constants.PRODUCT_EAN_EXTRA));
 

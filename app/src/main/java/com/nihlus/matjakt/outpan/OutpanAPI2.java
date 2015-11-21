@@ -22,7 +22,6 @@ public class OutpanAPI2
         this.APIKey = InAPIKey;
     }
 
-    //TODO: Stub
     public OutpanProduct getProduct(EAN InEAN)
     {
         OutpanProduct OutProduct = null;

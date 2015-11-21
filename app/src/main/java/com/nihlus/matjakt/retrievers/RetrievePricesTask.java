@@ -113,20 +113,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                 rawUrl += "&" + Constants.API_PARAM_COUNT + "=" + String.valueOf(count);
             }
 
-            String responseContent = "";
-            URL url = new URL(rawUrl);
-            URLConnection requestConnection = url.openConnection();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
-            {
-                responseContent += currentLine;
-            }
-
-            JSONArray Result = new JSONArray(responseContent);
+            JSONArray Result = Utility.getRemoteJSONArray(new URL(rawUrl));
 
             for (int i = 0; i < Result.length(); ++i)
             {
@@ -143,6 +130,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                 }
             }
 
+            //TODO: Load extended search radius from settings instead of a hardcoded value
             // No prices? Extend the search 10x
             if (!(retrievedPrices.size() > 0))
             {
@@ -162,19 +150,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                     rawUrl += "&" + Constants.API_PARAM_COUNT + "=" + String.valueOf(count);
                 }
 
-                responseContent = "";
-                url = new URL(rawUrl);
-                requestConnection = url.openConnection();
-
-                br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-                // Read the entire input stream
-                while ((currentLine = br.readLine()) != null)
-                {
-                    responseContent += currentLine;
-                }
-
-                Result = new JSONArray(responseContent);
+                Result = Utility.getRemoteJSONArray(new URL(rawUrl));
 
                 for (int i = 0; i < Result.length(); ++i)
                 {
@@ -187,14 +163,12 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         }
         catch (MalformedURLException mex)
         {
+            //TODO: Create global exception handler
             mex.printStackTrace();
-        }
-        catch (IOException iex)
-        {
-            iex.printStackTrace();
         }
         catch (JSONException jex)
         {
+            //TODO: Create global exception handler
             jex.printStackTrace();
         }
 

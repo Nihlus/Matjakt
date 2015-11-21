@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.journeyapps.barcodescanner.Util;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
@@ -74,10 +75,46 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
 
         try
         {
-            URL url;
+            JSONArray Result = Utility.getRemoteJSONArray(buildURL(chain.isEmpty(), false));
+            if (Result != null)
+            {
+                for (int i = 0; i < Result.length(); ++i)
+                {
+                    retrievedStores.add(new MatjaktStore(Result.getJSONObject(i)));
+                }
+            }
 
-            // Get stores in the desired distance
-            if (chain.isEmpty())
+            // If the list is empty, extend the search distance 10x
+            if (retrievedStores.size() < 1)
+            {
+
+                Result = Utility.getRemoteJSONArray(buildURL(chain.isEmpty(), true));
+                if (Result != null)
+                {
+                    for (int i = 0; i < Result.length(); ++i)
+                    {
+                        retrievedStores.add(new MatjaktStore(Result.getJSONObject(i)));
+                    }
+                }
+            }
+        }
+        catch (JSONException jex)
+        {
+            jex.printStackTrace();
+        }
+
+        return retrievedStores;
+    }
+
+    //TODO: Load extended search radius from settings instead of a hardcoded value
+    private URL buildURL(boolean bIsChainEmpty, boolean bIsExtendedSearch)
+    {
+        URL url = null;
+
+        double distance = bIsExtendedSearch ? 0.2 : 2;
+        try
+        {
+            if (bIsChainEmpty)
             {
                 url = new URL(Constants.MatjaktAPIURL + Constants.GETSTORES + "?" +
                         Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
@@ -92,79 +129,14 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
                         Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance) + "&" +
                         Constants.API_PARAM_CHAIN + "=" + chain);
             }
-
-            String responseContent = "";
-            URLConnection requestConnection = url.openConnection();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
-            {
-                responseContent += currentLine;
-            }
-
-            JSONArray Result = new JSONArray(responseContent);
-
-            for (int i = 0; i < Result.length(); ++i)
-            {
-                retrievedStores.add(new MatjaktStore(Result.getJSONObject(i)));
-            }
-
-            // If the list is empty, extend the search distance 10x
-            if (retrievedStores.size() < 1)
-            {
-                // Get stores in the desired distance
-                if (chain.isEmpty())
-                {
-                    url = new URL(Constants.MatjaktAPIURL + Constants.GETSTORES + "?" +
-                            Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
-                            Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                            Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance * 10));
-                }
-                else
-                {
-                    url = new URL(Constants.MatjaktAPIURL + Constants.GETSTORES + "?" +
-                            Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
-                            Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                            Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance * 10) + "&" +
-                            Constants.API_PARAM_CHAIN + "=" + chain);
-                }
-
-                responseContent = "";
-                requestConnection = url.openConnection();
-
-                br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-                // Read the entire input stream
-                while ((currentLine = br.readLine()) != null)
-                {
-                    responseContent += currentLine;
-                }
-
-                Result = new JSONArray(responseContent);
-
-                for (int i = 0; i < Result.length(); ++i)
-                {
-                    retrievedStores.add(new MatjaktStore(Result.getJSONObject(i)));
-                }
-            }
         }
         catch (MalformedURLException mex)
         {
+            //TODO: Create global exception handler
             mex.printStackTrace();
         }
-        catch (IOException iex)
-        {
-            iex.printStackTrace();
-        }
-        catch (JSONException jex)
-        {
-            jex.printStackTrace();
-        }
 
-        return retrievedStores;
+        return url;
     }
 
     @Override

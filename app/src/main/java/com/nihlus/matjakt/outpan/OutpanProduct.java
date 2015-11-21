@@ -22,7 +22,6 @@ import java.util.List;
  * Represents a response object from the Outpan database.
  */
 
-// TODO: 9/8/15 Stub class
 @SuppressWarnings("WeakerAccess")
 public class OutpanProduct
 {
