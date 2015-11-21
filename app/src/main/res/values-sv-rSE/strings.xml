@@ -2,14 +2,10 @@
     <string name="app_name">Matjakt</string>
     <string name="action_settings">Inställningar</string>
 
-    <string name="codeTextDefault">Ingen skannad kod</string>
-    <string name="codeTypeDefault">Ingen skannand typ</string>
     <string name="dialog_newProductNameText">Den här produkten verkar inte ha ett namn i databasen. Vill du lägga till den?</string>
     <string name="dialog_OK">OK</string>
     <string name="dialog_CancelText">Avbryt</string>
     <string name="dialog_NoProductFound">Ingen produkt hittad</string>
-
-    <string name="preference_file_key">matjaktprefs</string>
 
     <string name="action_edit">Redigera</string>
 
@@ -30,11 +26,7 @@
     <string name="prompt_ScanACode">Skanna en streckkod</string>
     <string name="debug_placeholder">platshållare</string>
     <string name="title_activity_new_product">Ny produkt</string>
-    <string name="debug_NoValue">N/A</string>
     <string name="debug_howDidYouGetHere">Hur hamnade du här?</string>
-    <string name="debug_imageUploadFailed">Bilduppladdning misslyckades :(</string>
-    <string name="debug_locationFromGPS">Från GPS:</string>
-    <string name="debug_locationFromStorage">Från lagring:</string>
     <string name="dialog_No">Nej</string>
     <string name="dialog_Yes">Ja</string>
     <string name="dialog_confirm">Bekräfta</string>
@@ -54,10 +46,6 @@
     <string name="ui_scanButton">Skanna</string>
     <string name="ui_weightHint">100</string>
     <string name="ui_pricesLoading">Laddar…</string>
-    <string name="ui_editFluidVolume">Vätskevolym:</string>
-    <string name="ui_editGrossWeight">Grossvikt:</string>
-    <string name="ui_editNetWeight">Nettovikt:</string>
-    <string name="ui_isAFluid">Den här produkten är en dryck eller vätska</string>
     <string name="ui_isFairtrade">Fairtrade</string>
     <string name="ui_isOrganic">Ekologisk</string>
     <string name="dialog_brokenProductBody">Den här produkten finns i databasen, men saknar nödvändig information. Vill du lägga till informationen?</string>

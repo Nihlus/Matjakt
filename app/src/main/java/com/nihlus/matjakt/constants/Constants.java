@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.Constants;
+package com.nihlus.matjakt.constants;
 
 /**
  * Created by jarl on 9/8/15.
@@ -9,27 +9,19 @@ package com.nihlus.matjakt.Constants;
 @SuppressWarnings("HardCodedStringLiteral")
 public final class Constants
 {
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int INSERT_NEW_PRODUCT = 2;
     public static final int MODIFY_EXISTING_PRODUCT = 3;
     public static final int VIEW_EXISTING_PRODUCT = 4;
     public static final int REQUEST_BARCODE_SCAN = 5;
 
     public static final String GENERIC_INTENT_ID = "INTENT";
-    public static final String LATITUDE_ID = "LATITUDE";
-    public static final String LONGITUDE_ID = "LONGITUDE";
     public static final String MATJAKT_LOG_ID = "MATJAKT";
     public static final String CURRENTFRAGMENT_ID = "CURRENTFRAGMENT";
-    public static final String DATEFORMAT_EUR = "yyyy-MM-dd_HH-mm-ss";
-    public static final String MATJAKT_IMAGE_PREFIX = "MAT_";
-    public static final String JPEGSUFFIX = ".jpg";
-    public static final String WEBFORMAT_JPEG = "image/jpeg";
     public static final String DIALOG_ADDPRODUCTFRAGMENT_ID = "ADD_PRODUCT_DIALOG";
     public static final String DIALOG_REPAIRPRODUCTFRAGMENT_ID = "REPAIR_PRODUCT_DIALOG";
 
     public static final String PRODUCT_TITLE_EXTRA = "PRODUCT_TITLE";
     public static final String PRODUCT_EAN_EXTRA = "EAN";
-    public static final String PRODUCT_EAN_TYPE_EXTRA = "EAN_TYPE";
     public static final String PRODUCT_BRAND_ATTRIBUTE = "Brand";
     public static final String PRODUCT_TITLE_ATTRIBUTE = "Title";
     public static final String PRODUCT_AMOUNT_ATTRIBUTE = "Amount";
@@ -41,7 +33,6 @@ public final class Constants
     public static final String OutpanBaseURLv2 = "https://api.outpan.com/v2/products/";
     public static final String OutpanLegacyAPI_EditName = "http://www.outpan.com/api/edit-name.php";
     public static final String OutpanLegacyAPI_EditAttribute = "http://www.outpan.com/api/edit-attr.php";
-    public static final String OutpanFileUploadField = "file";
 
     public static final String MatjaktAPIURL = "http://192.168.1.120/api/v1/";
     public static final String GETSTORES = "matjakt_getstores.php";
@@ -65,8 +56,6 @@ public final class Constants
     public static final String API_PARAM_TIMESTAMP = "timestamp";
     public static final String API_PARAM_STOREID = "storeid";
 
-    public static final String UTF8 = "UTF-8";
-
     public static final String PRICEMAPID_CHAIN = "CHAIN";
     public static final String PRICEMAPID_EXTRA = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
@@ -86,5 +75,4 @@ public final class Constants
     public static final String SPLITMAP_LETTER = "LETTER";
     public static final String SPLITMAP_NUMBER = "NUMBER";
 
-    public static final String PREFERENCE_FILE_KEY = "MATJAKTPREFS";
 }

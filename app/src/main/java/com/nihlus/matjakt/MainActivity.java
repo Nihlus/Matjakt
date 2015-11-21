@@ -8,13 +8,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Location;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,28 +22,20 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.Outpan.OutpanAPI2;
-import com.nihlus.matjakt.Outpan.OutpanProduct;
-import com.nihlus.matjakt.Services.GPSService;
-import com.nihlus.matjakt.UI.RepairProductDialogFragment;
-import com.nihlus.matjakt.UI.ViewProductActivity;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.outpan.OutpanAPI2;
+import com.nihlus.matjakt.outpan.OutpanProduct;
+import com.nihlus.matjakt.services.GPSService;
+import com.nihlus.matjakt.ui.RepairProductDialogFragment;
+import com.nihlus.matjakt.ui.ViewProductActivity;
 
 public class MainActivity extends AppCompatActivity
 {
-    private String currentPhotoPath;
-    private EAN currentEAN;
-
     private boolean isGPSBound;
     private boolean isGPSConnected;
     private GPSService GPS;
 
-    private ServiceConnection GPSConnection = new ServiceConnection()
+    private final ServiceConnection GPSConnection = new ServiceConnection()
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
@@ -84,8 +73,6 @@ public class MainActivity extends AppCompatActivity
     {
         //GPS.startService(new Intent(this, GPSService.class));
         GPS.startService(new Intent(this, GPSService.class));
-
-        Location someLocation = GPS.getCurrentLocation();
     }
 
     @Override
@@ -185,24 +172,6 @@ public class MainActivity extends AppCompatActivity
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private File createImageFile() throws IOException
-    {
-        String timestamep = new SimpleDateFormat(Constants.DATEFORMAT_EUR).format(new Date());
-        String imageFileName = Constants.MATJAKT_IMAGE_PREFIX + timestamep;
-
-        File storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-        File image = File.createTempFile(imageFileName, Constants.JPEGSUFFIX, storageDirectory);
-
-        //currentPhotoPath = "file:" + image.getAbsolutePath();
-        currentPhotoPath = image.getAbsolutePath();
-
-        //add the image to the gallery
-        MediaScannerConnection.scanFile(this, new String[]{image.getPath()}, new String[]{Constants.WEBFORMAT_JPEG}, null);
-
-        return image;
-    }
-
     private void InitiateScan()
     {
         if (isNetworkAvailable())
@@ -219,11 +188,6 @@ public class MainActivity extends AppCompatActivity
         {
             Toast.makeText(getApplication(), getResources().getString(R.string.debug_noInternet), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void EnableLocationUpdates()
-    {
-
     }
 
     @Override
@@ -291,12 +255,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected OutpanProduct doInBackground(EAN... inEans)
+        protected OutpanProduct doInBackground(EAN... inEANs)
         {
-            this.ean = inEans[0].getCode();
+            this.ean = inEANs[0].getCode();
 
             OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-            return api.getProduct(inEans[0]);
+            return api.getProduct(inEANs[0]);
         }
 
         @Override
@@ -339,14 +303,7 @@ public class MainActivity extends AppCompatActivity
             boolean nameIsNull = name.equals("null");
 
 
-            if (nameIsEmpty || nameIsNull)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !(nameIsEmpty || nameIsNull);
         }
 
         private boolean isProductValid(OutpanProduct outpanObject)

@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:supportsRtl="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.ModifyProductActivity"
+            android:name=".ui.ModifyProductActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_new_product"
             android:parentActivityName=".MainActivity"
@@ -39,7 +40,7 @@
                 android:value="com.nihlus.matjakt.MainActivity" />
         </activity>
         <activity
-            android:name=".UI.ViewProductActivity"
+            android:name=".ui.ViewProductActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_view_product"
             android:parentActivityName=".MainActivity"
@@ -50,9 +51,9 @@
         </activity>
 
         <service
-            android:name=".Services.GPSService"
+            android:name=".services.GPSService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="false" >
         </service>
     </application>
 

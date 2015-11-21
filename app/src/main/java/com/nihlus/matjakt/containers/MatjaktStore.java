@@ -1,12 +1,12 @@
-package com.nihlus.matjakt.Containers;
+package com.nihlus.matjakt.containers;
 
-import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.constants.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by jarl on 11/7/15.
+ * Represents a store from the Matjakt database.
  */
 public class MatjaktStore
 {

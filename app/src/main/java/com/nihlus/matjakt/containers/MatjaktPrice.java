@@ -1,6 +1,6 @@
-package com.nihlus.matjakt.Containers;
+package com.nihlus.matjakt.containers;
 
-import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.constants.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,10 +12,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
- * Created by jarl on 11/7/15.
+ * Represents a price from the Matjakt database.
  */
+@SuppressWarnings("WeakerAccess")
 public class MatjaktPrice
 {
     public int ID;
@@ -38,9 +40,8 @@ public class MatjaktPrice
             this.StoreID = InObject.getInt(Constants.API_PARAM_STORE);
             this.Offer = InObject.getBoolean(Constants.API_PARAM_OFFER);
 
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date InDate = formatter.parse(InObject.getString(Constants.API_PARAM_TIMESTAMP));
-            this.Timestamp = InDate;
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            this.Timestamp = formatter.parse(InObject.getString(Constants.API_PARAM_TIMESTAMP));
         }
         catch (JSONException jex)
         {
@@ -60,7 +61,7 @@ public class MatjaktPrice
         //if the entry is an "Add" entry (i.e, just a plus sign), don't add the price or the comma
         if (!Store.Chain.equals("+"))
         {
-            //TODO: Add city reverse geocoding here
+            //TODO: Add city reverse GeoCoding here
             hashMap.put(Constants.PRICEMAPID_EXTRA, Store.Name);
             hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
         }
@@ -72,7 +73,8 @@ public class MatjaktPrice
 
         hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Store.Latitude));
         hashMap.put(Constants.PRICEMAPID_LON, String.valueOf(Store.Longitude));
-        //TODO: Add city reverse geocoding here
+
+        //TODO: Add city reverse GeoCoding here
         //hashMap.put(Constants.PRICEMAPID_LOC, Location);
         hashMap.put(Constants.PRICEMAPID_TIMESTAMP, Timestamp.toString());
 

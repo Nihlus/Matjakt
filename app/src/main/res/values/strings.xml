@@ -2,9 +2,6 @@
     <string name="app_name">Matjakt</string>
     <string name="action_settings">Settings</string>
 
-    <string name="codeTextDefault">No scanned code</string>
-    <string name="codeTypeDefault">No scanned type</string>
-
     <string name="dialog_newProductNameText">This product doesn\'t seem to have a name in the database. Would you like to add one?</string>
     <string name="dialog_OK">OK</string>
     <string name="dialog_CancelText">Cancel</string>
@@ -28,20 +25,12 @@
 
     <string name="debug_fragmentNullLog">Fragment was null!</string>
     <string name="debug_placeholder">placeholder</string>
-    <string name="debug_imageUploadFailed">Image upload failed :(</string>
-    <string name="debug_locationFromGPS">From location:</string>
-    <string name="debug_locationFromStorage">From storage:</string>
     <string name="debug_howDidYouGetHere">How did you get here?</string>
-    <string name="debug_NoValue">N/A</string>
     <string name="debug_noInternet">No internet connection :(</string>
 
     <string name="ui_editBrand">Brand:</string>
     <string name="ui_editName">Name:</string>
     <string name="ui_editAmount">Amount:</string>
-    <string name="ui_editNetWeight">Net Weight:</string>
-    <string name="ui_editGrossWeight">Gross Weight:</string>
-    <string name="ui_editFluidVolume">Fluid Volume:</string>
-    <string name="ui_isAFluid">This product is a drink or fluid</string>
     <string name="ui_isOrganic">Organic</string>
     <string name="ui_isFairtrade">Fairtrade</string>
     <string name="ui_editPriceHint">New price</string>
@@ -59,8 +48,6 @@
     <string name="ui_editStoreNameHint">Name (GroceryMart)</string>
     <string name="ui_addPriceTitle">Add new price</string>
     <string name="ui_addStoreTitle">Add new store</string>
-
-    <string name="preference_file_key">matjaktprefs</string>
 
     <string name="action_edit">Edit</string>
 

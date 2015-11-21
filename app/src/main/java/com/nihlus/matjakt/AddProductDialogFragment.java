@@ -8,8 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.UI.ModifyProductActivity;
+import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.ui.ModifyProductActivity;
 
 
 /**

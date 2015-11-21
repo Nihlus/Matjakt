@@ -1,10 +1,9 @@
-package com.nihlus.matjakt.UI;
+package com.nihlus.matjakt.ui;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -16,14 +15,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.Containers.MatjaktPrice;
-import com.nihlus.matjakt.Containers.MatjaktStore;
+import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.containers.MatjaktPrice;
+import com.nihlus.matjakt.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
-import com.nihlus.matjakt.Retrievers.RetrievePricesTask;
-import com.nihlus.matjakt.Retrievers.RetrieveStoresTask;
-import com.nihlus.matjakt.Services.GPSService;
-import com.nihlus.matjakt.UI.Lists.PriceViewAdapter;
+import com.nihlus.matjakt.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.retrievers.RetrieveStoresTask;
+import com.nihlus.matjakt.services.GPSService;
+import com.nihlus.matjakt.ui.lists.PriceViewAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class ViewProductActivity extends AppCompatActivity
     private boolean isGPSConnected;
     private GPSService GPS;
 
-    private ServiceConnection GPSConnection = new ServiceConnection()
+    private final ServiceConnection GPSConnection = new ServiceConnection()
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
@@ -237,7 +236,7 @@ public class ViewProductActivity extends AppCompatActivity
         addAddItem();
     }
 
-    public void addPriceItem(MatjaktPrice entry)
+    private void addPriceItem(MatjaktPrice entry)
     {
         if (adapter != null && priceList != null)
         {
@@ -311,8 +310,8 @@ public class ViewProductActivity extends AppCompatActivity
             else
             {
                 //display timestamp
-                String nixtime = priceList.get(position).get(Constants.PRICEMAPID_TIMESTAMP);
-                Toast.makeText(ViewProductActivity.this, nixtime, Toast.LENGTH_LONG).show();
+                String nixTime = priceList.get(position).get(Constants.PRICEMAPID_TIMESTAMP);
+                Toast.makeText(ViewProductActivity.this, nixTime, Toast.LENGTH_LONG).show();
             }
         }
     }

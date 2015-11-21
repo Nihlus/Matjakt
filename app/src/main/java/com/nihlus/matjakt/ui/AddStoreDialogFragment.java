@@ -1,22 +1,16 @@
-package com.nihlus.matjakt.UI;
+package com.nihlus.matjakt.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.nihlus.matjakt.Inserters.InsertStoreTask;
+import com.nihlus.matjakt.inserters.InsertStoreTask;
 import com.nihlus.matjakt.R;
-
-import java.util.jar.Attributes;
 
 
 public class AddStoreDialogFragment extends DialogFragment
@@ -60,8 +54,8 @@ public class AddStoreDialogFragment extends DialogFragment
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle(getActivity().getResources().getString(R.string.ui_addStoreTitle));
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.fragment_add_store_dialog, null);
+        //LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = View.inflate(ParentActivity, R.layout.fragment_add_store_dialog, null);
 
         ChainEntry = (EditText)view.findViewById(R.id.chainEntry);
         NameEntry = (EditText)view.findViewById(R.id.nameEntry);

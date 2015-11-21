@@ -6,9 +6,9 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.nihlus.matjakt.UI.ViewProductActivity">
+                tools:context="com.nihlus.matjakt.ui.ViewProductActivity">
 
-    <com.nihlus.matjakt.UI.Custom.AutoResizeTextView
+    <com.nihlus.matjakt.ui.custom.AutoResizeTextView
         android:id="@+id/textView_ProductTitle"
         android:layout_width="match_parent"
         android:layout_height="32dp"

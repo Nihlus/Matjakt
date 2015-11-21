@@ -1,37 +1,35 @@
-package com.nihlus.matjakt.Inserters;
+package com.nihlus.matjakt.inserters;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.AsyncTask;
 
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.Containers.MatjaktStore;
-import com.nihlus.matjakt.Retrievers.RetrievePricesTask;
-import com.nihlus.matjakt.UI.AddPriceDialogFragment;
-import com.nihlus.matjakt.UI.AddStoreDialogFragment;
+import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.containers.MatjaktStore;
+import com.nihlus.matjakt.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.ui.AddPriceDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by jarl on 11/7/15.
+ * Inserts a store into the Matjakt database, based on location and name.
  */
 public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
 {
-    final Activity ParentActivity;
-    final DialogFragment ParentDialog;
-    final String Chain;
-    final String Name;
-    final double Latitude;
-    final double Longitude;
+    private final Activity ParentActivity;
+    private final DialogFragment ParentDialog;
+    private final String Chain;
+    private final String Name;
+    private final double Latitude;
+    private final double Longitude;
 
     private MatjaktStore InsertedStore;
 
@@ -55,8 +53,6 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected Boolean doInBackground(Void... nothing)
     {
-        JSONObject jsonResult = new JSONObject();
-
         try
         {
             String rawUrl = Constants.MatjaktAPIURL + Constants.ADDSTORE + "?" +
@@ -65,22 +61,20 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
                     Constants.API_PARAM_LAT + "=" + String.valueOf(Latitude) + "&" +
                     Constants.API_PARAM_LON + "=" + String.valueOf(Longitude);
 
+            String responseContent = "";
             URL url = new URL(rawUrl);
-            URLConnection uc = url.openConnection();
+            URLConnection requestConnection = url.openConnection();
 
-            InputStream in = uc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
 
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuffer sb = new StringBuffer();
-
-            while ((numCharsRead = isr.read(charArray)) > 0)
+            // Read the entire input stream
+            String currentLine;
+            while ((currentLine = br.readLine()) != null)
             {
-                sb.append(charArray, 0, numCharsRead);
+                responseContent += currentLine;
             }
 
-            jsonResult = new JSONObject(sb.toString());
+            JSONObject jsonResult = new JSONObject(responseContent);
 
             if (jsonResult.getInt("result") == 0 || jsonResult.getInt("result") == 2)
             {

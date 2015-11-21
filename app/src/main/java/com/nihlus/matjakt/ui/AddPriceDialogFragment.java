@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.UI;
+package com.nihlus.matjakt.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,13 +6,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.nihlus.matjakt.Containers.MatjaktStore;
+import com.nihlus.matjakt.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class AddPriceDialogFragment extends DialogFragment
     private final double Latitude;
     private final double Longitude;
 
-    List<String> StoreNames;
+    private List<String> StoreNames;
 
     @SuppressWarnings("ValidFragment")
     public AddPriceDialogFragment(Activity InActivity, List<MatjaktStore> InStores, double InLatitude, double InLongitude)
@@ -59,8 +58,8 @@ public class AddPriceDialogFragment extends DialogFragment
 
         builder.setTitle(getActivity().getResources().getString(R.string.ui_addPriceTitle));
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.fragment_add_price_dialog, null);
+        //LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = View.inflate(ParentActivity, R.layout.fragment_add_price_dialog, null);
 
         Spinner storeSpinner = (Spinner)view.findViewById(R.id.storesSpinner);
 
@@ -70,8 +69,8 @@ public class AddPriceDialogFragment extends DialogFragment
             StoreNames.add(Store.ID + " - " + Store.Chain + " " + Store.Name);
         }
 
-        // TODO: Replace with proper adapter, containing the ID as well. Hashmaps!
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        // TODO: Replace with proper adapter, containing the ID as well. HashMaps!
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 R.layout.support_simple_spinner_dropdown_item, StoreNames);
 
         storeSpinner.setAdapter(adapter);
@@ -119,7 +118,7 @@ public class AddPriceDialogFragment extends DialogFragment
     {
         if (Success)
         {
-            // TODO: Replace with proper adapter. Hashmaps!
+            // TODO: Replace with proper adapter. HashMaps!
             String storeEntry = InsertedStore.ID + " - " + InsertedStore.Chain + " " + InsertedStore.Name;
             StoreNames.add(storeEntry);
         }

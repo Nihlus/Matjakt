@@ -14,11 +14,6 @@ public class EAN
         this.RawEAN = InRawEAN;
     }
 
-    public EAN()
-    {
-        this.RawEAN = "";
-    }
-
     public String getCode()
     {
         return RawEAN;

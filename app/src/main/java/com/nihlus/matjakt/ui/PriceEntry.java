@@ -1,20 +1,16 @@
-package com.nihlus.matjakt.UI;
+package com.nihlus.matjakt.ui;
 
 import android.content.Context;
 
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.Containers.MatjaktPrice;
+import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
-import java.util.InputMismatchException;
 
 /**
- * Created by jarl on 9/7/15.
- *
- * Represents a retrieved entry from the price database
+ * Represents an entry in the visible price list
  */
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings({"HardCodedStringLiteral", "WeakerAccess"})
 public class PriceEntry
 {
     public String Chain;
@@ -24,49 +20,6 @@ public class PriceEntry
     public String Location;
     public double Price;
     public String Timestamp;
-
-    public static PriceEntry getDefaultEntry()
-    {
-        PriceEntry entry = new PriceEntry();
-
-        entry.Chain = "N/A";
-        entry.Extra = "N/A";
-        entry.Latitude = 0;
-        entry.Longitude = 0;
-        entry.Location = "N/A";
-        entry.Price = 0;
-        entry.Timestamp = "0";
-
-        return entry;
-    }
-
-    public static PriceEntry getExampleEntry()
-    {
-        PriceEntry entry = new PriceEntry();
-        entry.Chain = "EXAMPLE: ICA";
-        entry.Extra = "Maxi";
-        entry.Latitude = 0;
-        entry.Longitude = 0;
-        entry.Location = "Nyköping";
-        entry.Price = 22.90;
-        entry.Timestamp = "0";
-
-        return entry;
-    }
-
-    public static PriceEntry getExampleEntry2()
-    {
-        PriceEntry entry = new PriceEntry();
-        entry.Chain = "EXAMPLE: COOP";
-        entry.Extra = "Maxi";
-        entry.Latitude = 0;
-        entry.Longitude = 0;
-        entry.Location = "Nyköping";
-        entry.Price = 22.90;
-        entry.Timestamp = "0";
-
-        return entry;
-    }
 
     public static PriceEntry getAddEntry()
     {

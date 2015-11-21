@@ -7,7 +7,7 @@
                     xmlns:tools="http://schemas.android.com/tools"
                     android:layout_width="match_parent"
                     android:layout_height="192dp"
-                    tools:context="com.nihlus.matjakt.UI.AddPriceDialogFragment"
+                    tools:context="com.nihlus.matjakt.ui.AddPriceDialogFragment"
                     android:layout_gravity="center_horizontal|top">
 
         <!-- TODO: Update blank fragment layout -->
@@ -23,7 +23,6 @@
             android:layout_alignParentStart="true"
             android:hint="@string/ui_editPriceHint"
             android:maxLines="1"
-            android:numeric="decimal"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"

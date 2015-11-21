@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.Services;
+package com.nihlus.matjakt.services;
 
 import android.app.Service;
 import android.content.Context;
@@ -64,7 +64,7 @@ public class GPSService extends Service
     @Override
     public void onCreate()
     {
-        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -84,7 +84,7 @@ public class GPSService extends Service
 
     // The service is stopped and then destroyed
     @Override
-    public void onDestroy ()
+    public void onDestroy()
     {
         locationManager.removeUpdates(locationListener);
     }

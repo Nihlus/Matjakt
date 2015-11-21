@@ -1,35 +1,32 @@
-package com.nihlus.matjakt.Inserters;
+package com.nihlus.matjakt.inserters;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.nihlus.matjakt.Constants.Constants;
-import com.nihlus.matjakt.Containers.MatjaktPrice;
-import com.nihlus.matjakt.UI.ViewProductActivity;
+import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.ui.ViewProductActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 /**
- * Created by jarl on 11/7/15.
+ * Inserts a price into the Matjakt database, based on EAN and store ID.
  */
 public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
 {
-    final Activity ParentActivity;
-    final String EAN;
-    final double Price;
-    final String Currency;
-    final int Store;
-    final boolean isOffer;
+    private final Activity ParentActivity;
+    private final String EAN;
+    private final double Price;
+    private final String Currency;
+    private final int Store;
+    private final boolean isOffer;
 
     public InsertPriceTask(Activity InActivity, String InEAN, double InPrice, String InCurrency, int InStore, boolean InIsOffer)
     {
@@ -55,8 +52,6 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected Boolean doInBackground(Void... nothing)
     {
-        JSONObject jsonResult = new JSONObject();
-
         try
         {
             String rawUrl = Constants.MatjaktAPIURL + Constants.ADDPRICE + "?" +
@@ -66,31 +61,22 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
                     Constants.API_PARAM_STORE + "=" + String.valueOf(Store) + "&" +
                     Constants.API_PARAM_OFFER + "=" + String.valueOf(isOffer);
 
+            String responseContent = "";
             URL url = new URL(rawUrl);
-            URLConnection uc = url.openConnection();
+            URLConnection requestConnection = url.openConnection();
 
-            InputStream in = uc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
 
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuffer sb = new StringBuffer();
-
-            while ((numCharsRead = isr.read(charArray)) > 0)
+            // Read the entire input stream
+            String currentLine;
+            while ((currentLine = br.readLine()) != null)
             {
-                sb.append(charArray, 0, numCharsRead);
+                responseContent += currentLine;
             }
 
-            jsonResult = new JSONObject(sb.toString());
+            JSONObject Result = new JSONObject(responseContent);
 
-            if (jsonResult.getInt("result") == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Result.getInt("result") == 0;
         }
         catch (MalformedURLException mex)
         {

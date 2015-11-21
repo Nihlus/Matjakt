@@ -1,9 +1,7 @@
-package com.nihlus.matjakt.UI.Lists;
+package com.nihlus.matjakt.ui.lists;
 
 /**
- * Created by jarl on 9/7/15.
- *
- * Adapter for the columnar listview for prices
+ * Adapter for the columnar ListView for prices
  */
 
 import android.app.Activity;
@@ -13,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
 
 import java.util.ArrayList;
@@ -22,16 +20,16 @@ import java.util.HashMap;
 public class PriceViewAdapter extends BaseAdapter
 {
 
-    public final ArrayList<HashMap<String, String>> list;
-    final Activity activity;
-    TextView txtFirst;
-    TextView txtSecond;
-    TextView txtThird;
+    private final ArrayList<HashMap<String, String>> list;
+    private final Activity ParentActivity;
+    private TextView txtFirst;
+    private TextView txtSecond;
+    private TextView txtThird;
 
     public PriceViewAdapter(Activity activity, ArrayList<HashMap<String, String>> list)
     {
         super();
-        this.activity = activity;
+        this.ParentActivity = activity;
         this.list = list;
     }
 
@@ -59,15 +57,13 @@ public class PriceViewAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        // TODO Auto-generated method stub
-
-
-        LayoutInflater inflater = activity.getLayoutInflater();
+        //TODO: Have another look at this if the ListView stops working, passing parent instead of null
+        LayoutInflater inflater = ParentActivity.getLayoutInflater();
 
         if (convertView == null)
         {
 
-            convertView = inflater.inflate(R.layout.price_row, null);
+            convertView = inflater.inflate(R.layout.price_row, parent);
 
             txtFirst = (TextView) convertView.findViewById(R.id.chain);
             txtSecond = (TextView) convertView.findViewById(R.id.extra);

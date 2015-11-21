@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.UI.Custom;
+package com.nihlus.matjakt.ui.custom;
 
 /**
  *               DO WHAT YOU WANT TO PUBLIC LICENSE
@@ -29,6 +29,8 @@ import android.util.SparseIntArray;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+// Suppressing all warnings for this class - it's not my code
+@SuppressWarnings("ALL")
 public class AutoResizeTextView extends TextView
 {
     private static final int NO_LINE_LIMIT = -1;

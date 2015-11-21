@@ -1,8 +1,8 @@
-package com.nihlus.matjakt.Outpan;
+package com.nihlus.matjakt.outpan;
 
 import android.os.Bundle;
 
-import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.EAN;
 
 import org.json.JSONArray;
@@ -23,6 +23,7 @@ import java.util.List;
  */
 
 // TODO: 9/8/15 Stub class
+@SuppressWarnings("WeakerAccess")
 public class OutpanProduct
 {
     public EAN ean;

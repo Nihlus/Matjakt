@@ -16,8 +16,8 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment
 {
 
-    public ArrayAdapter<String> listAdapter;
-    ArrayList<String> listItems = new ArrayList<>();
+    private ArrayAdapter<String> listAdapter;
+    private final ArrayList<String> listItems = new ArrayList<>();
 
     public MainActivityFragment()
     {

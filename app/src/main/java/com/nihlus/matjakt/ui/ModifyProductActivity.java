@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.UI;
+package com.nihlus.matjakt.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,11 +17,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.EAN;
-import com.nihlus.matjakt.MainActivity;
-import com.nihlus.matjakt.Outpan.OutpanAPI2;
-import com.nihlus.matjakt.Outpan.OutpanProduct;
+import com.nihlus.matjakt.outpan.OutpanAPI2;
+import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
@@ -223,7 +222,7 @@ public class ModifyProductActivity extends AppCompatActivity
     {
         HashMap<String, String> list = new HashMap<>();
 
-        String tempNums  = "";
+        String tempNumbers  = "";
         String tempChars = "";
 
         if (inString != null)
@@ -233,7 +232,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 char c = inString.charAt(i);
                 if (Character.isDigit(c))
                 {
-                    tempNums += c;
+                    tempNumbers += c;
                 }
                 else
                 {
@@ -243,7 +242,7 @@ public class ModifyProductActivity extends AppCompatActivity
         }
 
         list.put(Constants.SPLITMAP_LETTER, tempChars);
-        list.put(Constants.SPLITMAP_NUMBER, tempNums);
+        list.put(Constants.SPLITMAP_NUMBER, tempNumbers);
 
         return list;
     }

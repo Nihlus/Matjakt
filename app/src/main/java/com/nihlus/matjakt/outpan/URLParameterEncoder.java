@@ -1,9 +1,9 @@
-package com.nihlus.matjakt.Outpan;
+package com.nihlus.matjakt.outpan;
 
 /**
  * https://stackoverflow.com/questions/724043/http-url-address-encoding-in-java/4605816#4605816
  */
-public class URLParameterEncoder
+class URLParameterEncoder
 {
     public static String encode(String input)
     {
@@ -31,11 +31,7 @@ public class URLParameterEncoder
 
     private static boolean isUnsafe(char ch)
     {
-        if (ch < 0 || ch > 128)
-        {
-            return true;
-        }
-        return " %$&+,/:;=?@<>#%".indexOf(ch) >= 0;
+        return ch > 128 || " %$&+,/:;=?@<>#%".indexOf(ch) >= 0;
     }
 
 }
