@@ -7,24 +7,16 @@ package com.nihlus.matjakt;
  */
 public class EAN
 {
-    private final String Type;
     private final String RawEAN;
 
-    public EAN(String EANString, String Type)
+    public EAN(String InRawEAN)
     {
-        this.RawEAN = EANString;
-        this.Type = Type;
+        this.RawEAN = InRawEAN;
     }
 
     public EAN()
     {
         this.RawEAN = "";
-        this.Type = "";
-    }
-
-    public String getType()
-    {
-        return Type;
     }
 
     public String getCode()

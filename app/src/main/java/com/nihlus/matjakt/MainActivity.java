@@ -238,13 +238,8 @@ public class MainActivity extends AppCompatActivity
             if (result.getContents() != null)
             {
                 //retrieve data and show it to the user if the product exists
-                new AsyncProductResolver(this).execute(new EAN(result.getContents(), result.getFormatName()));
+                new AsyncProductResolver(this).execute(new EAN(result.getContents()));
             }
-        }
-        else if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
-        {
-            // We took a picture of the product
-            new AsyncImageUploader().execute(currentPhotoPath);
         }
         else if (requestCode == Constants.INSERT_NEW_PRODUCT && resultCode == RESULT_OK)
         {
@@ -279,7 +274,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //HACK: This should be in its own class or in OutpanObject as getBundle()
+    //HACK: This should be in its own class or in OutpanProduct as getBundle()
     public static Bundle getOutpanBundle(OutpanObject outpanObject)
     {
         Bundle productData = new Bundle();
@@ -316,7 +311,6 @@ public class MainActivity extends AppCompatActivity
     {
         private final Activity activity;
         private String ean;
-        private String type;
 
         private ProgressDialog progressDialog;
 
@@ -335,7 +329,6 @@ public class MainActivity extends AppCompatActivity
         protected OutpanObject doInBackground(EAN... inEans)
         {
             this.ean = inEans[0].getCode();
-            this.type = inEans[0].getType();
 
             OutpanAPI api = new OutpanAPI(Constants.OutpanAPIKey);
             return api.getProduct(ean);
@@ -416,37 +409,6 @@ public class MainActivity extends AppCompatActivity
             }
 
             return !isMissingRequiredAttributes;
-        }
-    }
-
-    private class AsyncImageUploader extends AsyncTask<String, Integer, Boolean>
-    {
-        @Override
-        protected void onPreExecute()
-        {
-
-        }
-
-        @Override
-        protected Boolean doInBackground(String... inFiles)
-        {
-            try
-            {
-                return OutpanAPI2.UploadImage(new String[]{inFiles[0]}, currentEAN.getCode());
-            } catch (IOException iex)
-            {
-                iex.printStackTrace();
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success)
-        {
-            if (!success)
-            {
-                Toast.makeText(getApplication(), getResources().getString(R.string.debug_imageUploadFailed), Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

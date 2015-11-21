@@ -2,6 +2,7 @@ package com.nihlus.matjakt.Outpan;
 
 
 import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.EAN;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,57 +26,16 @@ import javax.net.ssl.SSLContext;
 
 public class OutpanAPI2
 {
-    public OutpanAPI2()
+    private final String APIKey;
+    public OutpanAPI2(String InAPIKey)
     {
-
+        this.APIKey = InAPIKey;
     }
 
-    public static boolean UploadImage(String[] filePaths, String ean) throws IOException
+    //TODO: Stub
+    public OutpanProduct getProduct(EAN InEAN)
     {
-        String requestURL = Constants.OutpanBaseURL + ean + OutpanEndpoints.IMAGES;
-        try
-        {
-            //set up basic authentication
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(Constants.OutpanAPIKey);
-            CredentialsProvider provider = new BasicCredentialsProvider();
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            for (String filePath : filePaths)
-            {
-                File file = new File(filePath);
-
-                SSLContext sslContext = SSLContexts.createSystemDefault();
-                SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext);
-
-                CloseableHttpClient httpClient = HttpClients.custom()
-                        .setDefaultCredentialsProvider(provider)
-                        .setSSLSocketFactory(sslConnectionSocketFactory)
-                        .build();
-
-                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addBinaryBody(Constants.OutpanFileUploadField, file, ContentType.create(Constants.WEBFORMAT_JPEG), file.getName());
-
-
-                HttpEntity entity = builder.build();
-                HttpPost post = new HttpPost(requestURL);
-                post.setEntity(entity);
-                HttpResponse response = httpClient.execute(post);
-
-                // TODO: 9/8/15 Investigate if needed or purpose
-                //String content = EntityUtils.toString(response.getEntity(), Constants.UTF8);
-                httpClient.close();
-
-                if (response.getStatusLine().getStatusCode() == 400)
-                {
-                    return false;
-                }
-            }
-        } catch (ClientProtocolException cex)
-        {
-            cex.printStackTrace();
-            return false;
-        }
-
-        return true;
+        return null;
     }
+
 }

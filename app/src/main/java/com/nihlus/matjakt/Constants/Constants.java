@@ -73,6 +73,14 @@ public final class Constants
     public static final String PRICEMAPID_LOC = "LOC";
     public static final String PRICEMAPID_TIMESTAMP = "NIXTIME";
 
+    public static final String PRODUCTKEY_EAN = "gtin";
+    public static final String PRODUCTKEY_OUTPANURL = "outpan_url";
+    public static final String PRODUCTKEY_NAME = "name";
+    public static final String PRODUCTKEY_ATTRIBUTES = "attributes";
+    public static final String PRODUCTKEY_IMAGES = "images";
+    public static final String PRODUCTKEY_VIDEOS = "videos";
+    public static final String PRODUCTKEY_CATEGORIES = "categories";
+
     public static final String SPLITMAP_LETTER = "LETTER";
     public static final String SPLITMAP_NUMBER = "NUMBER";
 
