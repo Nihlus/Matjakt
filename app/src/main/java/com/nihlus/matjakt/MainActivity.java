@@ -23,9 +23,11 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.containers.EAN;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.services.GPSService;
+import com.nihlus.matjakt.ui.AddProductDialogFragment;
 import com.nihlus.matjakt.ui.RepairProductDialogFragment;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
