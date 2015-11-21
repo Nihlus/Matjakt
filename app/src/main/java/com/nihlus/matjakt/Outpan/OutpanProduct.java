@@ -1,5 +1,7 @@
 package com.nihlus.matjakt.Outpan;
 
+import android.os.Bundle;
+
 import com.nihlus.matjakt.Constants.Constants;
 import com.nihlus.matjakt.EAN;
 
@@ -45,6 +47,10 @@ public class OutpanProduct
                 this.Videos = getURLListFromJSON(InJSON.getJSONArray(Constants.PRODUCTKEY_VIDEOS));
                 this.Categories = getStringListFromJSON(InJSON.getJSONArray(Constants.PRODUCTKEY_CATEGORIES));
             }
+            else
+            {
+                throw new IllegalArgumentException("The provided product was an error message.");
+            }
         }
         catch (JSONException jex)
         {
@@ -56,6 +62,38 @@ public class OutpanProduct
             //TODO: Create global exception handler
             mex.printStackTrace();
         }
+    }
+
+    public Bundle getBundle()
+    {
+        Bundle productData = new Bundle();
+
+        if (Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, Attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+        }
+
+        if (Attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, Attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
+        }
+
+        if (Attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        {
+            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, Attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+        }
+
+        if (Attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+        {
+            productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+        }
+
+        if (Attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+        {
+            productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+        }
+
+        return productData;
     }
 
     private boolean isErrorMessage(JSONObject InJSON)
@@ -71,7 +109,7 @@ public class OutpanProduct
         {
             Iterator<?> Attributes = InJSON.keys();
 
-            while (InJSON.keys().hasNext())
+            while (Attributes.hasNext())
             {
                 try
                 {

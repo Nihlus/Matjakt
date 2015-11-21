@@ -4,25 +4,16 @@ package com.nihlus.matjakt.Outpan;
 import com.nihlus.matjakt.Constants.Constants;
 import com.nihlus.matjakt.EAN;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-
-import javax.net.ssl.SSLContext;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class OutpanAPI2
 {
@@ -35,7 +26,111 @@ public class OutpanAPI2
     //TODO: Stub
     public OutpanProduct getProduct(EAN InEAN)
     {
-        return null;
+        OutpanProduct OutProduct = null;
+
+        try
+        {
+            String responseContent = "";
+            URL requestURL = buildRequestURL(InEAN);
+            URLConnection requestConnection = requestURL.openConnection();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
+
+            // Read the entire input stream
+            String currentLine;
+            while ((currentLine = br.readLine()) != null)
+            {
+                responseContent += currentLine;
+            }
+
+            if (!responseContent.isEmpty())
+            {
+                OutProduct = new OutpanProduct(new JSONObject(responseContent));
+            }
+
+        }
+        catch (IOException iex)
+        {
+            //TODO: Create global exception handler
+            iex.printStackTrace();
+        }
+        catch (JSONException jex)
+        {
+            //TODO: Create global exception handler
+            jex.printStackTrace();
+        }
+
+        return OutProduct;
     }
 
+    //Unofficial API, does not return an object.
+    public void setProductName(String barcode, String newName)
+    {
+        try
+        {
+            URL requestURL = new URL(Constants.OutpanLegacyAPI_EditName +
+                    "?apikey=" + URLParameterEncoder.encode(APIKey) +
+                    "&barcode=" + URLParameterEncoder.encode(barcode) +
+                    "&name=" + URLParameterEncoder.encode(newName));
+
+            URLConnection uc = requestURL.openConnection();
+            uc.getInputStream();
+
+        }
+        catch (MalformedURLException mex)
+        {
+            //TODO: Create global exception handler
+            mex.printStackTrace();
+        }
+        catch (IOException iex)
+        {
+            //TODO: Create global exception handler
+            iex.printStackTrace();
+        }
+    }
+
+    //Unofficial API, does not return an object.
+    public void setProductAttribute(String barcode, String attributeKey, String attributeValue)
+    {
+        try
+        {
+            URL requestURL = new URL(Constants.OutpanLegacyAPI_EditAttribute +
+                    "?apikey=" + URLParameterEncoder.encode(APIKey) +
+                    "&barcode=" + URLParameterEncoder.encode(barcode) +
+                    "&attr_name=" + URLParameterEncoder.encode(attributeKey) +
+                    "&attr_val=" + URLParameterEncoder.encode(attributeValue));
+
+            URLConnection uc = requestURL.openConnection();
+            uc.getInputStream();
+
+        }
+        catch (MalformedURLException mex)
+        {
+            //TODO: Create global exception handler
+            mex.printStackTrace();
+        }
+        catch (IOException iex)
+        {
+            //TODO: Create global exception handler
+            iex.printStackTrace();
+        }
+    }
+
+    private URL buildRequestURL(EAN InEAN)
+    {
+        URL OutURL = null;
+        String rawURL = Constants.OutpanBaseURLv2 + InEAN.getCode() + "?apikey=" + Constants.OutpanAPIKey;
+
+        try
+        {
+            OutURL = new URL(rawURL);
+        }
+        catch (MalformedURLException mex)
+        {
+            //TODO: Create global exception handler
+            mex.printStackTrace();
+        }
+
+        return OutURL;
+    }
 }

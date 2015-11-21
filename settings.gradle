@@ -1,1 +1,1 @@
-include ':app', ':outpanapi'
+include ':app'

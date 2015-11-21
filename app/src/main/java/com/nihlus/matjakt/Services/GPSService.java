@@ -65,6 +65,10 @@ public class GPSService extends Service
     public void onCreate()
     {
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
     }
 
     // The service is started
@@ -74,7 +78,6 @@ public class GPSService extends Service
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
 
-        currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
         locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), TEN_SECONDS, TEN_METERS, locationListener);
         return START_NOT_STICKY;
     }
@@ -95,6 +98,13 @@ public class GPSService extends Service
 
     public Location getCurrentLocation()
     {
+        if (currentLocation == null)
+        {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+        }
+
         return currentLocation;
     }
 

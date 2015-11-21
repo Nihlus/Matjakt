@@ -27,6 +27,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.Constants.Constants;
 import com.nihlus.matjakt.Outpan.OutpanAPI2;
+import com.nihlus.matjakt.Outpan.OutpanProduct;
 import com.nihlus.matjakt.Services.GPSService;
 import com.nihlus.matjakt.UI.RepairProductDialogFragment;
 import com.nihlus.matjakt.UI.ViewProductActivity;
@@ -35,9 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import io.github.johncipponeri.outpanapi.OutpanAPI;
-import io.github.johncipponeri.outpanapi.OutpanObject;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -274,40 +272,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //HACK: This should be in its own class or in OutpanProduct as getBundle()
-    public static Bundle getOutpanBundle(OutpanObject outpanObject)
-    {
-        Bundle productData = new Bundle();
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-        {
-            productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-        {
-            productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
-        }
-
-        return productData;
-    }
-
-    private class AsyncProductResolver extends AsyncTask<EAN, Integer, OutpanObject>
+    private class AsyncProductResolver extends AsyncTask<EAN, Integer, OutpanProduct>
     {
         private final Activity activity;
         private String ean;
@@ -326,16 +291,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected OutpanObject doInBackground(EAN... inEans)
+        protected OutpanProduct doInBackground(EAN... inEans)
         {
             this.ean = inEans[0].getCode();
 
-            OutpanAPI api = new OutpanAPI(Constants.OutpanAPIKey);
-            return api.getProduct(ean);
+            OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
+            return api.getProduct(inEans[0]);
         }
 
         @Override
-        protected void onPostExecute(OutpanObject result)
+        protected void onPostExecute(OutpanProduct result)
         {
             if (progressDialog.isShowing())
             {
@@ -347,16 +312,16 @@ public class MainActivity extends AppCompatActivity
             {
                 Intent intent = new Intent(activity, ViewProductActivity.class);
 
-                intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.name);
+                intent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.Name);
                 intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
-                intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, getOutpanBundle(result));
+                intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
 
                 startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
             }
-            else if (isNameValid(result.name))
+            else if (isNameValid(result.Name))
             {
                 //broken product, ask if the user wants to edit it
-                RepairProductDialogFragment dialog = new RepairProductDialogFragment(activity, ean, getOutpanBundle(result));
+                RepairProductDialogFragment dialog = new RepairProductDialogFragment(activity, ean, result.getBundle());
                 dialog.show(getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
             }
             else
@@ -384,26 +349,26 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        private boolean isProductValid(OutpanObject outpanObject)
+        private boolean isProductValid(OutpanProduct outpanObject)
         {
             boolean isMissingRequiredAttributes = false;
 
-            if (!isNameValid(outpanObject.name))
+            if (!isNameValid(outpanObject.Name))
             {
                 isMissingRequiredAttributes = true;
             }
 
-            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+            if (!outpanObject.Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
             {
                 isMissingRequiredAttributes = true;
             }
 
-            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+            if (!outpanObject.Attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
             {
                 isMissingRequiredAttributes = true;
             }
 
-            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+            if (!outpanObject.Attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
                 isMissingRequiredAttributes = true;
             }

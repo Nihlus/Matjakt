@@ -18,13 +18,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.EAN;
 import com.nihlus.matjakt.MainActivity;
+import com.nihlus.matjakt.Outpan.OutpanAPI2;
+import com.nihlus.matjakt.Outpan.OutpanProduct;
 import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
-
-import io.github.johncipponeri.outpanapi.OutpanAPI;
-import io.github.johncipponeri.outpanapi.OutpanObject;
 
 public class ModifyProductActivity extends AppCompatActivity
 {
@@ -327,7 +327,7 @@ public class ModifyProductActivity extends AppCompatActivity
     }
 
     //async posting of the update to the database
-    class UpdateProductTitle extends AsyncTask<String, Void, OutpanObject>
+    class UpdateProductTitle extends AsyncTask<String, Void, OutpanProduct>
     {
         private final Activity parentActivity;
         private final String ean;
@@ -352,9 +352,9 @@ public class ModifyProductActivity extends AppCompatActivity
             this.dialog.show();
         }
 
-        protected OutpanObject doInBackground(String... inputs)
+        protected OutpanProduct doInBackground(String... inputs)
         {
-            OutpanAPI api = new OutpanAPI(Constants.OutpanAPIKey);
+            OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
             api.setProductName(ean, inputs[0]);
 
             api.setProductAttribute(ean, Constants.PRODUCT_BRAND_ATTRIBUTE, data.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
@@ -380,10 +380,10 @@ public class ModifyProductActivity extends AppCompatActivity
                 api.setProductAttribute(ean, Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
             }
 
-            return api.getProduct(ean);
+            return api.getProduct(new EAN(ean));
         }
 
-        protected void onPostExecute(OutpanObject result)
+        protected void onPostExecute(OutpanProduct result)
         {
             super.onPostExecute(result);
             if (this.dialog.isShowing() && result != null)
@@ -391,9 +391,9 @@ public class ModifyProductActivity extends AppCompatActivity
                 this.dialog.dismiss();
 
                 Intent resultIntent = new Intent(parentActivity, ViewProductActivity.class);
-                resultIntent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.name);
+                resultIntent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.Name);
                 resultIntent.putExtra(Constants.PRODUCT_EAN_EXTRA, ModifyProductActivity.this.ean);
-                resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, MainActivity.getOutpanBundle(result));
+                resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
 
                 parentActivity.setResult(RESULT_OK, resultIntent);
                 parentActivity.startActivity(resultIntent);

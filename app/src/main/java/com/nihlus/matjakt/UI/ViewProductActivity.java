@@ -195,7 +195,7 @@ public class ViewProductActivity extends AppCompatActivity
     private void setupPriceView()
     {
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
-        if (priceView != null)
+        if (priceView != null && GPS != null)
         {
             //priceList.add(PriceEntry.getExampleEntry().getHashMap());
             LoadPrices();
@@ -218,7 +218,7 @@ public class ViewProductActivity extends AppCompatActivity
         // TODO: Clean this crap up
         RetrievePricesTask pricesTask = new RetrievePricesTask(this, ean,
                 GPS.getCurrentLocation().getLatitude(),
-                GPS.getCurrentLocation().getLongitude(), 0.2);
+                GPS.getCurrentLocation().getLongitude(), 2);
 
         pricesTask.execute();
     }

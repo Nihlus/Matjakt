@@ -38,7 +38,9 @@ public final class Constants
     public static final String PRODUCT_BUNDLE_EXTRA = "PRODUCTDATA";
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
-    public static final String OutpanBaseURL = "https://api.outpan.com/v1/products/";
+    public static final String OutpanBaseURLv2 = "https://api.outpan.com/v2/products/";
+    public static final String OutpanLegacyAPI_EditName = "http://www.outpan.com/api/edit-name.php";
+    public static final String OutpanLegacyAPI_EditAttribute = "http://www.outpan.com/api/edit-attr.php";
     public static final String OutpanFileUploadField = "file";
 
     public static final String MatjaktAPIURL = "http://192.168.1.120/api/v1/";
