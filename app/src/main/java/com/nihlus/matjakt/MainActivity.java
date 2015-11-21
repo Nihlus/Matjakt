@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Criteria;
+import android.content.ServiceConnection;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.MediaScannerConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.Constants.Constants;
 import com.nihlus.matjakt.Outpan.OutpanAPI2;
+import com.nihlus.matjakt.Services.GPSService;
 import com.nihlus.matjakt.UI.RepairProductDialogFragment;
 import com.nihlus.matjakt.UI.ViewProductActivity;
 
@@ -39,55 +41,54 @@ import io.github.johncipponeri.outpanapi.OutpanObject;
 
 public class MainActivity extends AppCompatActivity
 {
-    /**
-     * Location listener for the application. Saves the current latitude and longitude into prefs.
-     */
-    private final LocationListener locationListener = new LocationListener()
-    {
-        @Override
-        public void onLocationChanged(Location location)
-        {
-            SharedPreferences preferences = getSharedPreferences(Constants.PREFERENCE_FILE_KEY,
-                    Context.MODE_MULTI_PROCESS);
-
-            SharedPreferences.Editor editor = preferences.edit();
-
-            editor.putLong(Constants.LATITUDE_ID, Double.doubleToLongBits(location.getLatitude()));
-            editor.putLong(Constants.LONGITUDE_ID, Double.doubleToLongBits(location.getLongitude()));
-
-            editor.apply();
-
-            long latitude = 0;
-            preferences.getLong(Constants.LATITUDE_ID, latitude);
-
-            // TODO: 9/8/15 Debug logging, remove
-            Log.d(Constants.MATJAKT_LOG_ID, getResources().getString(R.string.debug_locationFromGPS)
-                    + String.valueOf(location.getLatitude()));
-            Log.d(Constants.MATJAKT_LOG_ID, getResources().getString(R.string.debug_locationFromStorage)
-                    + String.valueOf(Double.longBitsToDouble(latitude)));
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider)
-        {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider)
-        {
-
-        }
-    };
-    private LocationManager locationManager;
     private String currentPhotoPath;
     private EAN currentEAN;
+
+    private boolean isGPSBound;
+    private boolean isGPSConnected;
+    private GPSService GPS;
+
+    private ServiceConnection GPSConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            GPS = ((GPSService.GPSBinder)service).getService();
+            isGPSConnected = true;
+
+            onGPSConnected();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            GPS = null;
+            isGPSConnected = false;
+        }
+    };
+
+    private void bindGPS()
+    {
+        bindService(new Intent(this, GPSService.class), GPSConnection, Context.BIND_AUTO_CREATE);
+        isGPSBound = true;
+    }
+
+    private void unbindGPS()
+    {
+        if (isGPSBound)
+        {
+            unbindService(GPSConnection);
+            isGPSBound = false;
+        }
+    }
+
+    private void onGPSConnected()
+    {
+        //GPS.startService(new Intent(this, GPSService.class));
+        GPS.startService(new Intent(this, GPSService.class));
+
+        Location someLocation = GPS.getCurrentLocation();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -95,22 +96,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (locationManager == null)
-        {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), 0, 1, locationListener);
-        }
-        else
-        {
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), 0, 1, locationListener);
-        }
+        bindGPS();
 
         if (savedInstanceState == null)
         {
@@ -132,18 +118,21 @@ public class MainActivity extends AppCompatActivity
     {
         super.onResume();
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(bestProvider, 2000, 1, locationListener);
+        if (!isGPSBound)
+        {
+            bindGPS();
+        }
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
-        locationManager.removeUpdates(locationListener);
+
+        if (isGPSBound)
+        {
+            unbindGPS();
+        }
     }
 
     private void setFragment(Fragment fragment)
@@ -186,7 +175,16 @@ public class MainActivity extends AppCompatActivity
 
     public void OnScanButtonClicked(View view)
     {
+        // Will fail if there's no network available
         InitiateScan();
+    }
+
+    private boolean isNetworkAvailable()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private File createImageFile() throws IOException
@@ -209,13 +207,20 @@ public class MainActivity extends AppCompatActivity
 
     private void InitiateScan()
     {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt(getResources().getString(R.string.prompt_ScanACode));
-        integrator.setBeepEnabled(false);
-        integrator.setOrientationLocked(false);
+        if (isNetworkAvailable())
+        {
+            IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+            integrator.setPrompt(getResources().getString(R.string.prompt_ScanACode));
+            integrator.setBeepEnabled(false);
+            integrator.setOrientationLocked(false);
 
-        integrator.initiateScan();
+            integrator.initiateScan();
+        }
+        else
+        {
+            Toast.makeText(getApplication(), getResources().getString(R.string.debug_noInternet), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void EnableLocationUpdates()
@@ -289,24 +294,9 @@ public class MainActivity extends AppCompatActivity
             productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
         }
 
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+        if (outpanObject.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
         {
-            productData.putString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_VOLUME_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_VOLUME_ATTRIBUTE));
-        }
-
-        if (outpanObject.attributes.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
-        {
-            productData.putBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, Boolean.valueOf(outpanObject.attributes.get(Constants.PRODUCT_FLUID_ATTRIBUTE)));
+            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, outpanObject.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
         }
 
         if (outpanObject.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
@@ -420,12 +410,7 @@ public class MainActivity extends AppCompatActivity
                 isMissingRequiredAttributes = true;
             }
 
-
-            boolean grossWeightMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE);
-            boolean netWeightMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE);
-            boolean volumeMissing = !outpanObject.attributes.containsKey(Constants.PRODUCT_VOLUME_ATTRIBUTE);
-
-            if ((grossWeightMissing && netWeightMissing) && volumeMissing)
+            if (!outpanObject.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
                 isMissingRequiredAttributes = true;
             }

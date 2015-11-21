@@ -65,56 +65,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ui_editNetWeight"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@+id/productGrossWeightEdit"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        />
-
-    <EditText
-        android:id="@+id/productNetWeightEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/ui_weightHint"
-        android:imeOptions="actionDone"
-        android:inputType="number|numberDecimal"
-        android:maxLines="1"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_toLeftOf="@+id/netWeightSpinner"
-        android:layout_toEndOf="@+id/textView4"
-        android:layout_alignLeft="@+id/productGrossWeightEdit"
-        android:layout_alignStart="@+id/productGrossWeightEdit"/>
-
-    <Spinner
-        android:id="@+id/netWeightSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/ui_weight_types"
-        android:focusable="false"
-        android:spinnerMode="dialog"
-        android:layout_alignTop="@+id/textView4"
-        android:layout_alignBottom="@+id/productNetWeightEdit"
-        android:layout_alignLeft="@+id/button4"
-        android:layout_alignStart="@+id/button4"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/isFluidCheckbox"
-        android:checked="false"
-        android:layout_above="@+id/isOrganicCheckbox"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="onIsFluidToggle"
-        android:text="@string/ui_isAFluid"/>
-
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/ui_editGrossWeight"
+        android:text="@string/ui_editAmount"
         android:id="@+id/textView"
         android:layout_below="@+id/productNameEdit"
         android:layout_alignParentLeft="true"
@@ -152,59 +102,25 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/productGrossWeightEdit"
+        android:id="@+id/productAmountEdit"
         android:layout_below="@+id/productNameEdit"
         android:layout_alignLeft="@+id/productNameEdit"
         android:layout_alignStart="@+id/productNameEdit"
         android:hint="@string/ui_weightHint"
-        android:layout_toLeftOf="@+id/grossWeightSpinner"
-        android:layout_toStartOf="@+id/grossWeightSpinner"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/ui_editFluidVolume"
-        android:id="@+id/textView5"
-        android:layout_below="@+id/productNetWeightEdit"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/productFluidVolumeEdit"
-        android:layout_below="@+id/productNetWeightEdit"
-        android:layout_toLeftOf="@+id/netWeightSpinner"
-        android:hint="@string/ui_weightHint"
-        android:layout_alignLeft="@+id/productNetWeightEdit"
-        android:layout_alignStart="@+id/productNetWeightEdit"/>
+        android:layout_toLeftOf="@+id/amountSpinner"
+        android:layout_toStartOf="@+id/amountSpinner"/>
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/grossWeightSpinner"
-        android:layout_alignTop="@+id/productGrossWeightEdit"
-        android:layout_alignLeft="@+id/netWeightSpinner"
-        android:layout_alignStart="@+id/netWeightSpinner"
-        android:layout_alignBottom="@+id/productGrossWeightEdit"
+        android:id="@+id/amountSpinner"
+        android:layout_alignTop="@+id/productAmountEdit"
+        android:layout_alignBottom="@+id/productAmountEdit"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:entries="@array/ui_weight_types"/>
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/fluidVolumeSpinner"
-        android:layout_alignTop="@+id/productFluidVolumeEdit"
-        android:layout_alignLeft="@+id/netWeightSpinner"
-        android:layout_alignStart="@+id/netWeightSpinner"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/productFluidVolumeEdit"
-        android:entries="@array/ui_volume_types"
-        android:spinnerMode="dialog"/>
+        android:entries="@array/ui_amount_types"
+        android:spinnerMode="dialog"
+        android:layout_alignLeft="@+id/button4"
+        android:layout_alignStart="@+id/button4"/>
 
 </RelativeLayout>

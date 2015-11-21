@@ -45,9 +45,6 @@ public class ModifyProductActivity extends AppCompatActivity
         boolean bIsNewProduct = incomingIntent == Constants.INSERT_NEW_PRODUCT;
         boolean bIsModifyingProduct = incomingIntent == Constants.MODIFY_EXISTING_PRODUCT;
 
-        EditText productFluidVolume = (EditText)findViewById(R.id.productFluidVolumeEdit);
-        Spinner fluidVolumeTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
-
         if (bIsNewProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
@@ -60,63 +57,37 @@ public class ModifyProductActivity extends AppCompatActivity
 
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-            EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-            EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
+            EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
 
-            Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
-            Spinner grossWeightTypeSpinner = (Spinner) findViewById(R.id.grossWeightSpinner);
+            Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
-            CheckBox isFluid = (CheckBox)findViewById(R.id.isFluidCheckbox);
             CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
 
             //load input data from the intent
 
-            //brand
+            // Brand
             brandName.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
-            //name
+
+            // Name
             productTitle.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
-            //weight or volume
-            if (productData.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+
+            // Amount
+            if (productData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
-                productNetWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                netWeightTypeSpinner.setSelection(((ArrayAdapter<String>)netWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
+                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+                productAmount.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
+                productAmountSpinner.setSelection(((ArrayAdapter<String>) productAmountSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
             }
 
-            if (productData.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
-            {
-                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
-                productGrossWeight.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                grossWeightTypeSpinner.setSelection(((ArrayAdapter<String>)grossWeightTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
-            }
-
-            if (productData.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
-            {
-                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE));
-                productFluidVolume.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                fluidVolumeTypeSpinner.setSelection(((ArrayAdapter<String>) fluidVolumeTypeSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
-            }
-
-            //fluid
-            isFluid.setChecked(productData.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, false));
-            //organic
+            // Is it organic?
             isOrganic.setChecked(productData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
-            //fairtrade
+            // Is it fairtrade?
             isFairtrade.setChecked(productData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
         }
         else
         {
             setTitle(getResources().getString(R.string.debug_howDidYouGetHere));
-        }
-
-        if (productFluidVolume != null && fluidVolumeTypeSpinner != null)
-        {
-            if (!isFluidChecked())
-            {
-                productFluidVolume.setEnabled(false);
-                fluidVolumeTypeSpinner.setEnabled(false);
-            }
         }
     }
 
@@ -171,13 +142,9 @@ public class ModifyProductActivity extends AppCompatActivity
             //if OK, send to server
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-            EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-            EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
-            EditText productFluidVolume = (EditText)findViewById(R.id.productFluidVolumeEdit);
+            EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
 
-            Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
-            Spinner grossWeightTypeSpinner = (Spinner) findViewById(R.id.grossWeightSpinner);
-            Spinner fluidVolumeTypeSpinner = (Spinner) findViewById(R.id.fluidVolumeSpinner);
+            Spinner amountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
             CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
@@ -187,50 +154,25 @@ public class ModifyProductActivity extends AppCompatActivity
             productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
             productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, productTitle.getText().toString());
 
-            productData.putString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, productNetWeight.getText().toString()
-                    + netWeightTypeSpinner.getSelectedItem().toString());
+            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, productAmount.getText().toString()
+                    + amountSpinner.getSelectedItem().toString());
 
-            productData.putString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, productGrossWeight.getText().toString()
-                    + grossWeightTypeSpinner.getSelectedItem().toString());
 
-            if (isFluidChecked())
+            // Only include the checkboxes if they have been checked
+            if (isOrganic.isChecked())
             {
-                productData.putBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE, isFluidChecked());
-                productData.putString(Constants.PRODUCT_VOLUME_ATTRIBUTE, productFluidVolume.getText().toString()
-                        + fluidVolumeTypeSpinner.getSelectedItem().toString());
+                productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
             }
 
-            productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
-            productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
+            if (isFairtrade.isChecked())
+            {
+                productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
+            }
 
             //create the task and send it to the server, close parentActivity when done
             UpdateProductTitle update = new UpdateProductTitle(this, ean, productData);
             update.execute(getFinalProductString());
         }
-    }
-
-    public void onIsFluidToggle(View view)
-    {
-        EditText productFluidVolume = (EditText)findViewById(R.id.productFluidVolumeEdit);
-        Spinner fluidTypeSpinner = (Spinner)findViewById(R.id.fluidVolumeSpinner);
-
-        if (productFluidVolume != null && fluidTypeSpinner != null)
-        {
-            productFluidVolume.setEnabled(isFluidChecked());
-            fluidTypeSpinner.setEnabled(isFluidChecked());
-        }
-
-        //clear any errors previously set
-        EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-        EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
-
-        if (productNetWeight != null && productGrossWeight != null && productFluidVolume != null)
-        {
-            productNetWeight.setError(null);
-            productGrossWeight.setError(null);
-            productFluidVolume.setError(null);
-        }
-
     }
 
     @Override
@@ -306,22 +248,13 @@ public class ModifyProductActivity extends AppCompatActivity
         return list;
     }
 
-    private boolean isFluidChecked()
-    {
-
-        CheckBox isFluid = (CheckBox) findViewById(R.id.isFluidCheckbox);
-        return isFluid != null && isFluid.isChecked();
-    }
-
     private boolean verifyRequiredFields()
     {
         boolean bHasIncompleteFields = false;
 
         EditText productBrand = (EditText) findViewById(R.id.brandEdit);
         EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-        EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-        EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
-        EditText productFluidVolume = (EditText) findViewById(R.id.productFluidVolumeEdit);
+        EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
 
         if (productBrand.getText().toString().isEmpty())
         {
@@ -335,26 +268,12 @@ public class ModifyProductActivity extends AppCompatActivity
             bHasIncompleteFields = true;
         }
 
-        if (isFluidChecked())
-        {
-            //require the fluid field, other two not neccesary
-            if (productFluidVolume.getText().toString().isEmpty())
-            {
-                productFluidVolume.setError(getResources().getString(R.string.prompt_fillOutField));
-                bHasIncompleteFields = true;
-            }
-        }
-        else
-        {
-            boolean isNetWeightNotFilledOut = productNetWeight.getText().toString().isEmpty();
-            boolean isGrossWeightNotFilledOut = productGrossWeight.getText().toString().isEmpty();
+        boolean isProductAmountNotFilledOut = productAmount.getText().toString().isEmpty();
 
-            if (isNetWeightNotFilledOut && isGrossWeightNotFilledOut)
-            {
-                productNetWeight.setError(getResources().getString(R.string.prompt_fillOutAtLeastOneField));
-                productGrossWeight.setError(getResources().getString(R.string.prompt_fillOutAtLeastOneField));
-                bHasIncompleteFields = true;
-            }
+        if (isProductAmountNotFilledOut)
+        {
+            productAmount.setError(getResources().getString(R.string.prompt_fillOutField));
+            bHasIncompleteFields = true;
         }
 
         return !bHasIncompleteFields;
@@ -367,8 +286,8 @@ public class ModifyProductActivity extends AppCompatActivity
 
         EditText productBrand = (EditText) findViewById(R.id.brandEdit);
         EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-        EditText productNetWeight = (EditText) findViewById(R.id.productNetWeightEdit);
-        Spinner netWeightTypeSpinner = (Spinner) findViewById(R.id.netWeightSpinner);
+        EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
+        Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
         if (!productBrand.getText().toString().equals(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE)))
         {
@@ -380,12 +299,12 @@ public class ModifyProductActivity extends AppCompatActivity
             bFieldsHaveChanged = true;
         }
 
-        if (!productNetWeight.getText().toString().equals(productData.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE)))
+        if (!productAmount.getText().toString().equals(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if ((netWeightTypeSpinner.getSelectedItemPosition() != 0))
+        if ((productAmountSpinner.getSelectedItemPosition() != 0))
         {
             bFieldsHaveChanged = true;
         }
@@ -398,28 +317,13 @@ public class ModifyProductActivity extends AppCompatActivity
         EditText manufacturerName = (EditText) findViewById(R.id.brandEdit);
         EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
 
-        if (isFluidChecked())
-        {
-            //use the fluid volume for the final title
-            EditText fluidVolume = (EditText) findViewById(R.id.productFluidVolumeEdit);
-            Spinner fluidVolumeType = (Spinner) findViewById(R.id.fluidVolumeSpinner);
+        EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
+        Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
-            return manufacturerName.getText().toString() + " " +
-                    productTitle.getText().toString() + " " +
-                    fluidVolume.getText().toString() +
-                    fluidVolumeType.getSelectedItem().toString();
-        }
-        else
-        {
-            //use the gross weight for the final title
-            EditText productGrossWeight = (EditText) findViewById(R.id.productGrossWeightEdit);
-            Spinner grossWeightTypeSpinner = (Spinner) findViewById(R.id.grossWeightSpinner);
-
-            return manufacturerName.getText().toString() + " " +
-                    productTitle.getText().toString() + " " +
-                    productGrossWeight.getText().toString() +
-                    grossWeightTypeSpinner.getSelectedItem().toString();
-        }
+        return manufacturerName.getText().toString() + " " +
+                productTitle.getText().toString() + " " +
+                productAmount.getText().toString() +
+                productAmountSpinner.getSelectedItem().toString();
     }
 
     //async posting of the update to the database
@@ -456,39 +360,25 @@ public class ModifyProductActivity extends AppCompatActivity
             api.setProductAttribute(ean, Constants.PRODUCT_BRAND_ATTRIBUTE, data.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
             api.setProductAttribute(ean, Constants.PRODUCT_TITLE_ATTRIBUTE, data.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
 
-            if (data.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE))
+            if (data.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(data.getString(Constants.PRODUCT_FLUID_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
+                boolean isEmpty = splitAmountValue(data.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
 
                 if (!isEmpty)
                 {
-                    api.setProductAttribute(ean, Constants.PRODUCT_VOLUME_ATTRIBUTE, data.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE));
+                    api.setProductAttribute(ean, Constants.PRODUCT_AMOUNT_ATTRIBUTE, data.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
                 }
             }
 
-            if (data.containsKey(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE))
+            if (data.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(data.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
-
-                if (!isEmpty)
-                {
-                    api.setProductAttribute(ean, Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE, data.getString(Constants.PRODUCT_NET_WEIGHT_ATTRIBUTE));
-                }
+                api.setProductAttribute(ean, Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
             }
 
-            if (data.containsKey(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE))
+            if (data.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(data.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
-
-                if (!isEmpty)
-                {
-                    api.setProductAttribute(ean, Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE, data.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE));
-                }
+                api.setProductAttribute(ean, Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
             }
-
-            api.setProductAttribute(ean, Constants.PRODUCT_FLUID_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE)));
-            api.setProductAttribute(ean, Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
-            api.setProductAttribute(ean, Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
 
             return api.getProduct(ean);
         }

@@ -3,9 +3,11 @@ package com.nihlus.matjakt.UI;
 import android.content.Context;
 
 import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.Containers.MatjaktPrice;
 import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
+import java.util.InputMismatchException;
 
 /**
  * Created by jarl on 9/7/15.
@@ -71,8 +73,8 @@ public class PriceEntry
         PriceEntry entry = new PriceEntry();
         entry.Chain = "+";
         entry.Extra = "";
-        entry.Latitude = 0;
-        entry.Longitude = 0;
+        entry.Latitude = -1;
+        entry.Longitude = -1;
         entry.Location = "";
         entry.Price = 0;
         entry.Timestamp = "0";
@@ -85,8 +87,8 @@ public class PriceEntry
         PriceEntry entry = new PriceEntry();
         entry.Chain = context.getResources().getString(R.string.ui_pricesLoading);
         entry.Extra = "";
-        entry.Latitude = 0;
-        entry.Longitude = 0;
+        entry.Latitude = -1;
+        entry.Longitude = -1;
         entry.Location = "";
         entry.Price = 0;
         entry.Timestamp = "0";
@@ -99,8 +101,8 @@ public class PriceEntry
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put(Constants.PRICEMAPID_CHAIN, Chain);
 
-        //if the entry is an "Add" entry (i.e, just a plus sign), don't add the price or the comma
-        if (!Chain.equals("+"))
+        //if the entry is an "Add" entry (i.e, just a plus sign) or Loading, don't add the price or the comma
+        if (Latitude == -1 || Longitude == -1)
         {
             hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
             hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));

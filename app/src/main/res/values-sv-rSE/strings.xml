@@ -13,15 +13,13 @@
 
     <string name="action_edit">Redigera</string>
 
-    <string-array name="ui_weight_types">
+    <string-array name="ui_amount_types">
         <item>g</item>
         <item>kg</item>
         <item>mg</item>
-        <item>pcs</item>
-    </string-array>
-
-    <string-array name="ui_volume_types">
+        <item>st</item>
         <item>l</item>
+        <item>dl</item>
         <item>cl</item>
         <item>ml</item>
     </string-array>
@@ -56,7 +54,6 @@
     <string name="ui_scanButton">Skanna</string>
     <string name="ui_weightHint">100</string>
     <string name="ui_pricesLoading">Laddar...</string>
-    <string name="prompt_fillOutAtLeastOneField">Minst ett av fälten måste vara ifyllda.</string>
     <string name="ui_editFluidVolume">Vätskevolym:</string>
     <string name="ui_editGrossWeight">Grossvikt:</string>
     <string name="ui_editNetWeight">Nettovikt:</string>
@@ -65,4 +62,9 @@
     <string name="ui_isOrganic">Ekologisk</string>
     <string name="dialog_brokenProductBody">Den här produkten finns i databasen, men saknar nödvändig information. Vill du lägga till informationen?</string>
     <string name="dialog_BrokenProduct">Ogiltig eller trasig produkt</string>
+    <string name="ui_editAmount">Mängd:</string>
+    <string name="debug_noInternet">Ingen internetuppkoppling :(</string>
+    <string name="dialog_loadingStoresAndPrices">Laddar lokala butiker och priser...</string>
+    <string name="hello_blank_fragment"></string>
+    <string name="ui_editPriceHint">Nytt pris</string>
 </resources>

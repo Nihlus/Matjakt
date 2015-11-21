@@ -16,11 +16,13 @@
     <string name="dialog_brokenProductBody">This product is in the database, but is missing some information. Would you like to add it?</string>
     <string name="dialog_RetrievingProduct">Retrieving product information…</string>
     <string name="dialog_updatingProductInfo">Updating product information…</string>
+    <string name="dialog_insertingStore">Updating store database…</string>
+    <string name="dialog_insertingPrice">Updating price database…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>
+    <string name="dialog_loadingStoresAndPrices">Loading local stores and prices…</string>
 
     <string name="prompt_ScanACode">Scan a barcode</string>
     <string name="prompt_fillOutField">This field is required.</string>
-    <string name="prompt_fillOutAtLeastOneField">At least one of these fields must be filled out.</string>
     <string name="prompt_productUpdateFailed">Whoops! Could not update the product information.</string>
     <string name="prompt_addNewPrice">Add new price</string>
 
@@ -31,15 +33,18 @@
     <string name="debug_locationFromStorage">From storage:</string>
     <string name="debug_howDidYouGetHere">How did you get here?</string>
     <string name="debug_NoValue">N/A</string>
+    <string name="debug_noInternet">No internet connection :(</string>
 
     <string name="ui_editBrand">Brand:</string>
     <string name="ui_editName">Name:</string>
+    <string name="ui_editAmount">Amount:</string>
     <string name="ui_editNetWeight">Net Weight:</string>
     <string name="ui_editGrossWeight">Gross Weight:</string>
     <string name="ui_editFluidVolume">Fluid Volume:</string>
     <string name="ui_isAFluid">This product is a drink or fluid</string>
     <string name="ui_isOrganic">Organic</string>
     <string name="ui_isFairtrade">Fairtrade</string>
+    <string name="ui_editPriceHint">New price</string>
 
     <string name="ui_brandHint">ACME</string>
     <string name="ui_nameHint">Wholegrain Bread</string>
@@ -48,22 +53,24 @@
     <string name="ui_defaultProductTitle">Brand Product Name Amount</string>
     <string name="ui_addAttributeButton">Add…</string>
     <string name="ui_scanButton">Scan</string>
-
-    <string name="ui_pricesLoading">Loading...</string>
+    <string name="ui_shopMissingAddNew">Shop missing? Add new</string>
+    <string name="ui_pricesLoading">Loading…</string>
+    <string name="ui_editStoreChainHint">Chain (ACME)</string>
+    <string name="ui_editStoreNameHint">Name (GroceryMart)</string>
+    <string name="ui_addPriceTitle">Add new price</string>
+    <string name="ui_addStoreTitle">Add new store</string>
 
     <string name="preference_file_key">matjaktprefs</string>
 
     <string name="action_edit">Edit</string>
 
-    <string-array name="ui_weight_types">
+    <string-array name="ui_amount_types">
         <item>g</item>
         <item>kg</item>
         <item>mg</item>
         <item>pcs</item>
-    </string-array>
-
-    <string-array name="ui_volume_types">
         <item>l</item>
+        <item>dl</item>
         <item>cl</item>
         <item>ml</item>
     </string-array>

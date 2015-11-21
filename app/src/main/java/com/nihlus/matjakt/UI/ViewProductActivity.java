@@ -1,20 +1,28 @@
 package com.nihlus.matjakt.UI;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.Constants.Constants;
+import com.nihlus.matjakt.Containers.MatjaktPrice;
+import com.nihlus.matjakt.Containers.MatjaktStore;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.Retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.Retrievers.RetrieveStoresTask;
+import com.nihlus.matjakt.Services.GPSService;
 import com.nihlus.matjakt.UI.Lists.PriceViewAdapter;
 
 import java.util.ArrayList;
@@ -29,6 +37,50 @@ public class ViewProductActivity extends AppCompatActivity
     private String ean;
     private Bundle productData;
 
+
+    private boolean isGPSBound;
+    private boolean isGPSConnected;
+    private GPSService GPS;
+
+    private ServiceConnection GPSConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            GPS = ((GPSService.GPSBinder)service).getService();
+            isGPSConnected = true;
+
+            onGPSConnected();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            GPS = null;
+            isGPSConnected = false;
+        }
+    };
+
+    private void bindGPS()
+    {
+        bindService(new Intent(this, GPSService.class), GPSConnection, Context.BIND_AUTO_CREATE);
+        isGPSBound = true;
+    }
+
+    private void unbindGPS()
+    {
+        if (isGPSBound)
+        {
+            unbindService(GPSConnection);
+            isGPSBound = false;
+        }
+    }
+
+    private void onGPSConnected()
+    {
+        setupPriceView();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -36,6 +88,8 @@ public class ViewProductActivity extends AppCompatActivity
         setContentView(R.layout.activity_view_product);
 
         setTitle(getResources().getString(R.string.title_activity_scanned_product));
+
+        bindGPS();
 
         Intent intent = getIntent();
         String productTitle = intent.getStringExtra(Constants.PRODUCT_TITLE_EXTRA);
@@ -46,9 +100,20 @@ public class ViewProductActivity extends AppCompatActivity
         setVisibleProductTitle(productTitle);
 
         //add default <none> priceList item
-        setupPriceView();
+        setListStatusLoading();
 
         //load new prices
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+        if (isGPSBound)
+        {
+            unbindGPS();
+        }
     }
 
     @Override
@@ -113,20 +178,9 @@ public class ViewProductActivity extends AppCompatActivity
 
     private String getFinalProductString(Bundle inProductData)
     {
-        if (inProductData.containsKey(Constants.PRODUCT_FLUID_ATTRIBUTE) && inProductData.getBoolean(Constants.PRODUCT_FLUID_ATTRIBUTE))
-        {
-            //use the fluid volume for the final title
-            return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
-                    inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
-                    inProductData.getString(Constants.PRODUCT_VOLUME_ATTRIBUTE);
-        }
-        else
-        {
-            //use the gross weight for the final title
-            return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
-                    inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
-                    inProductData.getString(Constants.PRODUCT_GROSS_WEIGHT_ATTRIBUTE);
-        }
+        return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
+                inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
+                inProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE);
     }
 
     private void setVisibleProductTitle(String title)
@@ -143,8 +197,8 @@ public class ViewProductActivity extends AppCompatActivity
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
         if (priceView != null)
         {
-            priceList.add(PriceEntry.getExampleEntry().getHashMap());
-            priceList.add(PriceEntry.getAddEntry().getHashMap());
+            //priceList.add(PriceEntry.getExampleEntry().getHashMap());
+            LoadPrices();
 
             priceView.setOnItemClickListener(new onPriceClicked());
 
@@ -159,35 +213,37 @@ public class ViewProductActivity extends AppCompatActivity
         resetListViewAdapter();
     }
 
+    public void LoadPrices()
+    {
+        // TODO: Clean this crap up
+        RetrievePricesTask pricesTask = new RetrievePricesTask(this, ean,
+                GPS.getCurrentLocation().getLatitude(),
+                GPS.getCurrentLocation().getLongitude(), 0.2);
+
+        pricesTask.execute();
+    }
+
     // TODO: 9/7/15 Stub function - adds all relevant provided prices to the visible list
-    public void addPrices(List<PriceEntry> entries)
+    public void addPrices(List<MatjaktPrice> entries)
     {
         clearPrices();
 
         //add the prices
-        for (PriceEntry entry : entries)
+        for (MatjaktPrice entry : entries)
         {
             addPriceItem(entry);
         }
+
+        addAddItem();
     }
 
-    public void addPriceItem(PriceEntry entry)
+    public void addPriceItem(MatjaktPrice entry)
     {
         if (adapter != null && priceList != null)
         {
-            if (priceList.size() > 1)
-            {
-                //get the last item and remove it (the add button)
-                priceList.remove(priceList.get(priceList.size() - 1));
-            }
-            else
-            {
-                //the list is clean, so add in the values
-                priceList.add(entry.getHashMap());
-                addAddItem();
+            priceList.add(entry.getHashMap());
 
-                resetListViewAdapter();
-            }
+            resetListViewAdapter();
         }
         else
         {
@@ -205,7 +261,6 @@ public class ViewProductActivity extends AppCompatActivity
         if (adapter != null)
         {
             priceList.clear();
-            addAddItem();
 
             resetListViewAdapter();
         }
@@ -243,8 +298,15 @@ public class ViewProductActivity extends AppCompatActivity
             {
                 //add new price
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
-                clearPrices();
-                //addPriceItem(PriceEntry.getExampleEntry2());
+                //TODO: Add InsertPriceTask handler here
+
+                //TODO: Clean up this crap
+                // Retrieve stores in a 200m range. Extends the search to 2km if nothing is found.
+                RetrieveStoresTask retrieveStoresTask = new RetrieveStoresTask(ViewProductActivity.this,
+                        GPS.getCurrentLocation().getLatitude(),
+                        GPS.getCurrentLocation().getLongitude(), 0.2);
+
+                retrieveStoresTask.execute();
             }
             else
             {
@@ -253,5 +315,24 @@ public class ViewProductActivity extends AppCompatActivity
                 Toast.makeText(ViewProductActivity.this, nixtime, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public void onStoresLoaded(List<MatjaktStore> Stores)
+    {
+        Stores.size();
+
+        //TODO: Real values instead of test values
+        AddPriceDialogFragment addPriceDialogFragment = new AddPriceDialogFragment(this, Stores,
+                GPS.getCurrentLocation().getLatitude(),
+                GPS.getCurrentLocation().getLongitude());
+
+        addPriceDialogFragment.show(getFragmentManager(), "PRICEDIALOG");
+        // If within a reasonable distance (~100m), preselect that store
+        // Still nothing? Display store input dialog (chain, name)
+        // Grab lat/lon and attach to store, display accuracy to user
+        // Load stores again, then continue
+        // Display a price input dialog (value spinners, currency, store spinner, Cancel/OK)
+        // Save/load currency from user settings
+        // Load prices again
     }
 }
