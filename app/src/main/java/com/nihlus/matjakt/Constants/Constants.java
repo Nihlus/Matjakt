@@ -32,17 +32,36 @@ public final class Constants
     public static final String PRODUCT_EAN_TYPE_EXTRA = "EAN_TYPE";
     public static final String PRODUCT_BRAND_ATTRIBUTE = "Brand";
     public static final String PRODUCT_TITLE_ATTRIBUTE = "Title";
-    public static final String PRODUCT_VOLUME_ATTRIBUTE = "Volume";
-    public static final String PRODUCT_NET_WEIGHT_ATTRIBUTE = "Net Weight";
-    public static final String PRODUCT_GROSS_WEIGHT_ATTRIBUTE = "Gross Weight";
+    public static final String PRODUCT_AMOUNT_ATTRIBUTE = "Amount";
     public static final String PRODUCT_FAIRTRADE_ATTRIBUTE = "Fairtrade";
     public static final String PRODUCT_ORGANIC_ATTRIBUTE = "Organic";
-    public static final String PRODUCT_FLUID_ATTRIBUTE = "Fluid";
     public static final String PRODUCT_BUNDLE_EXTRA = "PRODUCTDATA";
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
     public static final String OutpanBaseURL = "https://api.outpan.com/v1/products/";
-    public static final String OutpanFileUploadField = "field";
+    public static final String OutpanFileUploadField = "file";
+
+    public static final String MatjaktAPIURL = "http://192.168.1.120/api/v1/";
+    public static final String GETSTORES = "matjakt_getstores.php";
+    public static final String GETSTORE = "matjakt_getstore.php";
+    public static final String GETPRICES = "matjakt_getprices.php";
+    public static final String ADDSTORE = "matjakt_addstore.php";
+    public static final String ADDPRICE = "matjakt_addprice.php";
+
+    public static final String API_PARAM_ID = "id";
+    public static final String API_PARAM_EAN = "ean";
+    public static final String API_PARAM_LAT = "latitude";
+    public static final String API_PARAM_LON = "longitude";
+    public static final String API_PARAM_DISTANCE = "distance";
+    public static final String API_PARAM_CHAIN = "chain";
+    public static final String API_PARAM_COUNT = "count";
+    public static final String API_PARAM_PRICE = "price";
+    public static final String API_PARAM_CURRENCY = "currency";
+    public static final String API_PARAM_STORE = "store";
+    public static final String API_PARAM_OFFER = "isOffer";
+    public static final String API_PARAM_NAME = "name";
+    public static final String API_PARAM_TIMESTAMP = "timestamp";
+    public static final String API_PARAM_STOREID = "storeid";
 
     public static final String UTF8 = "UTF-8";
 
