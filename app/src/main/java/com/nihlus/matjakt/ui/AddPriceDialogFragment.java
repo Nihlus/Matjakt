@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.nihlus.matjakt.containers.MatjaktStore;
+import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 
 import java.util.ArrayList;

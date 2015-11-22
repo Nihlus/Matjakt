@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.inserters;
+package com.nihlus.matjakt.database.inserters;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -101,7 +101,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
         if (ParentActivity instanceof ViewProductActivity)
         {
             //send the results
-            ((ViewProductActivity) ParentActivity).LoadPrices();
+            ((ViewProductActivity) ParentActivity).LoadPricesAsync();
         }
     }
 }

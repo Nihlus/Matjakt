@@ -2,7 +2,7 @@ package com.nihlus.matjakt.outpan;
 
 
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.EAN;
+import com.nihlus.matjakt.database.containers.EAN;
 
 import org.json.JSONException;
 import org.json.JSONObject;

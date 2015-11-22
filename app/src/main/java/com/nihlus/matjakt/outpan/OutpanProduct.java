@@ -3,7 +3,7 @@ package com.nihlus.matjakt.outpan;
 import android.os.Bundle;
 
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.EAN;
+import com.nihlus.matjakt.database.containers.EAN;
 
 import org.json.JSONArray;
 import org.json.JSONException;

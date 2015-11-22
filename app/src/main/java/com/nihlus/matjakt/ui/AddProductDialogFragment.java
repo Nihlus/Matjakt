@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.EAN;
+import com.nihlus.matjakt.database.containers.EAN;
 
 
 /**

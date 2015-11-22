@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.nihlus.matjakt.inserters.InsertStoreTask;
+import com.nihlus.matjakt.database.inserters.InsertStoreTask;
 import com.nihlus.matjakt.R;
 
 

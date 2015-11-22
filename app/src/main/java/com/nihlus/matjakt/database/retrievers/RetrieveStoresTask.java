@@ -1,24 +1,19 @@
-package com.nihlus.matjakt.retrievers;
+package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.journeyapps.barcodescanner.Util;
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.MatjaktStore;
+import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 

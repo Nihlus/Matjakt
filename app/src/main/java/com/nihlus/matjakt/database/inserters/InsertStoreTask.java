@@ -1,12 +1,12 @@
-package com.nihlus.matjakt.inserters;
+package com.nihlus.matjakt.database.inserters;
 
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.AsyncTask;
 
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.MatjaktStore;
-import com.nihlus.matjakt.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.database.containers.MatjaktStore;
+import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
 import com.nihlus.matjakt.ui.AddPriceDialogFragment;
 
 import org.json.JSONException;

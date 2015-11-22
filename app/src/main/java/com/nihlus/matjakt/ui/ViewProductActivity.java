@@ -2,6 +2,7 @@ package com.nihlus.matjakt.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.EAN;
-import com.nihlus.matjakt.containers.MatjaktPrice;
-import com.nihlus.matjakt.containers.MatjaktStore;
+import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.containers.MatjaktPrice;
+import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
-import com.nihlus.matjakt.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.ui.lists.PriceEntry;
 import com.nihlus.matjakt.ui.lists.PriceViewAdapter;
 
 import java.util.ArrayList;
@@ -30,25 +32,58 @@ public class ViewProductActivity extends AppCompatActivity
 
     private Bundle ProductData;
 
+    private SwipeRefreshLayout swipeContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_product);
 
-        setTitle(getResources().getString(R.string.title_activity_scanned_product));
-
+        // Setup data
         Intent intent = getIntent();
-
         this.ProductData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
 
+        // Setup main activity content
+        setContentView(R.layout.activity_view_product);
+        setTitle(getResources().getString(R.string.title_activity_scanned_product));
         setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
 
-        //add default <none> priceList item
+        // Setup ListView and its associated swipe container
+        setupPriceView();
         setListStatusLoading();
 
-        //load new prices
-        LoadPrices();
+        swipeContainer = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                // Load new prices from a new location
+                LoadPricesAsync();
+
+            }
+        });
+
+        swipeContainer.setColorSchemeResources(
+                R.color.holo_blue_bright,
+                R.color.holo_green_light,
+                R.color.holo_orange_light,
+                R.color.holo_red_light);
+
+        LoadPricesAsync();
+
+        // Start up the GPS and wait for that. Execution continues in onGPSConnected()
+        //bindGPS();
+    }
+
+    protected void onGPSConnected()
+    {
+        // Load the prices using the available location
+    }
+
+    protected void onPriceRefreshRequested()
+    {
+
     }
 
     @Override
@@ -137,10 +172,44 @@ public class ViewProductActivity extends AppCompatActivity
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
         if (priceView != null)
         {
-            //priceList.add(PriceEntry.getExampleEntry().getHashMap());
-            LoadPrices();
+            priceView.setOnItemClickListener(new onPriceClickedListener());
 
-            priceView.setOnItemClickListener(new onPriceClicked());
+            resetListViewAdapter();
+        }
+    }
+
+    public void LoadPricesAsync()
+    {
+        swipeContainer.setRefreshing(true);
+        //TODO: Clean this crap up (GPS Service)
+        //TODO: Use real values instead of debug point
+        RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                58.770276,
+                17.020926, 2);
+
+        pricesTask.execute();
+    }
+
+
+    public void onPricesRetrieved(List<MatjaktPrice> entries)
+    {
+        clearPrices();
+
+        //add the prices
+        for (MatjaktPrice entry : entries)
+        {
+            addPriceItem(entry);
+        }
+
+        addPlusItem();
+        swipeContainer.setRefreshing(false);
+    }
+
+    private void addPriceItem(MatjaktPrice entry)
+    {
+        if (adapter != null && priceList != null)
+        {
+            priceList.add(entry.getHashMap());
 
             resetListViewAdapter();
         }
@@ -153,47 +222,10 @@ public class ViewProductActivity extends AppCompatActivity
         resetListViewAdapter();
     }
 
-    public void LoadPrices()
-    {
-        //TODO: Clean this crap up (GPS Service)
-        //TODO: Use real values instead of debug point
-        RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
-                58.770276,
-                17.020926, 2);
-
-        pricesTask.execute();
-    }
-
-    public void addPrices(List<MatjaktPrice> entries)
-    {
-        clearPrices();
-
-        //add the prices
-        for (MatjaktPrice entry : entries)
-        {
-            addPriceItem(entry);
-        }
-
-        addAddItem();
-    }
-
-    private void addPriceItem(MatjaktPrice entry)
-    {
-        if (adapter != null && priceList != null)
-        {
-            priceList.add(entry.getHashMap());
-
-            resetListViewAdapter();
-        }
-        else
-        {
-            setupPriceView();
-        }
-    }
-
-    private void addAddItem()
+    private void addPlusItem()
     {
         priceList.add(PriceEntry.getAddEntry().getHashMap());
+        resetListViewAdapter();
     }
 
     private void clearPrices()
@@ -228,7 +260,7 @@ public class ViewProductActivity extends AppCompatActivity
         this.finish();
     }
 
-    private class onPriceClicked implements AdapterView.OnItemClickListener
+    private class onPriceClickedListener implements AdapterView.OnItemClickListener
     {
         @Override
         public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
@@ -252,8 +284,6 @@ public class ViewProductActivity extends AppCompatActivity
 
     public void onStoresLoaded(List<MatjaktStore> Stores)
     {
-        Stores.size();
-
         //TODO: Clean this crap up (GPS Service)
         //TODO: Use real values instead of debug point
         AddPriceDialogFragment addPriceDialog = new AddPriceDialogFragment(this, Stores,

@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.ui;
+package com.nihlus.matjakt.ui.lists;
 
 import android.content.Context;
 

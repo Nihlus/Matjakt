@@ -1,13 +1,12 @@
-package com.nihlus.matjakt.retrievers;
+package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.containers.EAN;
-import com.nihlus.matjakt.containers.MatjaktPrice;
-import com.nihlus.matjakt.containers.MatjaktStore;
+import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.containers.MatjaktPrice;
+import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONArray;
@@ -83,11 +82,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
     @Override
     protected void onPreExecute()
     {
-        //set first list item to show a loading message
-        if (ParentActivity instanceof ViewProductActivity)
-        {
-            ((ViewProductActivity) ParentActivity).setListStatusLoading();
-        }
+
     }
 
     // TODO: Refactor - redundant and repetitive code
@@ -115,14 +110,9 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
             }
 
             JSONArray Result = Utility.getRemoteJSONArray(new URL(rawUrl));
-
-            for (int i = 0; i < Result.length(); ++i)
+            if (Result != null)
             {
-                if (Result.getJSONObject(i).has("type"))
-                {
-                    Log.w(Constants.MATJAKT_LOG_ID, "Error in price retrieval - array might be empty?");
-                }
-                else
+                for (int i = 0; i < Result.length(); ++i)
                 {
                     MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
                     newPrice.Store = getStore(newPrice.StoreID);
@@ -153,12 +143,15 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
 
                 Result = Utility.getRemoteJSONArray(new URL(rawUrl));
 
-                for (int i = 0; i < Result.length(); ++i)
+                if (Result != null)
                 {
-                    MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
-                    newPrice.Store = getStore(newPrice.StoreID);
+                    for (int i = 0; i < Result.length(); ++i)
+                    {
+                        MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
+                        newPrice.Store = getStore(newPrice.StoreID);
 
-                    retrievedPrices.add(newPrice);
+                        retrievedPrices.add(newPrice);
+                    }
                 }
             }
         }
@@ -183,7 +176,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         if (ParentActivity instanceof ViewProductActivity)
         {
             //send the results
-            ((ViewProductActivity) ParentActivity).addPrices(result);
+            ((ViewProductActivity) ParentActivity).onPricesRetrieved(result);
         }
     }
 

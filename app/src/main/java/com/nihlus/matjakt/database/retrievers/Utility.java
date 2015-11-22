@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.retrievers;
+package com.nihlus.matjakt.database.retrievers;
 
 import org.json.JSONArray;
 import org.json.JSONException;

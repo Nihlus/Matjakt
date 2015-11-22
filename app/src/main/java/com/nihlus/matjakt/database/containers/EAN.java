@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.containers;
+package com.nihlus.matjakt.database.containers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
