@@ -22,9 +22,9 @@ public class PriceViewAdapter extends BaseAdapter
 
     private final ArrayList<HashMap<String, String>> list;
     private final Activity ParentActivity;
-    private TextView txtFirst;
-    private TextView txtSecond;
-    private TextView txtThird;
+    private TextView storeChainText;
+    private TextView storeNameText;
+    private TextView priceValueText;
 
     public PriceViewAdapter(Activity activity, ArrayList<HashMap<String, String>> list)
     {
@@ -57,23 +57,22 @@ public class PriceViewAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        //TODO: Have another look at this if the ListView stops working, passing parent instead of null
         LayoutInflater inflater = ParentActivity.getLayoutInflater();
 
         if (convertView == null)
         {
 
-            convertView = inflater.inflate(R.layout.price_row, parent);
+            convertView = inflater.inflate(R.layout.price_row, null);
 
-            txtFirst = (TextView) convertView.findViewById(R.id.chain);
-            txtSecond = (TextView) convertView.findViewById(R.id.extra);
-            txtThird = (TextView) convertView.findViewById(R.id.price);
+            storeChainText = (TextView) convertView.findViewById(R.id.chain);
+            storeNameText = (TextView) convertView.findViewById(R.id.extra);
+            priceValueText = (TextView) convertView.findViewById(R.id.price);
         }
 
         HashMap<String, String> map = list.get(position);
-        txtFirst.setText(map.get(Constants.PRICEMAPID_CHAIN));
-        txtSecond.setText(map.get(Constants.PRICEMAPID_EXTRA));
-        txtThird.setText(map.get(Constants.PRICEMAPID_PRICE));
+        storeChainText.setText(map.get(Constants.PRICEMAPID_CHAIN));
+        storeNameText.setText(map.get(Constants.PRICEMAPID_EXTRA));
+        priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
 
         return convertView;
     }

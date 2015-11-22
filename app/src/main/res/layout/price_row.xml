@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.nihlus.matjakt.ui.custom.AutoResizeTextView
+    <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
         android:id="@+id/chain"
         android:layout_width="0dp"
         android:layout_height="24dp"
@@ -15,7 +15,7 @@
         android:maxLines="1"
         android:textStyle="bold"/>
 
-    <com.nihlus.matjakt.ui.custom.AutoResizeTextView
+    <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
         android:id="@+id/extra"
         android:layout_width="0dp"
         android:layout_height="24dp"
@@ -26,7 +26,7 @@
         android:ellipsize="none"
         android:maxLines="1"/>
 
-    <com.nihlus.matjakt.ui.custom.AutoResizeTextView
+    <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
         android:id="@+id/price"
         android:layout_width="0dp"
         android:layout_height="24dp"

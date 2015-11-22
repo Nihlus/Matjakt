@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.containers.EAN;
 import com.nihlus.matjakt.containers.MatjaktPrice;
 import com.nihlus.matjakt.containers.MatjaktStore;
 import com.nihlus.matjakt.ui.ViewProductActivity;
@@ -28,14 +29,14 @@ import java.util.List;
 public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>>
 {
     private final Activity ParentActivity;
-    private final String ean;
+    private final EAN ean;
     private final double latitude;
     private final double longitude;
     private final double distance;
     private final String chain;
     private final int count;
 
-    public RetrievePricesTask(Activity activity, String ean, double latitude, double longitude, double distance)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance)
     {
         this.ParentActivity = activity;
         this.ean = ean;
@@ -46,7 +47,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         this.count = 0;
     }
 
-    public RetrievePricesTask(Activity activity, String ean, double latitude, double longitude, double distance, String chain, int count)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, String chain, int count)
     {
         this.ParentActivity = activity;
         this.ean = ean;
@@ -57,7 +58,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         this.count = count;
     }
 
-    public RetrievePricesTask(Activity activity, String ean, double latitude, double longitude, double distance, String chain)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, String chain)
     {
         this.ParentActivity = activity;
         this.ean = ean;
@@ -68,7 +69,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         this.count = 0;
     }
 
-    public RetrievePricesTask(Activity activity, String ean, double latitude, double longitude, double distance, int count)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, int count)
     {
         this.ParentActivity = activity;
         this.ean = ean;
@@ -98,7 +99,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         try
         {
             String rawUrl = Constants.MatjaktAPIURL + Constants.GETPRICES + "?" +
-                    Constants.API_PARAM_EAN + "=" + ean + "&" +
+                    Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                     Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
                     Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance);
@@ -135,7 +136,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
             if (!(retrievedPrices.size() > 0))
             {
                 rawUrl = Constants.MatjaktAPIURL + Constants.GETPRICES + "?" +
-                        Constants.API_PARAM_EAN + "=" + ean + "&" +
+                        Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                         Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                         Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
                         Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance * 10);

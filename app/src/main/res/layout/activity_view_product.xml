@@ -8,7 +8,7 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context="com.nihlus.matjakt.ui.ViewProductActivity">
 
-    <com.nihlus.matjakt.ui.custom.AutoResizeTextView
+    <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
         android:id="@+id/textView_ProductTitle"
         android:layout_width="match_parent"
         android:layout_height="32dp"

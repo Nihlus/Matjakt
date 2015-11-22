@@ -27,7 +27,6 @@ import java.util.HashMap;
 
 public class ModifyProductActivity extends AppCompatActivity
 {
-    private String ean = "";
     private Bundle productData = new Bundle();
 
     @Override
@@ -39,7 +38,6 @@ public class ModifyProductActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         int incomingIntent = intent.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
-        this.ean = intent.getStringExtra(Constants.PRODUCT_EAN_EXTRA);
 
         boolean bIsNewProduct = incomingIntent == Constants.INSERT_NEW_PRODUCT;
         boolean bIsModifyingProduct = incomingIntent == Constants.MODIFY_EXISTING_PRODUCT;
@@ -169,7 +167,7 @@ public class ModifyProductActivity extends AppCompatActivity
             }
 
             //create the task and send it to the server, close parentActivity when done
-            UpdateProductTitle update = new UpdateProductTitle(this, ean, productData);
+            UpdateProductTitle update = new UpdateProductTitle(this, productData);
             update.execute(getFinalProductString());
         }
     }
@@ -329,18 +327,16 @@ public class ModifyProductActivity extends AppCompatActivity
     class UpdateProductTitle extends AsyncTask<String, Void, OutpanProduct>
     {
         private final Activity parentActivity;
-        private final String ean;
-        private final Bundle data;
+        private final Bundle ProductData;
 
         private final ProgressDialog dialog;
 
-        UpdateProductTitle(Activity parentActivity, String inEan, Bundle inData)
+        UpdateProductTitle(Activity InParentActivity, Bundle InProductData)
         {
-            this.parentActivity = parentActivity;
-            this.ean = inEan;
-            this.data = inData;
+            this.parentActivity = InParentActivity;
+            this.ProductData = InProductData;
 
-            dialog = new ProgressDialog(parentActivity);
+            dialog = new ProgressDialog(InParentActivity);
         }
 
         @Override
@@ -354,32 +350,44 @@ public class ModifyProductActivity extends AppCompatActivity
         protected OutpanProduct doInBackground(String... inputs)
         {
             OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-            api.setProductName(ean, inputs[0]);
+            api.setProductName((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN), inputs[0]);
 
-            api.setProductAttribute(ean, Constants.PRODUCT_BRAND_ATTRIBUTE, data.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
-            api.setProductAttribute(ean, Constants.PRODUCT_TITLE_ATTRIBUTE, data.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                    Constants.PRODUCT_BRAND_ATTRIBUTE,
+                    ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
 
-            if (data.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+            api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                    Constants.PRODUCT_TITLE_ATTRIBUTE,
+                    ProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+
+
+            if (ProductData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(data.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
+                boolean isEmpty = splitAmountValue(ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
 
                 if (!isEmpty)
                 {
-                    api.setProductAttribute(ean, Constants.PRODUCT_AMOUNT_ATTRIBUTE, data.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+                    api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                            Constants.PRODUCT_AMOUNT_ATTRIBUTE,
+                            ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
                 }
             }
 
-            if (data.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            if (ProductData.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
             {
-                api.setProductAttribute(ean, Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+                api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                        Constants.PRODUCT_ORGANIC_ATTRIBUTE,
+                        String.valueOf(ProductData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
             }
 
-            if (data.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            if (ProductData.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
             {
-                api.setProductAttribute(ean, Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(data.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+                api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
+                        String.valueOf(ProductData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
             }
 
-            return api.getProduct(new EAN(ean));
+            return api.getProduct((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN));
         }
 
         protected void onPostExecute(OutpanProduct result)
@@ -390,8 +398,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 this.dialog.dismiss();
 
                 Intent resultIntent = new Intent(parentActivity, ViewProductActivity.class);
-                resultIntent.putExtra(Constants.PRODUCT_TITLE_EXTRA, result.Name);
-                resultIntent.putExtra(Constants.PRODUCT_EAN_EXTRA, ModifyProductActivity.this.ean);
+
                 resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
 
                 parentActivity.setResult(RESULT_OK, resultIntent);

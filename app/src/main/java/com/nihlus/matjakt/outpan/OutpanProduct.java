@@ -68,6 +68,16 @@ public class OutpanProduct
     {
         Bundle productData = new Bundle();
 
+        if (isNameValid())
+        {
+            productData.putString(Constants.PRODUCT_NAME, Name);
+        }
+
+        if (ean != null)
+        {
+            productData.putParcelable(Constants.PRODUCT_EAN, ean);
+        }
+
         if (Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
         {
             productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, Attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
@@ -94,6 +104,43 @@ public class OutpanProduct
         }
 
         return productData;
+    }
+
+    public boolean isValid()
+    {
+        boolean isMissingRequiredAttributes = false;
+
+        if (!isNameValid())
+        {
+            isMissingRequiredAttributes = true;
+        }
+
+        if (!Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        {
+            isMissingRequiredAttributes = true;
+        }
+
+        if (!Attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+        {
+            isMissingRequiredAttributes = true;
+        }
+
+        if (!Attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        {
+            isMissingRequiredAttributes = true;
+        }
+
+        return !isMissingRequiredAttributes;
+    }
+
+    public boolean isNameValid()
+    {
+        //if name is empty or says null, return false
+        boolean nameIsEmpty = Name.isEmpty();
+        boolean nameIsNull = Name.equals("null");
+
+
+        return !(nameIsEmpty || nameIsNull);
     }
 
     private boolean isErrorMessage(JSONObject InJSON)

@@ -20,8 +20,8 @@ public final class Constants
     public static final String DIALOG_ADDPRODUCTFRAGMENT_ID = "ADD_PRODUCT_DIALOG";
     public static final String DIALOG_REPAIRPRODUCTFRAGMENT_ID = "REPAIR_PRODUCT_DIALOG";
 
-    public static final String PRODUCT_TITLE_EXTRA = "PRODUCT_TITLE";
-    public static final String PRODUCT_EAN_EXTRA = "EAN";
+    public static final String PRODUCT_NAME = "PRODUCT_TITLE";
+    public static final String PRODUCT_EAN = "EAN";
     public static final String PRODUCT_BRAND_ATTRIBUTE = "Brand";
     public static final String PRODUCT_TITLE_ATTRIBUTE = "Title";
     public static final String PRODUCT_AMOUNT_ATTRIBUTE = "Amount";

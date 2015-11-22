@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.ui.ModifyProductActivity;
+import com.nihlus.matjakt.containers.EAN;
 
 
 /**
@@ -18,14 +18,14 @@ import com.nihlus.matjakt.ui.ModifyProductActivity;
  */
 public class AddProductDialogFragment extends DialogFragment
 {
-    private String ean = "";
-    private Activity activity;
+    private EAN ean;
+    private Activity ParentActivity;
 
     @SuppressWarnings("ValidFragment")
-    public AddProductDialogFragment(Activity activity, String ean)
+    public AddProductDialogFragment(Activity InParentActivity, EAN InEAN)
     {
-        this.ean = ean;
-        this.activity = activity;
+        this.ean = InEAN;
+        this.ParentActivity = InParentActivity;
     }
 
     public AddProductDialogFragment()
@@ -64,11 +64,11 @@ public class AddProductDialogFragment extends DialogFragment
                 //   new UpdateProductTitle().execute(userInput);
                 //}
 
-                Intent intent = new Intent(activity, ModifyProductActivity.class);
+                Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
                 intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.INSERT_NEW_PRODUCT);
-                intent.putExtra(Constants.PRODUCT_EAN_EXTRA, ean);
+                intent.putExtra(Constants.PRODUCT_EAN, ean);
 
-                activity.startActivityForResult(intent, Constants.INSERT_NEW_PRODUCT);
+                ParentActivity.startActivityForResult(intent, Constants.INSERT_NEW_PRODUCT);
 
             }
         });

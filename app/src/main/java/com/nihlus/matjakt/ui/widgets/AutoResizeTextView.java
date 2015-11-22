@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.ui.custom;
+package com.nihlus.matjakt.ui.widgets;
 
 /**
  *               DO WHAT YOU WANT TO PUBLIC LICENSE

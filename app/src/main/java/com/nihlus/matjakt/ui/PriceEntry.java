@@ -55,7 +55,7 @@ public class PriceEntry
         hashMap.put(Constants.PRICEMAPID_CHAIN, Chain);
 
         //if the entry is an "Add" entry (i.e, just a plus sign) or Loading, don't add the price or the comma
-        if (Latitude == -1 || Longitude == -1)
+        if (!(Latitude == -1 || Longitude == -1))
         {
             hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
             hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));
