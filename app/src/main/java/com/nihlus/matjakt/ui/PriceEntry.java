@@ -8,6 +8,7 @@ import com.nihlus.matjakt.R;
 import java.util.HashMap;
 
 /**
+ * TODO: Deprecate class in favor of MatjaktPrice
  * Represents an entry in the visible price list
  */
 @SuppressWarnings({"HardCodedStringLiteral", "WeakerAccess"})
@@ -21,6 +22,8 @@ public class PriceEntry
     public double Price;
     public String Timestamp;
 
+    private boolean isSpecial;
+
     public static PriceEntry getAddEntry()
     {
         PriceEntry entry = new PriceEntry();
@@ -31,6 +34,8 @@ public class PriceEntry
         entry.Location = "";
         entry.Price = 0;
         entry.Timestamp = "0";
+
+        entry.isSpecial = true;
 
         return entry;
     }
@@ -46,6 +51,8 @@ public class PriceEntry
         entry.Price = 0;
         entry.Timestamp = "0";
 
+        entry.isSpecial = true;
+
         return entry;
     }
 
@@ -55,15 +62,15 @@ public class PriceEntry
         hashMap.put(Constants.PRICEMAPID_CHAIN, Chain);
 
         //if the entry is an "Add" entry (i.e, just a plus sign) or Loading, don't add the price or the comma
-        if (!(Latitude == -1 || Longitude == -1))
-        {
-            hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
-            hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));
-        }
-        else
+        if (isSpecial)
         {
             hashMap.put(Constants.PRICEMAPID_EXTRA, "");
             hashMap.put(Constants.PRICEMAPID_PRICE, "");
+        }
+        else
+        {
+            hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
+            hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));
         }
 
         hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Latitude));

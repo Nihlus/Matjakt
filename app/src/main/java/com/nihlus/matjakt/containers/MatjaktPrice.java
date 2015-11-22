@@ -56,25 +56,16 @@ public class MatjaktPrice
     public HashMap<String, String> getHashMap()
     {
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(Constants.PRICEMAPID_CHAIN, Store.Chain);
 
-        //if the entry is an "Add" entry (i.e, just a plus sign), don't add the price or the comma
-        if (!Store.Chain.equals("+"))
-        {
-            //TODO: Add city reverse GeoCoding here
-            hashMap.put(Constants.PRICEMAPID_EXTRA, Store.Name);
-            hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
-        }
-        else
-        {
-            hashMap.put(Constants.PRICEMAPID_EXTRA, "");
-            hashMap.put(Constants.PRICEMAPID_PRICE, "");
-        }
+
+        hashMap.put(Constants.PRICEMAPID_CHAIN, Store.Chain);
+        hashMap.put(Constants.PRICEMAPID_EXTRA, Store.Name);
+        hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
 
         hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Store.Latitude));
         hashMap.put(Constants.PRICEMAPID_LON, String.valueOf(Store.Longitude));
 
-        //TODO: Add city reverse GeoCoding here
+        //TODO: Add city reverse Geooding here
         //hashMap.put(Constants.PRICEMAPID_LOC, Location);
         hashMap.put(Constants.PRICEMAPID_TIMESTAMP, Timestamp.toString());
 
