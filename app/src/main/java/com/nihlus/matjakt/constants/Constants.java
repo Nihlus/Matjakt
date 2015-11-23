@@ -14,9 +14,19 @@ public final class Constants
     public static final int VIEW_EXISTING_PRODUCT = 4;
     public static final int REQUEST_BARCODE_SCAN = 5;
 
+    public static final String SHARED_PREFERENCES = "MATJAKTPREFS";
+    public static final String PREF_HASSTARTEDBEFORE = "bHasStartedBefore";
+    public static final String PREF_USEDARKTHEME = "bUseDarkTheme";
+    public static final String PREF_PREFERREDSTOREDISTANCE = "preferredStoreDistance";
+    public static final String PREF_MAXSTOREDISTANCE ="maxStoreDistance";
+    public static final String PREF_USERCURRENCY = "userCurrency";
+
     public static final String GENERIC_INTENT_ID = "INTENT";
     public static final String MATJAKT_LOG_ID = "MATJAKT";
     public static final String CURRENTFRAGMENT_ID = "CURRENTFRAGMENT";
+    public static final String SCANFRAGMENT_ID = "SCANFRAGMENT";
+    public static final String SETTINGSFRAGMENT_ID = "SETTINGSFRAGMENT";
+    public static final String ABOUTFRAGMENT_ID = "ABOUTFRAGMENT";
     public static final String DIALOG_ADDPRODUCTFRAGMENT_ID = "ADD_PRODUCT_DIALOG";
     public static final String DIALOG_REPAIRPRODUCTFRAGMENT_ID = "REPAIR_PRODUCT_DIALOG";
 
@@ -74,5 +84,9 @@ public final class Constants
 
     public static final String SPLITMAP_LETTER = "LETTER";
     public static final String SPLITMAP_NUMBER = "NUMBER";
+
+    public static final int DRAWERITEM_SCAN = 0;
+    public static final int DRAWERITEM_SETTINGS = 1;
+    public static final int DRAWERITEM_ABOUT = 2;
 
 }

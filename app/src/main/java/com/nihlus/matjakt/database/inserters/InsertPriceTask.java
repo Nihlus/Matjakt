@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.nihlus.matjakt.constants.Constants;
+import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONException;
@@ -22,16 +23,16 @@ import java.net.URLConnection;
 public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
 {
     private final Activity ParentActivity;
-    private final String EAN;
+    private final EAN ean;
     private final double Price;
     private final String Currency;
     private final int Store;
     private final boolean isOffer;
 
-    public InsertPriceTask(Activity InActivity, String InEAN, double InPrice, String InCurrency, int InStore, boolean InIsOffer)
+    public InsertPriceTask(Activity InActivity, EAN InEAN, double InPrice, String InCurrency, int InStore, boolean InIsOffer)
     {
         this.ParentActivity = InActivity;
-        this.EAN = InEAN;
+        this.ean = InEAN;
         this.Price = InPrice;
         this.Currency = InCurrency;
         this.Store = InStore;
@@ -55,7 +56,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
         try
         {
             String rawUrl = Constants.MatjaktAPIURL + Constants.ADDPRICE + "?" +
-                    Constants.API_PARAM_EAN + "=" + EAN + "&" +
+                    Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_PRICE + "=" + String.valueOf(Price) + "&" +
                     Constants.API_PARAM_CURRENCY + "=" + Currency + "&" +
                     Constants.API_PARAM_STORE + "=" + String.valueOf(Store) + "&" +

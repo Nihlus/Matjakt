@@ -2,8 +2,10 @@ package com.nihlus.matjakt.database.inserters;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
@@ -32,6 +34,7 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
     private final double Longitude;
 
     private MatjaktStore InsertedStore;
+    private ProgressDialog progressDialog;
 
     public InsertStoreTask(Activity InActivity, DialogFragment InDialog, String InChain, String InName, double InLatitude, double InLongitude)
     {
@@ -46,7 +49,7 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected void onPreExecute()
     {
-
+        progressDialog = ProgressDialog.show(ParentActivity, "", ParentActivity.getResources().getString(R.string.dialog_insertingStore));
     }
 
     // TODO: 9/8/15 Stub class - retrieve and sort prices
@@ -112,6 +115,7 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected void onPostExecute(Boolean success)
     {
+        progressDialog.cancel();
         if (ParentDialog instanceof AddPriceDialogFragment)
         {
             ((AddPriceDialogFragment)ParentDialog).onStoreInserted(success, InsertedStore);

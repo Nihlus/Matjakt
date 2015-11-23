@@ -62,8 +62,24 @@
         <item>ml</item>
     </string-array>
 
+    <string-array name="ui_sidebar_menu_items">
+        <item>Scan</item>
+        <item>Settings</item>
+        <item>About</item>
+    </string-array>
+
     <string name="title_activity_view_product">View Product</string>
     <string name="title_activity_new_product">New Product</string>
     <string name="title_activity_edit_product">Edit Product</string>
     <string name="title_activity_scanned_product">Scanned Product</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ui_settings_location">Location</string>
+    <string name="ui_settings_preferredStoreDistance">Preferred store distance:</string>
+    <string name="ui_settings_maxStoreDistance">Maximum store distance:</string>
+    <string name="ui_settings_locationHint">All distances are in metric kilometers.</string>
+    <string name="ui_settings_currency">Currency</string>
+    <string name="ui_settings_appearance">Appearance</string>
+    <string name="ui_settings_useDarkTheme">Use dark theme</string>
 </resources>

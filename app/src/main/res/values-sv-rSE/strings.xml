@@ -20,6 +20,12 @@
         <item>ml</item>
     </string-array>
 
+    <string-array name="ui_sidebar_menu_items">
+        <item>Skanna</item>
+        <item>Inställningar</item>
+        <item>Om</item>
+    </string-array>
+
     <string name="title_activity_view_product">Visa produkt</string>
     <string name="debug_fragmentNullLog">Fragmentet var null!</string>
     <string name="dialog_RetrievingProduct">Hämtar produktinformation…</string>
@@ -61,4 +67,11 @@
     <string name="ui_editStoreChainHint">Kedja (ACME)</string>
     <string name="ui_editStoreNameHint">Namn (Livs)</string>
     <string name="ui_shopMissingAddNew">Saknas en butik? Lägg till</string>
+    <string name="ui_settings_appearance">Utseende</string>
+    <string name="ui_settings_currency">Valuta</string>
+    <string name="ui_settings_location">Lokalisering</string>
+    <string name="ui_settings_locationHint">Alla avstånd är i metriska kilometer.</string>
+    <string name="ui_settings_maxStoreDistance">Maximalt butiksavstånd</string>
+    <string name="ui_settings_preferredStoreDistance">Föredraget butiksavstånd</string>
+    <string name="ui_settings_useDarkTheme">Använd ett mörkt tema</string>
 </resources>

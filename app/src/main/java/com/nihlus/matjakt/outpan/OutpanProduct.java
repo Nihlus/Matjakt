@@ -8,6 +8,7 @@ import com.nihlus.matjakt.database.containers.EAN;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Attr;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -78,29 +79,32 @@ public class OutpanProduct
             productData.putParcelable(Constants.PRODUCT_EAN, ean);
         }
 
-        if (Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        if (Attributes != null)
         {
-            productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, Attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-        }
+            if (Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, Attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            }
 
-        if (Attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, Attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
-        }
+            if (Attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, Attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            }
 
-        if (Attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-        {
-            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, Attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-        }
+            if (Attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, Attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+            }
 
-        if (Attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-        {
-            productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
-        }
+            if (Attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+            }
 
-        if (Attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-        {
-            productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+            if (Attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+            }
         }
 
         return productData;
@@ -113,6 +117,11 @@ public class OutpanProduct
         if (!isNameValid())
         {
             isMissingRequiredAttributes = true;
+        }
+
+        if (Attributes == null)
+        {
+            return false;
         }
 
         if (!Attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
@@ -137,10 +146,9 @@ public class OutpanProduct
     {
         //if name is empty or says null, return false
         boolean nameIsEmpty = Name.isEmpty();
-        boolean nameIsNull = Name.equals("null");
+        boolean nameContainsNull = Name.equals("null");
 
-
-        return !(nameIsEmpty || nameIsNull);
+        return !(nameIsEmpty || nameContainsNull);
     }
 
     private boolean isErrorMessage(JSONObject InJSON)

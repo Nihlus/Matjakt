@@ -1,7 +1,11 @@
 package com.nihlus.matjakt.ui;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,6 +22,8 @@ import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.database.retrievers.RetrieveStoresTask;
+import com.nihlus.matjakt.services.GPSService;
 import com.nihlus.matjakt.ui.lists.PriceEntry;
 import com.nihlus.matjakt.ui.lists.PriceViewAdapter;
 
@@ -33,6 +39,43 @@ public class ViewProductActivity extends AppCompatActivity
     private Bundle ProductData;
 
     private SwipeRefreshLayout swipeContainer;
+
+
+    private boolean isGPSBound;
+    private GPSService GPS;
+    private ServiceConnection GPSConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            isGPSBound = true;
+            GPSService.GPSBinder Binder = (GPSService.GPSBinder)service;
+            GPS = Binder.getService();
+
+            onGPSConnected();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            isGPSBound = false;
+        }
+    };
+
+    private void bindGPS()
+    {
+        Intent intent = new Intent(this, GPSService.class);
+        bindService(intent, GPSConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void unbindGPS()
+    {
+        if (isGPSBound)
+        {
+            unbindService(GPSConnection);
+            isGPSBound = false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,8 +102,14 @@ public class ViewProductActivity extends AppCompatActivity
             public void onRefresh()
             {
                 // Load new prices from a new location
-                LoadPricesAsync();
-
+                if (GPS != null)
+                {
+                    LoadPricesAsync();
+                }
+                else
+                {
+                    bindGPS();
+                }
             }
         });
 
@@ -70,26 +119,31 @@ public class ViewProductActivity extends AppCompatActivity
                 R.color.holo_orange_light,
                 R.color.holo_red_light);
 
-        LoadPricesAsync();
-
         // Start up the GPS and wait for that. Execution continues in onGPSConnected()
-        //bindGPS();
+        bindGPS();
     }
 
     protected void onGPSConnected()
     {
         // Load the prices using the available location
-    }
-
-    protected void onPriceRefreshRequested()
-    {
-
+        if (GPS != null)
+        {
+            LoadPricesAsync();
+        }
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        unbindGPS();
     }
 
     @Override
@@ -184,8 +238,9 @@ public class ViewProductActivity extends AppCompatActivity
         //TODO: Clean this crap up (GPS Service)
         //TODO: Use real values instead of debug point
         RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
-                58.770276,
-                17.020926, 2);
+                GPS.getCurrentLocation().getLatitude(),
+                GPS.getCurrentLocation().getLongitude(),
+                2);
 
         pricesTask.execute();
     }
@@ -272,6 +327,12 @@ public class ViewProductActivity extends AppCompatActivity
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
 
                 //TODO: Add InsertPriceTask handler here
+                RetrieveStoresTask retrieveStoresTask = new RetrieveStoresTask(ViewProductActivity.this,
+                        GPS.getCurrentLocation().getLatitude(),
+                        GPS.getCurrentLocation().getLongitude(),
+                        2);
+
+                retrieveStoresTask.execute();
             }
             else
             {
@@ -286,9 +347,11 @@ public class ViewProductActivity extends AppCompatActivity
     {
         //TODO: Clean this crap up (GPS Service)
         //TODO: Use real values instead of debug point
-        AddPriceDialogFragment addPriceDialog = new AddPriceDialogFragment(this, Stores,
-                58.770276,
-                17.020926);
+        AddPriceDialogFragment addPriceDialog = new AddPriceDialogFragment(this,
+                Stores,
+                ProductData,
+                GPS.getCurrentLocation().getLatitude(),
+                GPS.getCurrentLocation().getLongitude());
 
         addPriceDialog.show(getFragmentManager(), "PRICEDIALOG");
         // If within a reasonable distance (~100m), preselect that store

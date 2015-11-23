@@ -28,6 +28,7 @@ import java.util.HashMap;
 public class ModifyProductActivity extends AppCompatActivity
 {
     private Bundle productData = new Bundle();
+    private EAN ProductEAN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,12 +46,15 @@ public class ModifyProductActivity extends AppCompatActivity
         if (bIsNewProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
+
+            ProductEAN = intent.getParcelableExtra(Constants.PRODUCT_EAN);
         }
         else if (bIsModifyingProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_edit_product));
 
             this.productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+            this.ProductEAN = productData.getParcelable(Constants.PRODUCT_EAN);
 
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
@@ -147,27 +151,28 @@ public class ModifyProductActivity extends AppCompatActivity
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
 
             //bundle up the data needed by the server
-            Bundle productData = new Bundle();
-            productData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
-            productData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, productTitle.getText().toString());
+            Bundle newProductData = new Bundle();
+            newProductData.putParcelable(Constants.PRODUCT_EAN, ProductEAN);
+            newProductData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
+            newProductData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, productTitle.getText().toString());
 
-            productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, productAmount.getText().toString()
+            newProductData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, productAmount.getText().toString()
                     + amountSpinner.getSelectedItem().toString());
 
 
             // Only include the checkboxes if they have been checked
             if (isOrganic.isChecked())
             {
-                productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
+                newProductData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
             }
 
             if (isFairtrade.isChecked())
             {
-                productData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
+                newProductData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
             }
 
             //create the task and send it to the server, close parentActivity when done
-            UpdateProductTitle update = new UpdateProductTitle(this, productData);
+            UpdateProductTitle update = new UpdateProductTitle(this, newProductData);
             update.execute(getFinalProductString());
         }
     }
@@ -326,14 +331,14 @@ public class ModifyProductActivity extends AppCompatActivity
     //async posting of the update to the database
     class UpdateProductTitle extends AsyncTask<String, Void, OutpanProduct>
     {
-        private final Activity parentActivity;
+        private final Activity modifyProductParentActivity;
         private final Bundle ProductData;
 
         private final ProgressDialog dialog;
 
         UpdateProductTitle(Activity InParentActivity, Bundle InProductData)
         {
-            this.parentActivity = InParentActivity;
+            this.modifyProductParentActivity = InParentActivity;
             this.ProductData = InProductData;
 
             dialog = new ProgressDialog(InParentActivity);
@@ -397,20 +402,22 @@ public class ModifyProductActivity extends AppCompatActivity
             {
                 this.dialog.dismiss();
 
-                Intent resultIntent = new Intent(parentActivity, ViewProductActivity.class);
+                Intent resultIntent = new Intent(modifyProductParentActivity, ViewProductActivity.class);
 
                 resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
 
-                parentActivity.setResult(RESULT_OK, resultIntent);
-                parentActivity.startActivity(resultIntent);
-                parentActivity.finish();
+
+                //TODO: Scan button stops working if we've been editing as the new activity doesn't have a parent
+                modifyProductParentActivity.setResult(RESULT_OK, resultIntent);
+                modifyProductParentActivity.startActivityForResult(resultIntent, Constants.VIEW_EXISTING_PRODUCT);
+                modifyProductParentActivity.finish();
             }
             else
             {
-                parentActivity.setResult(RESULT_CANCELED);
+                modifyProductParentActivity.setResult(RESULT_CANCELED);
                 this.dialog.dismiss();
 
-                Toast.makeText(parentActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();
+                Toast.makeText(modifyProductParentActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();
             }
         }
 
