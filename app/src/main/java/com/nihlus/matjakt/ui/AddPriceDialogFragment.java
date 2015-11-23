@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -118,31 +119,11 @@ public class AddPriceDialogFragment extends DialogFragment
                 InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
                         (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
                         inPrice,
-                        Currency.getInstance(getCurrentCountry()).getCurrencyCode(),
+                        getUserCurrency(),
                         storeID,
                         false);
 
                 insertPriceTask.execute();
-            }
-
-            //TODO: Get rid of this and make it configurable
-            private Locale getCurrentCountry()
-            {
-                Locale outLocale = null;
-
-                TelephonyManager teleMgr = (TelephonyManager)ParentActivity.getSystemService(Context.TELEPHONY_SERVICE);
-                if (teleMgr != null)
-                {
-                    //TODO: Improve this, SIM may not always be the country you're in
-                    String countryISOCode = teleMgr.getNetworkCountryIso();
-                    if (countryISOCode.isEmpty())
-                    {
-                        countryISOCode = teleMgr.getSimCountryIso();
-                    }
-                    outLocale = new Locale("", countryISOCode);
-                }
-
-                return outLocale;
             }
         });
 
@@ -156,6 +137,12 @@ public class AddPriceDialogFragment extends DialogFragment
         });
 
         return builder.create();
+    }
+
+    private String getUserCurrency()
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getString(Constants.PREF_USERCURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
     }
 
     public void onStoreInserted(boolean Success, MatjaktStore InsertedStore)

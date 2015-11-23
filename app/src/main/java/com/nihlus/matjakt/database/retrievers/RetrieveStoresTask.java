@@ -2,6 +2,8 @@ package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.nihlus.matjakt.constants.Constants;
@@ -26,29 +28,26 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
     private final String chain;
     private final double latitude;
     private final double longitude;
-    private final double distance;
 
     private final ProgressDialog dialog;
 
 
-    public RetrieveStoresTask(Activity activity, String chain, double latitude, double longitude, double distance)
+    public RetrieveStoresTask(Activity activity, String chain, double latitude, double longitude)
     {
         this.ParentActivity = activity;
         this.chain = chain;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
 
         dialog = new ProgressDialog(ParentActivity);
     }
 
-    public RetrieveStoresTask(Activity activity, double latitude, double longitude, double distance)
+    public RetrieveStoresTask(Activity activity, double latitude, double longitude)
     {
         this.ParentActivity = activity;
         this.chain = "";
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
 
         dialog = new ProgressDialog(ParentActivity);
     }
@@ -106,7 +105,6 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
     {
         URL url = null;
 
-        double distance = bIsExtendedSearch ? 0.2 : 2;
         try
         {
             if (bIsChainEmpty)
@@ -114,14 +112,14 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
                 url = new URL(Constants.MatjaktAPIURL + Constants.GETSTORES + "?" +
                         Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                         Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance));
+                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(bIsExtendedSearch)));
             }
             else
             {
                 url = new URL(Constants.MatjaktAPIURL + Constants.GETSTORES + "?" +
                         Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                         Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance) + "&" +
+                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(bIsExtendedSearch)) + "&" +
                         Constants.API_PARAM_CHAIN + "=" + chain);
             }
         }
@@ -142,6 +140,20 @@ public class RetrieveStoresTask extends AsyncTask<Void, Void, List<MatjaktStore>
         {
             dialog.dismiss();
             ((ViewProductActivity) ParentActivity).onStoresLoaded(result);
+        }
+    }
+
+    private double getStoreSearchDistance(boolean maxAllowedDistance)
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (maxAllowedDistance)
+        {
+            return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 2.0f);
+        }
+        else
+        {
+            return preferences.getFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
         }
     }
 }

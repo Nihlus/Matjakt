@@ -326,11 +326,10 @@ public class ViewProductActivity extends AppCompatActivity
                 //add new price
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
 
-                //TODO: Add InsertPriceTask handler here
+                // Retrieve the local stores, and then show an add price dialog
                 RetrieveStoresTask retrieveStoresTask = new RetrieveStoresTask(ViewProductActivity.this,
                         GPS.getCurrentLocation().getLatitude(),
-                        GPS.getCurrentLocation().getLongitude(),
-                        2);
+                        GPS.getCurrentLocation().getLongitude());
 
                 retrieveStoresTask.execute();
             }
@@ -354,12 +353,5 @@ public class ViewProductActivity extends AppCompatActivity
                 GPS.getCurrentLocation().getLongitude());
 
         addPriceDialog.show(getFragmentManager(), "PRICEDIALOG");
-        // If within a reasonable distance (~100m), preselect that store
-        // Still nothing? Display store input dialog (chain, name)
-        // Grab lat/lon and attach to store, display accuracy to user
-        // Load stores again, then continue
-        // Display a price input dialog (value spinners, currency, store spinner, Cancel/OK)
-        // Save/load currency from user settings
-        // Load prices again
     }
 }

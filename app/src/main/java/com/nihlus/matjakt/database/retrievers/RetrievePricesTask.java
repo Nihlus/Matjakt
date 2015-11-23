@@ -1,6 +1,8 @@
 package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.nihlus.matjakt.constants.Constants;
@@ -31,50 +33,45 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
     private final EAN ean;
     private final double latitude;
     private final double longitude;
-    private final double distance;
     private final String chain;
     private final int count;
 
-    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude)
     {
         this.ParentActivity = activity;
         this.ean = ean;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
         this.chain = "";
         this.count = 0;
     }
 
-    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, String chain, int count)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, String chain, int count)
     {
         this.ParentActivity = activity;
         this.ean = ean;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
         this.chain = chain;
         this.count = count;
     }
 
-    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, String chain)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, String chain)
     {
         this.ParentActivity = activity;
         this.ean = ean;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
         this.chain = chain;
         this.count = 0;
     }
 
-    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, double distance, int count)
+    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude, int count)
     {
         this.ParentActivity = activity;
         this.ean = ean;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.distance = distance;
         this.chain = "";
         this.count = count;
     }
@@ -97,7 +94,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                     Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                     Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance);
+                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(false));
 
             if (!chain.isEmpty())
             {
@@ -129,7 +126,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                         Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                         Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                         Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(distance * 10);
+                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(true));
 
                 if (!chain.isEmpty())
                 {
@@ -217,5 +214,19 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         }
 
         return new MatjaktStore(Result);
+    }
+
+    private double getStoreSearchDistance(boolean maxAllowedDistance)
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (maxAllowedDistance)
+        {
+            return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 2.0f);
+        }
+        else
+        {
+            return preferences.getFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
+        }
     }
 }
