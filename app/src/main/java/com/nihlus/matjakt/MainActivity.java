@@ -27,6 +27,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.services.GPSService;
@@ -231,33 +232,7 @@ public class MainActivity extends AppCompatActivity
     public void onScanButtonClicked(View view)
     {
         // Will fail if there's no network available
-        initiateScan();
-    }
-
-    private boolean isNetworkAvailable()
-    {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private void initiateScan()
-    {
-        if (isNetworkAvailable())
-        {
-            IntentIntegrator integrator = new IntentIntegrator(this);
-            integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-            integrator.setPrompt(getResources().getString(R.string.prompt_ScanACode));
-            integrator.setBeepEnabled(false);
-            integrator.setOrientationLocked(false);
-
-            integrator.initiateScan();
-        }
-        else
-        {
-            Toast.makeText(getApplication(), getResources().getString(R.string.debug_noInternet), Toast.LENGTH_LONG).show();
-        }
+        ProductScan.initiate(this);
     }
 
     @Override
@@ -288,7 +263,7 @@ public class MainActivity extends AppCompatActivity
             int request = data.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
             if (request == Constants.REQUEST_BARCODE_SCAN)
             {
-                initiateScan();
+                ProductScan.initiate(this);
             }
         }
         else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
@@ -296,71 +271,12 @@ public class MainActivity extends AppCompatActivity
             int request = data.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
             if (request == Constants.REQUEST_BARCODE_SCAN)
             {
-                initiateScan();
+                ProductScan.initiate(this);
             }
         }
         else
         {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
-    {
-        private final Activity ParentActivity;
-        private EAN ean;
-
-        private ProgressDialog progressDialog;
-
-        public RetrieveProductTask(Activity InParentActivity)
-        {
-            this.ParentActivity = InParentActivity;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            progressDialog = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.dialog_RetrievingProduct));
-        }
-
-        @Override
-        protected OutpanProduct doInBackground(EAN... inEANs)
-        {
-            this.ean = inEANs[0];
-
-            OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-            return api.getProduct(inEANs[0]);
-        }
-
-        @Override
-        protected void onPostExecute(OutpanProduct result)
-        {
-            if (progressDialog.isShowing())
-            {
-                progressDialog.dismiss();
-            }
-
-            //launch product view activity
-            if (!result.isNameValid())
-            {
-                //ask the user if they want to add a new product
-                AddProductDialogFragment dialog = new AddProductDialogFragment(ParentActivity, ean);
-                dialog.show(getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
-            }
-            else if (!result.isValid())
-            {
-                //broken product, ask if the user wants to edit it
-                RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, ean, result.getBundle());
-                dialog.show(getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
-            }
-            else
-            {
-                Intent intent = new Intent(ParentActivity, ViewProductActivity.class);
-
-                intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
-
-                startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
-            }
         }
     }
 }

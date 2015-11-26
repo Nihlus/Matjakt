@@ -16,12 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.nihlus.matjakt.ProductScan;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
 import com.nihlus.matjakt.database.retrievers.RetrieveStoresTask;
 import com.nihlus.matjakt.services.GPSService;
 import com.nihlus.matjakt.ui.lists.PriceEntry;
@@ -185,7 +189,17 @@ public class ViewProductActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null)
+        {
+            // We scanned an EAN code!
+            if (result.getContents() != null)
+            {
+                //retrieve data and show it to the user if the product exists
+                new RetrieveProductTask(this).execute(new EAN(result.getContents()));
+            }
+        }
+        else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
         {
             if (data.getIntExtra(Constants.GENERIC_INTENT_ID, -1) != Constants.REQUEST_BARCODE_SCAN)
             {
@@ -193,14 +207,6 @@ public class ViewProductActivity extends AppCompatActivity
                 this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
 
                 setVisibleProductTitle(getFinalProductString(ProductData));
-            }
-            else
-            {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.GENERIC_INTENT_ID, Constants.REQUEST_BARCODE_SCAN);
-
-                setResult(RESULT_OK, resultIntent);
-                this.finish();
             }
         }
     }
@@ -308,11 +314,7 @@ public class ViewProductActivity extends AppCompatActivity
 
     public void onScanButtonClicked(View view)
     {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(Constants.GENERIC_INTENT_ID, Constants.REQUEST_BARCODE_SCAN);
-
-        setResult(RESULT_OK, resultIntent);
-        this.finish();
+        ProductScan.initiate(this);
     }
 
     private class onPriceClickedListener implements AdapterView.OnItemClickListener
