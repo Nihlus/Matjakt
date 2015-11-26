@@ -75,11 +75,7 @@ public class AddPriceDialogFragment extends DialogFragment
             StoreNames.add(Store.ID + " - " + Store.Chain + " " + Store.Name);
         }
 
-        // TODO: Replace with proper adapter, containing the ID as well. HashMaps!
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                R.layout.support_simple_spinner_dropdown_item, StoreNames);
-
-        storeSpinner.setAdapter(adapter);
+        resetStoreSpinner();
 
         Button addStoreButton = (Button)view.findViewById(R.id.addStoreButton);
         addStoreButton.setOnClickListener(new View.OnClickListener()
@@ -131,6 +127,16 @@ public class AddPriceDialogFragment extends DialogFragment
         return builder.create();
     }
 
+    private void resetStoreSpinner()
+    {
+        // TODO: Replace with proper adapter, containing the ID as well. HashMaps!
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                R.layout.support_simple_spinner_dropdown_item, StoreNames);
+
+        storeSpinner.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
     private String getUserCurrency()
     {
         SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -146,10 +152,25 @@ public class AddPriceDialogFragment extends DialogFragment
             if (!StoreNames.contains(storeEntry))
             {
                 StoreNames.add(storeEntry);
+                resetStoreSpinner();
             }
 
-            int storeIndex = StoreNames.indexOf(storeEntry);
-            storeSpinner.setSelection(storeIndex, true);
+            storeSpinner.setSelection(getStoreSpinnerID(storeEntry), true);
         }
+    }
+
+    private int getStoreSpinnerID(String InStore)
+    {
+        int i = 0;
+        for (String StoreName : StoreNames)
+        {
+            if (StoreName.equals(InStore))
+            {
+                return i;
+            }
+
+            ++i;
+        }
+        return 0;
     }
 }

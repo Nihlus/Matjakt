@@ -42,7 +42,7 @@ public final class Constants
     public static final String OutpanLegacyAPI_EditName = "http://www.outpan.com/api/edit-name.php";
     public static final String OutpanLegacyAPI_EditAttribute = "http://www.outpan.com/api/edit-attr.php";
 
-    public static final String MatjaktAPIURL = "http://192.168.1.120/api/v1/";
+    public static final String MatjaktAPIURL = "http://directorate.asuscomm.com/api/v1/";
     public static final String GETSTORES = "matjakt_getstores.php";
     public static final String GETSTORE = "matjakt_getstore.php";
     public static final String GETPRICES = "matjakt_getprices.php";

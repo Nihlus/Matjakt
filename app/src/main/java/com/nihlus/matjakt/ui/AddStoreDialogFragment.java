@@ -12,7 +12,7 @@ import android.widget.EditText;
 import com.nihlus.matjakt.database.inserters.InsertStoreTask;
 import com.nihlus.matjakt.R;
 
-
+// TODO: Deprecate this class in favor of a store selector with autocomplete in the price dialog
 public class AddStoreDialogFragment extends DialogFragment
 {
 
@@ -45,7 +45,7 @@ public class AddStoreDialogFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(ParentActivity);
 
         builder.setTitle(getActivity().getResources().getString(R.string.ui_addStoreTitle));
         //LayoutInflater inflater = getActivity().getLayoutInflater();
