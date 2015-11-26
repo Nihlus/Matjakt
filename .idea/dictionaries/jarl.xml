@@ -1,15 +1,46 @@
 <component name="ProjectDictionaryState">
   <dictionary name="jarl">
     <words>
+      <w>aboutfragment</w>
+      <w>addprice</w>
+      <w>addproductfragment</w>
+      <w>addstore</w>
+      <w>addstoredialog</w>
       <w>apikey</w>
+      <w>cccccc</w>
+      <w>ddff</w>
+      <w>dedca</w>
       <w>doesn</w>
+      <w>draweritem</w>
       <w>fairtrade</w>
+      <w>geooding</w>
+      <w>getprices</w>
+      <w>getstore</w>
+      <w>getstores</w>
+      <w>gtin</w>
+      <w>hasstartedbefore</w>
       <w>hocevar</w>
       <w>jarl</w>
       <w>matjakt</w>
+      <w>matjaktprefs</w>
+      <w>maxstoredistance</w>
       <w>nihlus</w>
+      <w>nixtime</w>
       <w>nära</w>
       <w>outpan</w>
+      <w>outpanurl</w>
+      <w>preferredstoredistance</w>
+      <w>pricedialog</w>
+      <w>pricemapid</w>
+      <w>productdata</w>
+      <w>productkey</w>
+      <w>repairproductfragment</w>
+      <w>scanfragment</w>
+      <w>settingsfragment</w>
+      <w>splitmap</w>
+      <w>storeid</w>
+      <w>usedarktheme</w>
+      <w>usercurrency</w>
       <w>zxing</w>
     </words>
   </dictionary>

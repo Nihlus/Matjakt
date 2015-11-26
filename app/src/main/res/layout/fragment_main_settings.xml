@@ -4,12 +4,11 @@
              android:layout_height="match_parent"
              tools:context="com.nihlus.matjakt.ui.MainSettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="left|top">
+        android:layout_gravity="start|top">
 
         <TextView
             android:layout_width="wrap_content"
@@ -18,7 +17,6 @@
             android:text="@string/ui_settings_location"
             android:id="@+id/textView4"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="10dp"/>
 
@@ -29,7 +27,6 @@
             android:text="@string/ui_settings_preferredStoreDistance"
             android:id="@+id/textView6"
             android:layout_below="@+id/textView7"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
         <EditText
@@ -39,12 +36,10 @@
             android:ems="10"
             android:id="@+id/preferredStoreDistanceText"
             android:layout_alignTop="@+id/textView6"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/textView6"
-            android:layout_toRightOf="@+id/textView6"
-            android:layout_marginLeft="48dp"
-            android:hint="2"/>
+            android:layout_marginStart="48dp"
+            android:hint="@string/ui_settings_defaultPreferredStoreDistance"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -53,11 +48,9 @@
             android:ems="10"
             android:id="@+id/maximumStoreDistanceText"
             android:layout_below="@+id/preferredStoreDistanceText"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_alignLeft="@+id/preferredStoreDistanceText"
             android:layout_alignStart="@+id/preferredStoreDistanceText"
-            android:hint="10"/>
+            android:hint="@string/ui_settings_defaultMaximumStoreDistance"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,7 +58,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/ui_settings_maxStoreDistance"
             android:id="@+id/textView5"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/maximumStoreDistanceText"/>
 
@@ -76,7 +68,6 @@
             android:text="@string/ui_settings_locationHint"
             android:id="@+id/textView7"
             android:layout_below="@+id/textView4"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="8dp"/>
 
@@ -87,7 +78,6 @@
             android:text="@string/ui_settings_currency"
             android:id="@+id/textView8"
             android:layout_below="@+id/maximumStoreDistanceText"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
         <Spinner
@@ -95,7 +85,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/currencySpinner"
             android:layout_below="@+id/textView8"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:spinnerMode="dialog"
             android:longClickable="false"/>
@@ -107,7 +96,6 @@
             android:text="@string/ui_settings_appearance"
             android:id="@+id/textView9"
             android:layout_below="@+id/currencySpinner"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
         <CheckBox
@@ -116,7 +104,6 @@
             android:text="@string/ui_settings_useDarkTheme"
             android:id="@+id/useDarkThemeCheckbox"
             android:layout_below="@+id/textView9"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:checked="false"/>
 

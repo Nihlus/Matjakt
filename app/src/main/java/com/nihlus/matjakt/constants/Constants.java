@@ -22,8 +22,6 @@ public final class Constants
     public static final String PREF_USERCURRENCY = "userCurrency";
 
     public static final String GENERIC_INTENT_ID = "INTENT";
-    public static final String MATJAKT_LOG_ID = "MATJAKT";
-    public static final String CURRENTFRAGMENT_ID = "CURRENTFRAGMENT";
     public static final String SCANFRAGMENT_ID = "SCANFRAGMENT";
     public static final String SETTINGSFRAGMENT_ID = "SETTINGSFRAGMENT";
     public static final String ABOUTFRAGMENT_ID = "ABOUTFRAGMENT";
@@ -82,7 +80,7 @@ public final class Constants
     public static final String PRODUCTKEY_VIDEOS = "videos";
     public static final String PRODUCTKEY_CATEGORIES = "categories";
 
-    public static final String SPLITMAP_LETTER = "LETTER";
+    public static final String SPLITMAP_UNIT = "LETTER";
     public static final String SPLITMAP_NUMBER = "NUMBER";
 
     public static final int DRAWERITEM_SCAN = 0;

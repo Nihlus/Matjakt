@@ -6,7 +6,8 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.nihlus.matjakt.ui.ModifyProductActivity">
+                tools:context="com.nihlus.matjakt.ui.ModifyProductActivity"
+                android:background="#ffffff">
 
     <Button
         android:id="@+id/button4"
@@ -14,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:onClick="onClickOKButton"
         android:text="@string/dialog_OK"/>
 
@@ -22,11 +22,9 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="64dp"
-        android:layout_marginRight="64dp"
         android:text="@string/ui_editBrand"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -35,19 +33,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView3"
         android:layout_toEndOf="@+id/textView3"
         android:hint="@string/ui_brandHint"
         android:imeOptions="actionNext"
         android:maxLines="1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:lines="1"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/brandEdit"
         android:text="@string/ui_editName"
@@ -57,14 +53,13 @@
         android:id="@+id/productNameEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/brandEdit"
         android:layout_alignStart="@+id/brandEdit"
         android:layout_alignTop="@+id/textView2"
         android:hint="@string/ui_nameHint"
         android:imeOptions="actionNext"
         android:maxLines="1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:lines="1"/>
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -73,7 +68,6 @@
         android:id="@+id/isFairtradeCheckbox"
         android:checked="false"
         android:layout_alignTop="@+id/isOrganicCheckbox"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="32dp"/>
 
@@ -84,7 +78,6 @@
         android:id="@+id/isOrganicCheckbox"
         android:checked="false"
         android:layout_above="@+id/button4"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="86dp"/>
 
@@ -95,7 +88,6 @@
         android:text="@string/ui_editAmount"
         android:id="@+id/textView"
         android:layout_below="@+id/productNameEdit"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <EditText
@@ -105,23 +97,23 @@
         android:ems="10"
         android:id="@+id/productAmountEdit"
         android:layout_below="@+id/productNameEdit"
-        android:layout_alignLeft="@+id/productNameEdit"
         android:layout_alignStart="@+id/productNameEdit"
         android:hint="@string/ui_weightHint"
-        android:layout_toLeftOf="@+id/amountSpinner"
-        android:layout_toStartOf="@+id/amountSpinner"/>
+        android:layout_toStartOf="@+id/amountSpinner"
+        android:maxLines="1"
+        android:lines="1"/>
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
         android:id="@+id/amountSpinner"
         android:layout_alignTop="@+id/productAmountEdit"
         android:layout_alignBottom="@+id/productAmountEdit"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:entries="@array/ui_amount_types"
         android:spinnerMode="dialog"
-        android:layout_alignLeft="@+id/button4"
-        android:layout_alignStart="@+id/button4"/>
+        android:layout_alignStart="@+id/button4"
+        />
 
 </RelativeLayout>

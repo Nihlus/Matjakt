@@ -32,25 +32,6 @@ public class MainSettingsFragment extends Fragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
@@ -148,49 +129,49 @@ public class MainSettingsFragment extends Fragment
         return createdView;
     }
 
-    protected void updatePreferenceDistanceValue(String InKey, float InData)
+    private void updatePreferenceDistanceValue(String InKey, float InData)
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor preferenceEditor = preferences.edit();
 
         preferenceEditor.putFloat(InKey, InData);
 
-        preferenceEditor.commit();
+        preferenceEditor.apply();
     }
 
-    protected void updatePreferenceCurrencyValue(String InCurrency)
+    private void updatePreferenceCurrencyValue(String InCurrency)
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor preferenceEditor = preferences.edit();
 
         preferenceEditor.putString(Constants.PREF_USERCURRENCY, InCurrency);
 
-        preferenceEditor.commit();
+        preferenceEditor.apply();
     }
 
-    protected void updateShouldUseDarkThemeValue(boolean shouldUseDarkTheme)
+    private void updateShouldUseDarkThemeValue(boolean shouldUseDarkTheme)
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor preferenceEditor = preferences.edit();
 
         preferenceEditor.putBoolean(Constants.PREF_USEDARKTHEME, shouldUseDarkTheme);
 
-        preferenceEditor.commit();
+        preferenceEditor.apply();
     }
 
-    protected String getDistanceValue(String InKey)
+    private String getDistanceValue(String InKey)
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return String.valueOf(preferences.getFloat(InKey, 0));
     }
 
-    protected String getUserCurrency()
+    private String getUserCurrency()
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getString(Constants.PREF_USERCURRENCY, "");
     }
 
-    protected boolean getShouldUseDarkTheme()
+    private boolean getShouldUseDarkTheme()
     {
         SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getBoolean(Constants.PREF_USEDARKTHEME, false);

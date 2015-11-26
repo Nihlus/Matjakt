@@ -1,16 +1,11 @@
 package com.nihlus.matjakt;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
@@ -21,20 +16,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
-import com.nihlus.matjakt.outpan.OutpanAPI2;
-import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.services.GPSService;
-import com.nihlus.matjakt.ui.AddProductDialogFragment;
 import com.nihlus.matjakt.ui.MainAboutFragment;
 import com.nihlus.matjakt.ui.MainSettingsFragment;
-import com.nihlus.matjakt.ui.RepairProductDialogFragment;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import java.util.Currency;
@@ -48,15 +38,14 @@ public class MainActivity extends AppCompatActivity
     /// GPS Service Binding ///
 
     private boolean isGPSBound;
-    private GPSService GPS;
-    private ServiceConnection GPSConnection = new ServiceConnection()
+    private final ServiceConnection GPSConnection = new ServiceConnection()
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
         {
             isGPSBound = true;
             GPSService.GPSBinder Binder = (GPSService.GPSBinder) service;
-            GPS = Binder.getService();
+            Binder.getService();
         }
 
         @Override
@@ -88,28 +77,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupLeftDrawer();
-
         if (!hasStartedBefore())
         {
             doFirstTimeSetup();
         }
 
+        setupLeftDrawer();
         setFragment(new MainActivityFragment(), Constants.SCANFRAGMENT_ID);
-
         bindGPS();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
     }
 
     @Override
@@ -141,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, menuItems));
+        drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, menuItems));
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -201,38 +176,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content_frame);
+        if (id == R.id.action_settings && !(currentFragment instanceof MainSettingsFragment))
         {
-            return true;
+            setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private boolean hasStartedBefore()
-    {
-        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getBoolean(Constants.PREF_HASSTARTEDBEFORE, false);
-    }
-
-    private void doFirstTimeSetup()
-    {
-        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor preferenceEditor = preferences.edit();
-
-        preferenceEditor.putBoolean(Constants.PREF_HASSTARTEDBEFORE, true);
-        preferenceEditor.putBoolean(Constants.PREF_USEDARKTHEME, false);
-        preferenceEditor.putFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
-        preferenceEditor.putFloat(Constants.PREF_MAXSTOREDISTANCE, 10.0f);
-        preferenceEditor.putString(Constants.PREF_USERCURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
-
-        preferenceEditor.commit();
-    }
-
-    public void onScanButtonClicked(View view)
-    {
-        // Will fail if there's no network available
-        ProductScan.initiate(this);
     }
 
     @Override
@@ -258,25 +208,37 @@ public class MainActivity extends AppCompatActivity
 
             startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
         }
-        else if (requestCode == Constants.VIEW_EXISTING_PRODUCT && resultCode == RESULT_OK)
-        {
-            int request = data.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
-            if (request == Constants.REQUEST_BARCODE_SCAN)
-            {
-                ProductScan.initiate(this);
-            }
-        }
-        else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
-        {
-            int request = data.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
-            if (request == Constants.REQUEST_BARCODE_SCAN)
-            {
-                ProductScan.initiate(this);
-            }
-        }
         else
         {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+
+    private boolean hasStartedBefore()
+    {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getBoolean(Constants.PREF_HASSTARTEDBEFORE, false);
+    }
+
+    private void doFirstTimeSetup()
+    {
+        SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor preferenceEditor = preferences.edit();
+
+        preferenceEditor.putBoolean(Constants.PREF_HASSTARTEDBEFORE, true);
+        preferenceEditor.putBoolean(Constants.PREF_USEDARKTHEME, false);
+        preferenceEditor.putFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
+        preferenceEditor.putFloat(Constants.PREF_MAXSTOREDISTANCE, 10.0f);
+        preferenceEditor.putString(Constants.PREF_USERCURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
+
+        preferenceEditor.apply();
+    }
+
+    @SuppressWarnings({"unused", "UnusedParameters"})
+    public void onScanButtonClicked(View view)
+    {
+        // Will fail if there's no network available
+        ProductScan.initiate(this);
     }
 }

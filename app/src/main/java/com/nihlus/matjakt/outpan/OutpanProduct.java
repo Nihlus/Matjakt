@@ -8,7 +8,6 @@ import com.nihlus.matjakt.database.containers.EAN;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Attr;
 
 import java.net.MalformedURLException;
 import java.net.URL;

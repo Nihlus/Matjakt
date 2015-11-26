@@ -27,10 +27,8 @@
     </string-array>
 
     <string name="title_activity_view_product">Visa produkt</string>
-    <string name="debug_fragmentNullLog">Fragmentet var null!</string>
     <string name="dialog_RetrievingProduct">Hämtar produktinformation…</string>
     <string name="prompt_ScanACode">Skanna en streckkod</string>
-    <string name="debug_placeholder">platshållare</string>
     <string name="title_activity_new_product">Ny produkt</string>
     <string name="debug_howDidYouGetHere">Hur hamnade du här?</string>
     <string name="dialog_No">Nej</string>
@@ -74,4 +72,7 @@
     <string name="ui_settings_maxStoreDistance">Maximalt butiksavstånd</string>
     <string name="ui_settings_preferredStoreDistance">Föredraget butiksavstånd</string>
     <string name="ui_settings_useDarkTheme">Använd ett mörkt tema</string>
+    <string name="ui_settings_defaultMaximumStoreDistance">10</string>
+    <string name="ui_settings_defaultPreferredStoreDistance">2</string>
+    <string name="hello_blank_fragment">Hej tomt fragment</string>
 </resources>

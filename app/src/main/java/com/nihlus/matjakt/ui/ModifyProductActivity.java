@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -56,29 +55,29 @@ public class ModifyProductActivity extends AppCompatActivity
             this.productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
             this.ProductEAN = productData.getParcelable(Constants.PRODUCT_EAN);
 
-            EditText brandName = (EditText) findViewById(R.id.brandEdit);
-            EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-            EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
+            EditText brandNameEdit = (EditText) findViewById(R.id.brandEdit);
+            EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
+            EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
 
             Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
             CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
             CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
 
-            //load input data from the intent
-
+            //load input data from the product data
             // Brand
-            brandName.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            brandNameEdit.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
 
             // Name
-            productTitle.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            productTitleEdit.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
 
             // Amount
             if (productData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                HashMap<String, String> splitValue = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-                productAmount.setText(splitValue.get(Constants.SPLITMAP_NUMBER));
-                productAmountSpinner.setSelection(((ArrayAdapter<String>) productAmountSpinner.getAdapter()).getPosition(splitValue.get(Constants.SPLITMAP_LETTER)));
+                HashMap<String, String> amountValues = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+
+                productAmountEdit.setText(amountValues.get(Constants.SPLITMAP_NUMBER));
+                productAmountSpinner.setSelection(getUnitIndex(amountValues.get(Constants.SPLITMAP_UNIT)));
             }
 
             // Is it organic?
@@ -117,29 +116,12 @@ public class ModifyProductActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (requestCode == Constants.REQUEST_BARCODE_SCAN && resultCode == RESULT_OK)
-        {
-            if (data.getIntExtra(Constants.GENERIC_INTENT_ID, -1) == Constants.REQUEST_BARCODE_SCAN)
-            {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.GENERIC_INTENT_ID, Constants.REQUEST_BARCODE_SCAN);
-
-                setResult(RESULT_OK, resultIntent);
-                this.finish();
-            }
-        }
-    }
-
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void onClickOKButton(View view)
     {
         //verify data
-        if (verifyRequiredFields())
+        if (areRequiredFieldsFilledOut())
         {
-            //Toast.makeText(this, getFinalProductString(), Toast.LENGTH_LONG).show();
-
             //if OK, send to server
             EditText brandName = (EditText) findViewById(R.id.brandEdit);
             EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
@@ -171,8 +153,8 @@ public class ModifyProductActivity extends AppCompatActivity
                 newProductData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
             }
 
-            //create the task and send it to the server, close parentActivity when done
-            UpdateProductTitle update = new UpdateProductTitle(this, newProductData);
+            //create the task and send it to the server, close the modify activity when done
+            UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProductData);
             update.execute(getFinalProductString());
         }
     }
@@ -244,13 +226,13 @@ public class ModifyProductActivity extends AppCompatActivity
             }
         }
 
-        list.put(Constants.SPLITMAP_LETTER, tempChars);
+        list.put(Constants.SPLITMAP_UNIT, tempChars);
         list.put(Constants.SPLITMAP_NUMBER, tempNumbers);
 
         return list;
     }
 
-    private boolean verifyRequiredFields()
+    private boolean areRequiredFieldsFilledOut()
     {
         boolean bHasIncompleteFields = false;
 
@@ -281,37 +263,64 @@ public class ModifyProductActivity extends AppCompatActivity
         return !bHasIncompleteFields;
     }
 
-    // TODO: 9/11/15 Update to reflect new Bundle model (match values with Bundle instead of default values
     private boolean haveFieldsChanged()
     {
         boolean bFieldsHaveChanged = false;
 
-        EditText productBrand = (EditText) findViewById(R.id.brandEdit);
-        EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-        EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
+        EditText productBrandEdit = (EditText) findViewById(R.id.brandEdit);
+        EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
+        EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
         Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
-        if (!productBrand.getText().toString().equals(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE)))
+        if (!productBrandEdit.getText().toString().equals(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if (!productTitle.getText().toString().equals(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE)))
+        if (!productTitleEdit.getText().toString().equals(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if (!productAmount.getText().toString().equals(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)))
+        String productAmount = productAmountEdit.getText().toString() + productAmountSpinner.getSelectedItem().toString();
+        if (!productAmount.equals(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)))
         {
             bFieldsHaveChanged = true;
         }
 
-        if ((productAmountSpinner.getSelectedItemPosition() != 0))
+        HashMap<String, String> amountMap = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+        if (amountMap.size() > 0)
         {
-            bFieldsHaveChanged = true;
+            int indexOfAmountUnit = getUnitIndex(amountMap.get(Constants.SPLITMAP_UNIT));
+            if ((productAmountSpinner.getSelectedItemPosition() != indexOfAmountUnit))
+            {
+                bFieldsHaveChanged = true;
+            }
         }
+
+
 
         return bFieldsHaveChanged;
+    }
+
+    private int getUnitIndex(String InUnit)
+    {
+        if (!InUnit.isEmpty())
+        {
+            String[] unitTypes = getResources().getStringArray(R.array.ui_amount_types);
+
+            int i = 0;
+            for (String unitType : unitTypes)
+            {
+                if (unitType.equals(InUnit))
+                {
+                    return i;
+                }
+                ++i;
+            }
+        }
+
+        return 0;
     }
 
     private String getFinalProductString()
@@ -329,14 +338,14 @@ public class ModifyProductActivity extends AppCompatActivity
     }
 
     //async posting of the update to the database
-    class UpdateProductTitle extends AsyncTask<String, Void, OutpanProduct>
+    class UpdateOutpanProduct extends AsyncTask<String, Void, OutpanProduct>
     {
         private final Activity modifyProductParentActivity;
         private final Bundle ProductData;
 
         private final ProgressDialog dialog;
 
-        UpdateProductTitle(Activity InParentActivity, Bundle InProductData)
+        UpdateOutpanProduct(Activity InParentActivity, Bundle InProductData)
         {
             this.modifyProductParentActivity = InParentActivity;
             this.ProductData = InProductData;
@@ -368,7 +377,8 @@ public class ModifyProductActivity extends AppCompatActivity
 
             if (ProductData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)).get(Constants.SPLITMAP_NUMBER).isEmpty();
+                boolean isEmpty = splitAmountValue(ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+                        .get(Constants.SPLITMAP_NUMBER).isEmpty();
 
                 if (!isEmpty)
                 {
@@ -395,6 +405,7 @@ public class ModifyProductActivity extends AppCompatActivity
             return api.getProduct((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN));
         }
 
+        // TODO: Update the values in the existing ViewProductActivity instead of loading a new one
         protected void onPostExecute(OutpanProduct result)
         {
             super.onPostExecute(result);
@@ -406,8 +417,6 @@ public class ModifyProductActivity extends AppCompatActivity
 
                 resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
 
-
-                //TODO: Scan button stops working if we've been editing as the new activity doesn't have a parent
                 modifyProductParentActivity.setResult(RESULT_OK, resultIntent);
                 modifyProductParentActivity.startActivityForResult(resultIntent, Constants.VIEW_EXISTING_PRODUCT);
                 modifyProductParentActivity.finish();

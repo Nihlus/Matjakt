@@ -47,7 +47,7 @@ public class ViewProductActivity extends AppCompatActivity
 
     private boolean isGPSBound;
     private GPSService GPS;
-    private ServiceConnection GPSConnection = new ServiceConnection()
+    private final ServiceConnection GPSConnection = new ServiceConnection()
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service)
@@ -127,19 +127,13 @@ public class ViewProductActivity extends AppCompatActivity
         bindGPS();
     }
 
-    protected void onGPSConnected()
+    private void onGPSConnected()
     {
         // Load the prices using the available location
         if (GPS != null)
         {
             LoadPricesAsync();
         }
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
     }
 
     @Override
@@ -179,7 +173,6 @@ public class ViewProductActivity extends AppCompatActivity
             intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, ProductData);
 
             startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
-            this.finish();
             return true;
         }
 
@@ -241,12 +234,9 @@ public class ViewProductActivity extends AppCompatActivity
     public void LoadPricesAsync()
     {
         swipeContainer.setRefreshing(true);
-        //TODO: Clean this crap up (GPS Service)
-        //TODO: Use real values instead of debug point
         RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
                 GPS.getCurrentLocation().getLatitude(),
-                GPS.getCurrentLocation().getLongitude(),
-                2);
+                GPS.getCurrentLocation().getLongitude());
 
         pricesTask.execute();
     }
@@ -301,7 +291,6 @@ public class ViewProductActivity extends AppCompatActivity
 
     private void resetListViewAdapter()
     {
-        // HACK: 9/8/15 ListView needs to have its adapter reset manually to clear ghosting data
         ListView priceView = (ListView)findViewById(R.id.listView_Prices);
         if (priceView != null)
         {
@@ -312,6 +301,7 @@ public class ViewProductActivity extends AppCompatActivity
         }
     }
 
+    @SuppressWarnings({"unused", "UnusedParameters"})
     public void onScanButtonClicked(View view)
     {
         ProductScan.initiate(this);
@@ -346,8 +336,6 @@ public class ViewProductActivity extends AppCompatActivity
 
     public void onStoresLoaded(List<MatjaktStore> Stores)
     {
-        //TODO: Clean this crap up (GPS Service)
-        //TODO: Use real values instead of debug point
         AddPriceDialogFragment addPriceDialog = new AddPriceDialogFragment(this,
                 Stores,
                 ProductData,

@@ -11,7 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by jarl on 11/21/15.
+ * Remote JSON retrieval utility class
  */
 class Utility
 {

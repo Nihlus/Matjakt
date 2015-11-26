@@ -52,7 +52,6 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
         progressDialog = ProgressDialog.show(ParentActivity, "", ParentActivity.getResources().getString(R.string.dialog_insertingStore));
     }
 
-    // TODO: 9/8/15 Stub class - retrieve and sort prices
     @Override
     protected Boolean doInBackground(Void... nothing)
     {
@@ -115,6 +114,7 @@ public class InsertStoreTask extends AsyncTask<Void, Void, Boolean>
     @Override
     protected void onPostExecute(Boolean success)
     {
+        // TODO: Sort stores based on distance
         progressDialog.cancel();
         if (ParentDialog instanceof AddPriceDialogFragment)
         {

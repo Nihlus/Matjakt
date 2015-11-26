@@ -82,9 +82,21 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
 
     }
 
-    // TODO: Refactor - redundant and repetitive code
     @Override
     protected List<MatjaktPrice> doInBackground(Void... nothing)
+    {
+        List<MatjaktPrice> retrievedPrices = fetchPrices(false);
+
+        // Perform an extended search if needed
+        if (retrievedPrices.size() <= 0 && !areSearchDistancesEqual())
+        {
+            fetchPrices(true);
+        }
+
+        return retrievedPrices;
+    }
+
+    private List<MatjaktPrice> fetchPrices(Boolean bIsExtendedSearch)
     {
         List<MatjaktPrice> retrievedPrices = new ArrayList<>();
 
@@ -94,7 +106,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                     Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                     Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(false));
+                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(bIsExtendedSearch));
 
             if (!chain.isEmpty())
             {
@@ -117,40 +129,6 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                     retrievedPrices.add(newPrice);
                 }
             }
-
-            //TODO: Load extended search radius from settings instead of a hardcoded value
-            // No prices? Extend the search 10x
-            if (!(retrievedPrices.size() > 0))
-            {
-                rawUrl = Constants.MatjaktAPIURL + Constants.GETPRICES + "?" +
-                        Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
-                        Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
-                        Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                        Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(true));
-
-                if (!chain.isEmpty())
-                {
-                    rawUrl += "&" + Constants.API_PARAM_CHAIN + "=" + chain;
-                }
-
-                if (count > 0)
-                {
-                    rawUrl += "&" + Constants.API_PARAM_COUNT + "=" + String.valueOf(count);
-                }
-
-                Result = Utility.getRemoteJSONArray(new URL(rawUrl));
-
-                if (Result != null)
-                {
-                    for (int i = 0; i < Result.length(); ++i)
-                    {
-                        MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
-                        newPrice.Store = getStore(newPrice.StoreID);
-
-                        retrievedPrices.add(newPrice);
-                    }
-                }
-            }
         }
         catch (MalformedURLException mex)
         {
@@ -164,17 +142,6 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         }
 
         return retrievedPrices;
-    }
-
-    @Override
-    protected void onPostExecute(List<MatjaktPrice> result)
-    {
-        //update list with the retrieved prices
-        if (ParentActivity instanceof ViewProductActivity)
-        {
-            //send the results
-            ((ViewProductActivity) ParentActivity).onPricesRetrieved(result);
-        }
     }
 
     public static MatjaktStore getStore(int id)
@@ -227,6 +194,22 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         else
         {
             return preferences.getFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
+        }
+    }
+
+    private boolean areSearchDistancesEqual()
+    {
+        return getStoreSearchDistance(true) == getStoreSearchDistance(false);
+    }
+
+    @Override
+    protected void onPostExecute(List<MatjaktPrice> retrievedPrices)
+    {
+        //update list with the retrieved prices
+        if (ParentActivity instanceof ViewProductActivity)
+        {
+            // TODO: Sort list based on price
+            ((ViewProductActivity) ParentActivity).onPricesRetrieved(retrievedPrices);
         }
     }
 }

@@ -23,8 +23,6 @@
     <string name="prompt_productUpdateFailed">Whoops! Could not update the product information.</string>
     <string name="prompt_addNewPrice">Add new price</string>
 
-    <string name="debug_fragmentNullLog">Fragment was null!</string>
-    <string name="debug_placeholder">placeholder</string>
     <string name="debug_howDidYouGetHere">How did you get here?</string>
     <string name="debug_noInternet">No internet connection :(</string>
 
@@ -82,4 +80,6 @@
     <string name="ui_settings_currency">Currency</string>
     <string name="ui_settings_appearance">Appearance</string>
     <string name="ui_settings_useDarkTheme">Use dark theme</string>
+    <string name="ui_settings_defaultPreferredStoreDistance">2</string>
+    <string name="ui_settings_defaultMaximumStoreDistance">10</string>
 </resources>

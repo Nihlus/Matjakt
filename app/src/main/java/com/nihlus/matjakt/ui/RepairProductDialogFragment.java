@@ -39,12 +39,6 @@ public class RepairProductDialogFragment extends DialogFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -66,7 +60,7 @@ public class RepairProductDialogFragment extends DialogFragment
 
                 //if (!userInput.isEmpty())
                 //{
-                //   new UpdateProductTitle().execute(userInput);
+                //   new UpdateOutpanProduct().execute(userInput);
                 //}
 
                 Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);

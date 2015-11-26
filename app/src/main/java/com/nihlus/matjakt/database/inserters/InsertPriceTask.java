@@ -49,7 +49,6 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
         }
     }
 
-    // TODO: 9/8/15 Stub class - retrieve and sort prices
     @Override
     protected Boolean doInBackground(Void... nothing)
     {
