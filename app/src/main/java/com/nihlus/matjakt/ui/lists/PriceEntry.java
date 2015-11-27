@@ -1,9 +1,6 @@
 package com.nihlus.matjakt.ui.lists;
 
-import android.content.Context;
-
 import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.R;
 
 import java.util.HashMap;
 
@@ -43,7 +40,7 @@ public class PriceEntry
     public HashMap<String, String> getHashMap()
     {
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(Constants.PRICEMAPID_CHAIN, Chain);
+        hashMap.put(Constants.PRICEMAPID_STORE, Chain);
 
         //if the entry is an "Add" entry (i.e, just a plus sign) or Loading, don't add the price or the comma
         if (isSpecial)

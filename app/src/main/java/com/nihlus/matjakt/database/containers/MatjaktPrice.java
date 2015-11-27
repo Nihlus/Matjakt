@@ -58,7 +58,7 @@ public class MatjaktPrice
         HashMap<String, String> hashMap = new HashMap<>();
 
 
-        hashMap.put(Constants.PRICEMAPID_CHAIN, Store.storePlace.getName().toString());
+        hashMap.put(Constants.PRICEMAPID_STORE, Store.storePlace.getName().toString());
         hashMap.put(Constants.PRICEMAPID_EXTRA, "");
         hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
 

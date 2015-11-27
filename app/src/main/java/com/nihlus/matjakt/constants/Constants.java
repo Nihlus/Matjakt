@@ -20,6 +20,8 @@ public final class Constants
     public static final String PREF_PREFERREDSTOREDISTANCE = "preferredStoreDistance";
     public static final String PREF_MAXSTOREDISTANCE ="maxStoreDistance";
     public static final String PREF_USERCURRENCY = "userCurrency";
+    public static final String PREF_STOREPLACEID = "storePlaceID";
+    public static final String PREF_STOREPRIMARYTEXT = "storePrimaryText";
 
     public static final String GENERIC_INTENT_ID = "INTENT";
     public static final String SCANFRAGMENT_ID = "SCANFRAGMENT";
@@ -54,7 +56,6 @@ public final class Constants
     public static final String API_PARAM_LAT = "latitude";
     public static final String API_PARAM_LON = "longitude";
     public static final String API_PARAM_DISTANCE = "distance";
-    public static final String API_PARAM_COUNT = "count";
     public static final String API_PARAM_PRICE = "price";
     public static final String API_PARAM_CURRENCY = "currency";
     public static final String API_PARAM_STORE = "store";
@@ -63,8 +64,7 @@ public final class Constants
     public static final String API_PARAM_STOREID = "storeid";
     public static final String API_PARAM_PLACEID = "placeID";
 
-    public static final String PRICEMAPID_CHAIN = "CHAIN";
-    public static final String PRICEMAPID_PLACEID = "PLACEID";
+    public static final String PRICEMAPID_STORE = "STORE";
     public static final String PRICEMAPID_EXTRA = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
     public static final String PRICEMAPID_LAT = "LAT";

@@ -99,13 +99,23 @@ public class AddPriceDialogFragment extends DialogFragment
                         {
                             final AutocompletePrediction item = placeAutocompleteAdapter.getItem(position);
                             selectedPlaceID = item.getPlaceId();
-
-                            Toast.makeText(ParentActivity, selectedPlaceID, Toast.LENGTH_SHORT).show();
                         }
                     });
 
+                    // Load the previous store data, if we have some
+                    if (!getSavedPrimaryText().isEmpty())
+                    {
+                        autoCompleteStoreText.setText(getSavedPrimaryText());
+                    }
+
+                    if (!getSavedPlaceID().isEmpty())
+                    {
+                        selectedPlaceID = getSavedPlaceID();
+                    }
+
                     ArrayList<Integer> filterTypes = new ArrayList<>();
                     filterTypes.add(Place.TYPE_ESTABLISHMENT);
+
                     AutocompleteFilter filter = AutocompleteFilter.create(filterTypes);
                     LatLngBounds bounds = getLatLngBoundsFromLocation(Latitude, Longitude, getStoreSearchDistance(true));
                     placeAutocompleteAdapter = new PlaceAutocompleteAdapter(ParentActivity,
@@ -158,6 +168,8 @@ public class AddPriceDialogFragment extends DialogFragment
                 {
                     EditText priceEntry = (EditText) v.getRootView().findViewById(R.id.priceEntry);
                     double inPrice = Double.valueOf(priceEntry.getText().toString());
+
+                    saveStoreState(selectedPlaceID, autoCompleteStoreText.getText().toString());
 
                     // TODO: Check the selected Google API place (if there is one)
                     // If not, add a new store using the provided name, then add the price
@@ -225,11 +237,26 @@ public class AddPriceDialogFragment extends DialogFragment
         }
     }
 
-    public void onStoreInserted(boolean Success, MatjaktStore InsertedStore)
+    private void saveStoreState(String placeID, String primaryText)
     {
-        if (Success)
-        {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
 
-        }
+        editor.putString(Constants.PREF_STOREPLACEID, placeID);
+        editor.putString(Constants.PREF_STOREPRIMARYTEXT, primaryText);
+
+        editor.apply();
+    }
+
+    private String getSavedPlaceID()
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getString(Constants.PREF_STOREPLACEID, "");
+    }
+
+    private String getSavedPrimaryText()
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getString(Constants.PREF_STOREPRIMARYTEXT, "");
     }
 }

@@ -363,8 +363,8 @@ public class ViewProductActivity extends AppCompatActivity
         @Override
         public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
         {
-            String chainName = adapter.getItem(position).get(Constants.PRICEMAPID_PLACEID);
-            if (chainName.equals("+"))
+            String storeName = adapter.getItem(position).get(Constants.PRICEMAPID_STORE);
+            if (storeName.equals("+"))
             {
                 //add new price
                 Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
