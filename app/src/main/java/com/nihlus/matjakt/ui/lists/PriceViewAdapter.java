@@ -70,9 +70,20 @@ public class PriceViewAdapter extends BaseAdapter
         }
 
         HashMap<String, String> map = list.get(position);
-        storeChainText.setText(map.get(Constants.PRICEMAPID_CHAIN));
-        storeNameText.setText(map.get(Constants.PRICEMAPID_EXTRA));
-        priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
+        if (map.containsKey(Constants.PRICEMAPID_CHAIN))
+        {
+            storeChainText.setText(map.get(Constants.PRICEMAPID_CHAIN));
+        }
+
+        if (map.containsKey(Constants.PRICEMAPID_EXTRA))
+        {
+            storeNameText.setText(map.get(Constants.PRICEMAPID_EXTRA));
+        }
+
+        if (map.containsKey(Constants.PRICEMAPID_PRICE))
+        {
+            priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
+        }
 
         return convertView;
     }

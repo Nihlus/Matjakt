@@ -35,7 +35,7 @@ public final class Constants
     public static final String PRODUCT_AMOUNT_ATTRIBUTE = "Amount";
     public static final String PRODUCT_FAIRTRADE_ATTRIBUTE = "Fairtrade";
     public static final String PRODUCT_ORGANIC_ATTRIBUTE = "Organic";
-    public static final String PRODUCT_BUNDLE_EXTRA = "PRODUCTDATA";
+    public static final String PRODUCT_BUNDLE = "PRODUCTDATA";
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
     public static final String OutpanBaseURLv2 = "https://api.outpan.com/v2/products/";
@@ -54,17 +54,17 @@ public final class Constants
     public static final String API_PARAM_LAT = "latitude";
     public static final String API_PARAM_LON = "longitude";
     public static final String API_PARAM_DISTANCE = "distance";
-    public static final String API_PARAM_CHAIN = "chain";
     public static final String API_PARAM_COUNT = "count";
     public static final String API_PARAM_PRICE = "price";
     public static final String API_PARAM_CURRENCY = "currency";
     public static final String API_PARAM_STORE = "store";
     public static final String API_PARAM_OFFER = "isOffer";
-    public static final String API_PARAM_NAME = "name";
     public static final String API_PARAM_TIMESTAMP = "timestamp";
     public static final String API_PARAM_STOREID = "storeid";
+    public static final String API_PARAM_PLACEID = "placeID";
 
     public static final String PRICEMAPID_CHAIN = "CHAIN";
+    public static final String PRICEMAPID_PLACEID = "PLACEID";
     public static final String PRICEMAPID_EXTRA = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
     public static final String PRICEMAPID_LAT = "LAT";

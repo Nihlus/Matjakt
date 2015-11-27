@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
@@ -76,6 +77,8 @@ public class AddProductDialogFragment extends DialogFragment
             }
         });
 
-        return builder.create();
+        Dialog finalDialog = builder.create();
+        finalDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return finalDialog;
     }
 }

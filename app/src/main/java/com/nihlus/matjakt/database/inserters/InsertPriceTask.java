@@ -3,8 +3,11 @@ package com.nihlus.matjakt.database.inserters;
 import android.app.Activity;
 import android.os.AsyncTask;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.retrievers.RetrieveStoresTask;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONException;
@@ -16,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Inserts a price into the Matjakt database, based on EAN and store ID.
@@ -26,16 +30,16 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     private final EAN ean;
     private final double Price;
     private final String Currency;
-    private final int Store;
+    private final String PlaceID;
     private final boolean isOffer;
 
-    public InsertPriceTask(Activity InActivity, EAN InEAN, double InPrice, String InCurrency, int InStore, boolean InIsOffer)
+    public InsertPriceTask(Activity InActivity, EAN InEAN, double InPrice, String InCurrency, String inPlaceID, boolean InIsOffer)
     {
         this.ParentActivity = InActivity;
         this.ean = InEAN;
         this.Price = InPrice;
         this.Currency = InCurrency;
-        this.Store = InStore;
+        this.PlaceID = inPlaceID;
         this.isOffer = InIsOffer;
     }
 
@@ -54,11 +58,20 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     {
         try
         {
+            // Get the store ID from the database
+            if (!RetrieveStoresTask.isPlaceIDRegisteredByMatjakt(PlaceID))
+            {
+                // Take the place ID and put it into the Matjakt database so we can search based on distance
+                registerPlaceID(((ViewProductActivity)ParentActivity).getGoogleApiClient(), PlaceID);
+            }
+
+            int StoreID = RetrieveStoresTask.getStoreIDByPlaceID(PlaceID);
+
             String rawUrl = Constants.MatjaktAPIURL + Constants.ADDPRICE + "?" +
                     Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_PRICE + "=" + String.valueOf(Price) + "&" +
                     Constants.API_PARAM_CURRENCY + "=" + Currency + "&" +
-                    Constants.API_PARAM_STORE + "=" + String.valueOf(Store) + "&" +
+                    Constants.API_PARAM_STORE + "=" + String.valueOf(StoreID) + "&" +
                     Constants.API_PARAM_OFFER + "=" + String.valueOf(isOffer);
 
             String responseContent = "";
@@ -101,7 +114,32 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
         if (ParentActivity instanceof ViewProductActivity)
         {
             //send the results
-            ((ViewProductActivity) ParentActivity).LoadPricesAsync();
+            ((ViewProductActivity) ParentActivity).loadPricesAsync();
+        }
+    }
+
+    public static void registerPlaceID(GoogleApiClient apiClient, String InPlaceID)
+    {
+        Place storePlace = RetrieveStoresTask.getStorePlaceByID(apiClient, InPlaceID);
+
+        try
+        {
+            String rawUrl = Constants.MatjaktAPIURL + Constants.ADDSTORE + "?" +
+                    Constants.API_PARAM_PLACEID + "=" + InPlaceID + "&" +
+                    Constants.API_PARAM_LAT + "=" + String.valueOf(storePlace.getLatLng().latitude) + "&" +
+                    Constants.API_PARAM_LON + "=" + String.valueOf(storePlace.getLatLng().longitude);
+
+            URL url = new URL(rawUrl);
+            URLConnection requestConnection = url.openConnection();
+            requestConnection.getInputStream();
+        }
+        catch (MalformedURLException mex)
+        {
+            mex.printStackTrace();
+        }
+        catch (IOException iex)
+        {
+            iex.printStackTrace();
         }
     }
 }

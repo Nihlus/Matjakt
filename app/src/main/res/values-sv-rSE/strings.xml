@@ -75,4 +75,5 @@
     <string name="ui_settings_defaultMaximumStoreDistance">10</string>
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
     <string name="hello_blank_fragment">Hej tomt fragment</string>
+    <string name="ui_price_storeHint">Butik</string>
 </resources>

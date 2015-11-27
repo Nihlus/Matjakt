@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Places;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.nihlus.matjakt.ProductScan;
@@ -36,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ViewProductActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener
+
 {
     private final ArrayList<HashMap<String, String>> priceList = new ArrayList<>();
     private final PriceViewAdapter adapter = new PriceViewAdapter(this, priceList);
@@ -43,6 +49,7 @@ public class ViewProductActivity extends AppCompatActivity
     private Bundle ProductData;
 
     private SwipeRefreshLayout swipeContainer;
+    private GoogleApiClient googleApiClient;
 
 
     private boolean isGPSBound;
@@ -86,14 +93,17 @@ public class ViewProductActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
-        // Setup data
-        Intent intent = getIntent();
-        this.ProductData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
-
         // Setup main activity content
         setContentView(R.layout.activity_view_product);
         setTitle(getResources().getString(R.string.title_activity_scanned_product));
-        setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
+        setVisibleProduct(getIntent().getBundleExtra(Constants.PRODUCT_BUNDLE));
+
+        // Setup the Google Api
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
         // Setup ListView and its associated swipe container
         setupPriceView();
@@ -108,7 +118,7 @@ public class ViewProductActivity extends AppCompatActivity
                 // Load new prices from a new location
                 if (GPS != null)
                 {
-                    LoadPricesAsync();
+                    loadPricesAsync();
                 }
                 else
                 {
@@ -132,16 +142,47 @@ public class ViewProductActivity extends AppCompatActivity
         // Load the prices using the available location
         if (GPS != null)
         {
-            LoadPricesAsync();
+            loadPricesAsync();
         }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint)
+    {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause)
+    {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result)
+    {
+
+    }
+
+    public GoogleApiClient getGoogleApiClient()
+    {
+        return googleApiClient;
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        bindGPS();
+        googleApiClient.connect();
     }
 
     @Override
     protected void onStop()
     {
-        super.onStop();
-
+        googleApiClient.disconnect();
         unbindGPS();
+        super.onStop();
     }
 
     @Override
@@ -170,7 +211,7 @@ public class ViewProductActivity extends AppCompatActivity
         {
             Intent intent = new Intent(this, ModifyProductActivity.class);
             intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.MODIFY_EXISTING_PRODUCT);
-            intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, ProductData);
+            intent.putExtra(Constants.PRODUCT_BUNDLE, ProductData);
 
             startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
             return true;
@@ -197,10 +238,21 @@ public class ViewProductActivity extends AppCompatActivity
             if (data.getIntExtra(Constants.GENERIC_INTENT_ID, -1) != Constants.REQUEST_BARCODE_SCAN)
             {
                 //update from bundle
-                this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
+                this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE);
 
                 setVisibleProductTitle(getFinalProductString(ProductData));
             }
+        }
+    }
+
+    public void setVisibleProduct(Bundle InProductBundle)
+    {
+        this.ProductData = InProductBundle;
+
+        setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
+        if (GPS != null)
+        {
+            loadPricesAsync();
         }
     }
 
@@ -231,7 +283,7 @@ public class ViewProductActivity extends AppCompatActivity
         }
     }
 
-    public void LoadPricesAsync()
+    public void loadPricesAsync()
     {
         swipeContainer.setRefreshing(true);
         RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
@@ -269,7 +321,6 @@ public class ViewProductActivity extends AppCompatActivity
     public void setListStatusLoading()
     {
         clearPrices();
-        priceList.add(PriceEntry.getLoadingEntry(this).getHashMap());
         resetListViewAdapter();
     }
 
@@ -312,7 +363,7 @@ public class ViewProductActivity extends AppCompatActivity
         @Override
         public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
         {
-            String chainName = adapter.getItem(position).get(Constants.PRICEMAPID_CHAIN);
+            String chainName = adapter.getItem(position).get(Constants.PRICEMAPID_PLACEID);
             if (chainName.equals("+"))
             {
                 //add new price
@@ -324,12 +375,6 @@ public class ViewProductActivity extends AppCompatActivity
                         GPS.getCurrentLocation().getLongitude());
 
                 retrieveStoresTask.execute();
-            }
-            else
-            {
-                //display timestamp
-                String nixTime = priceList.get(position).get(Constants.PRICEMAPID_TIMESTAMP);
-                Toast.makeText(ViewProductActivity.this, nixTime, Toast.LENGTH_LONG).show();
             }
         }
     }

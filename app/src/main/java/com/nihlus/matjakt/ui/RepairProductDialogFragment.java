@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
@@ -66,7 +67,7 @@ public class RepairProductDialogFragment extends DialogFragment
                 Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
                 intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.MODIFY_EXISTING_PRODUCT);
                 intent.putExtra(Constants.PRODUCT_EAN, ean);
-                intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, ProductData);
+                intent.putExtra(Constants.PRODUCT_BUNDLE, ProductData);
 
                 ParentActivity.startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
 
@@ -82,6 +83,8 @@ public class RepairProductDialogFragment extends DialogFragment
             }
         });
 
-        return builder.create();
+        Dialog finalDialog = builder.create();
+        finalDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return finalDialog;
     }
 }

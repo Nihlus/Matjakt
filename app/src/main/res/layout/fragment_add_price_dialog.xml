@@ -5,14 +5,14 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:tools="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="256dp"
                     tools:context="com.nihlus.matjakt.ui.AddPriceDialogFragment"
                     android:layout_gravity="center_horizontal|top">
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:ems="10"
             android:id="@+id/priceEntry"
@@ -22,28 +22,16 @@
             android:maxLines="1"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"/>
+            />
 
-            <Spinner
-                android:layout_width="340dp"
-                android:layout_height="wrap_content"
-                style="@style/Base.Widget.AppCompat.Spinner.Underlined"
-                android:id="@+id/storesSpinner"
-                android:layout_below="@+id/priceEntry"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="16dp"/>
-
-        <Button
-            android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/addStoreButton"
-            android:layout_below="@+id/storesSpinner"
-            android:layout_alignStart="@+id/storesSpinner"
-            android:text="@string/ui_shopMissingAddNew"/>
+            android:id="@+id/storeEntry"
+            android:layout_below="@+id/priceEntry"
+            android:layout_alignStart="@+id/priceEntry"
+            android:layout_alignEnd="@+id/priceEntry"
+            android:hint="@string/ui_price_storeHint"/>
 
     </RelativeLayout>
 

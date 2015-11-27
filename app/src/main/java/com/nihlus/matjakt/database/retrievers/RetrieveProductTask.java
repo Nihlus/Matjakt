@@ -2,6 +2,7 @@ package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 
@@ -33,6 +34,15 @@ public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
     protected void onPreExecute()
     {
         progressDialog = ProgressDialog.show(ParentActivity, "", ParentActivity.getResources().getString(R.string.dialog_RetrievingProduct));
+        progressDialog.setCancelable(true);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+        {
+            @Override
+            public void onCancel(DialogInterface dialog)
+            {
+                cancel(true);
+            }
+        });
     }
 
     @Override
@@ -68,7 +78,7 @@ public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
         else
         {
             Intent intent = new Intent(ParentActivity, ViewProductActivity.class);
-            intent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
+            intent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
             ParentActivity.startActivity(intent);
 
             if (ParentActivity instanceof ViewProductActivity)

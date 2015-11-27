@@ -46,44 +46,12 @@ public class ModifyProductActivity extends AppCompatActivity
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
 
-            ProductEAN = intent.getParcelableExtra(Constants.PRODUCT_EAN);
+            this.ProductEAN = intent.getParcelableExtra(Constants.PRODUCT_EAN);
         }
         else if (bIsModifyingProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_edit_product));
-
-            this.productData = intent.getBundleExtra(Constants.PRODUCT_BUNDLE_EXTRA);
-            this.ProductEAN = productData.getParcelable(Constants.PRODUCT_EAN);
-
-            EditText brandNameEdit = (EditText) findViewById(R.id.brandEdit);
-            EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
-            EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
-
-            Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
-
-            CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
-            CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
-
-            //load input data from the product data
-            // Brand
-            brandNameEdit.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
-
-            // Name
-            productTitleEdit.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
-
-            // Amount
-            if (productData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-            {
-                HashMap<String, String> amountValues = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-
-                productAmountEdit.setText(amountValues.get(Constants.SPLITMAP_NUMBER));
-                productAmountSpinner.setSelection(getUnitIndex(amountValues.get(Constants.SPLITMAP_UNIT)));
-            }
-
-            // Is it organic?
-            isOrganic.setChecked(productData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
-            // Is it fairtrade?
-            isFairtrade.setChecked(productData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
+            setVisibleProduct(intent.getBundleExtra(Constants.PRODUCT_BUNDLE));
         }
         else
         {
@@ -201,6 +169,45 @@ public class ModifyProductActivity extends AppCompatActivity
             setResult(RESULT_CANCELED);
             super.onBackPressed();
         }
+    }
+
+    public void setVisibleProduct(Bundle InProductData)
+    {
+        // Replace the member product data
+        this.productData = InProductData;
+
+        // Load the data again
+        this.ProductEAN = productData.getParcelable(Constants.PRODUCT_EAN);
+
+        EditText brandNameEdit = (EditText) findViewById(R.id.brandEdit);
+        EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
+        EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
+
+        Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
+
+        CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
+        CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
+
+        //load input data from the product data
+        // Brand
+        brandNameEdit.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+
+        // Name
+        productTitleEdit.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+
+        // Amount
+        if (productData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        {
+            HashMap<String, String> amountValues = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+
+            productAmountEdit.setText(amountValues.get(Constants.SPLITMAP_NUMBER));
+            productAmountSpinner.setSelection(getUnitIndex(amountValues.get(Constants.SPLITMAP_UNIT)));
+        }
+
+        // Is it organic?
+        isOrganic.setChecked(productData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
+        // Is it fairtrade?
+        isFairtrade.setChecked(productData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
     }
 
     private HashMap<String, String> splitAmountValue(String inString)
@@ -413,13 +420,22 @@ public class ModifyProductActivity extends AppCompatActivity
             {
                 this.dialog.dismiss();
 
-                Intent resultIntent = new Intent(modifyProductParentActivity, ViewProductActivity.class);
+                if (modifyProductParentActivity.getParent() instanceof ViewProductActivity)
+                {
+                    ((ViewProductActivity) modifyProductParentActivity.getParent()).setVisibleProduct(result.getBundle());
+                    modifyProductParentActivity.setResult(RESULT_OK);
+                    modifyProductParentActivity.finish();
+                }
+                else
+                {
+                    Intent resultIntent = new Intent(modifyProductParentActivity, ViewProductActivity.class);
 
-                resultIntent.putExtra(Constants.PRODUCT_BUNDLE_EXTRA, result.getBundle());
+                    resultIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
 
-                modifyProductParentActivity.setResult(RESULT_OK, resultIntent);
-                modifyProductParentActivity.startActivityForResult(resultIntent, Constants.VIEW_EXISTING_PRODUCT);
-                modifyProductParentActivity.finish();
+                    modifyProductParentActivity.setResult(RESULT_OK, resultIntent);
+                    modifyProductParentActivity.startActivityForResult(resultIntent, Constants.VIEW_EXISTING_PRODUCT);
+                    modifyProductParentActivity.finish();
+                }
             }
             else
             {

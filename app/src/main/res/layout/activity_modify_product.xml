@@ -106,7 +106,6 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
         android:id="@+id/amountSpinner"
         android:layout_alignTop="@+id/productAmountEdit"
         android:layout_alignBottom="@+id/productAmountEdit"

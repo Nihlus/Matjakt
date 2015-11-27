@@ -4,26 +4,43 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.GeoDataApi;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.SphericalUtil;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.inserters.InsertPriceTask;
+import com.nihlus.matjakt.ui.places.PlaceAutocompleteAdapter;
+
 
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class AddPriceDialogFragment extends DialogFragment
@@ -34,8 +51,10 @@ public class AddPriceDialogFragment extends DialogFragment
     private final double Latitude;
     private final double Longitude;
 
-    private Spinner storeSpinner;
-    private List<String> StoreNames;
+    private AutoCompleteTextView autoCompleteStoreText;
+    private PlaceAutocompleteAdapter placeAutocompleteAdapter;
+
+    private String selectedPlaceID;
 
     @SuppressWarnings("ValidFragment")
     public AddPriceDialogFragment(Activity InActivity, List<MatjaktStore> InStores, Bundle InProductData, double InLatitude, double InLongitude)
@@ -61,57 +80,52 @@ public class AddPriceDialogFragment extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
         builder.setTitle(getActivity().getResources().getString(R.string.ui_addPriceTitle));
 
-        //LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = View.inflate(ParentActivity, R.layout.fragment_add_price_dialog, null);
 
-        storeSpinner = (Spinner)view.findViewById(R.id.storesSpinner);
-
-        StoreNames = new ArrayList<>();
-        for (MatjaktStore Store: Stores)
+        if (ParentActivity instanceof ViewProductActivity)
         {
-            StoreNames.add(Store.ID + " - " + Store.Chain + " " + Store.Name);
+            final GoogleApiClient apiClient = ((ViewProductActivity) ParentActivity).getGoogleApiClient();
+            if (apiClient != null)
+            {
+                autoCompleteStoreText = (AutoCompleteTextView) view.findViewById(R.id.storeEntry);
+                if (autoCompleteStoreText != null)
+                {
+                    autoCompleteStoreText.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            final AutocompletePrediction item = placeAutocompleteAdapter.getItem(position);
+                            selectedPlaceID = item.getPlaceId();
+
+                            Toast.makeText(ParentActivity, selectedPlaceID, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    ArrayList<Integer> filterTypes = new ArrayList<>();
+                    filterTypes.add(Place.TYPE_ESTABLISHMENT);
+                    AutocompleteFilter filter = AutocompleteFilter.create(filterTypes);
+                    LatLngBounds bounds = getLatLngBoundsFromLocation(Latitude, Longitude, getStoreSearchDistance(true));
+                    placeAutocompleteAdapter = new PlaceAutocompleteAdapter(ParentActivity,
+                            ((ViewProductActivity) ParentActivity).getGoogleApiClient(),
+                            bounds, filter);
+
+                    autoCompleteStoreText.setAdapter(placeAutocompleteAdapter);
+                }
+            }
         }
 
-        resetStoreSpinner();
-
-        Button addStoreButton = (Button)view.findViewById(R.id.addStoreButton);
-        addStoreButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                AddStoreDialogFragment storeDialogFragment = new AddStoreDialogFragment(ParentActivity,
-                        AddPriceDialogFragment.this,
-                        Latitude,
-                        Longitude);
-
-                storeDialogFragment.show(ParentActivity.getFragmentManager(), "ADDSTOREDIALOG");
-            }
-        });
 
         builder.setView(view);
+
         builder.setPositiveButton(R.string.dialog_OK, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-                EditText priceEntry = (EditText)view.findViewById(R.id.priceEntry);
-                double inPrice = Double.valueOf(priceEntry.getText().toString());
-                int numberEnd = ((String)storeSpinner.getSelectedItem()).indexOf('-') - 1;
-                int storeID = Integer.valueOf(((String) storeSpinner.getSelectedItem()).substring(0, numberEnd));
-
-
-                InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
-                        (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
-                        inPrice,
-                        getUserCurrency(),
-                        storeID,
-                        false);
-
-                insertPriceTask.execute();
+                // Empty listener - is overridden later
             }
         });
 
@@ -124,17 +138,71 @@ public class AddPriceDialogFragment extends DialogFragment
             }
         });
 
-        return builder.create();
+        AlertDialog finalDialog = builder.create();
+        finalDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        return finalDialog;
     }
 
-    private void resetStoreSpinner()
+    @Override
+    public void onStart()
     {
-        // TODO: Replace with proper adapter, containing the ID as well. HashMaps!
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                R.layout.support_simple_spinner_dropdown_item, StoreNames);
+        super.onStart();
+        AlertDialog dialog = (AlertDialog)getDialog();
+        Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
+        positiveButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (areRequiredFieldsFilledOut(v.getRootView()))
+                {
+                    EditText priceEntry = (EditText) v.getRootView().findViewById(R.id.priceEntry);
+                    double inPrice = Double.valueOf(priceEntry.getText().toString());
 
-        storeSpinner.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+                    // TODO: Check the selected Google API place (if there is one)
+                    // If not, add a new store using the provided name, then add the price
+                    InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
+                            (EAN) ProductData.getParcelable(Constants.PRODUCT_EAN),
+                            inPrice,
+                            getUserCurrency(),
+                            selectedPlaceID,
+                            false);
+
+                    insertPriceTask.execute();
+                    dismiss();
+                }
+            }
+        });
+    }
+
+    private boolean areRequiredFieldsFilledOut(View view)
+    {
+        boolean areFieldsFilledOut = true;
+        EditText priceEntry = (EditText) view.findViewById(R.id.priceEntry);
+        EditText storeEntry = (EditText) view.findViewById(R.id.storeEntry);
+
+        if (priceEntry.getText().toString().isEmpty())
+        {
+            areFieldsFilledOut = false;
+            priceEntry.setError(getResources().getString(R.string.prompt_fillOutField));
+        }
+
+        if (storeEntry.getText().toString().isEmpty())
+        {
+            areFieldsFilledOut = false;
+            storeEntry.setError(getResources().getString(R.string.prompt_fillOutField));
+        }
+
+        return areFieldsFilledOut;
+    }
+
+    private LatLngBounds getLatLngBoundsFromLocation(double InLatitude, double InLongitude, double InRadius)
+    {
+        LatLng center = new LatLng(InLatitude, InLongitude);
+        LatLng southwestPoint = SphericalUtil.computeOffset(center, InRadius * Math.sqrt(2.0), 225);
+        LatLng northeastPoint = SphericalUtil.computeOffset(center, InRadius * Math.sqrt(2.0), 45);
+
+        return new LatLngBounds(southwestPoint, northeastPoint);
     }
 
     private String getUserCurrency()
@@ -143,34 +211,25 @@ public class AddPriceDialogFragment extends DialogFragment
         return preferences.getString(Constants.PREF_USERCURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
     }
 
+    private double getStoreSearchDistance(boolean maxAllowedDistance)
+    {
+        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
+        if (maxAllowedDistance)
+        {
+            return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 10.0f);
+        }
+        else
+        {
+            return preferences.getFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
+        }
+    }
+
     public void onStoreInserted(boolean Success, MatjaktStore InsertedStore)
     {
         if (Success)
         {
-            // TODO: Replace with proper adapter. HashMaps!
-            String storeEntry = InsertedStore.ID + " - " + InsertedStore.Chain + " " + InsertedStore.Name;
-            if (!StoreNames.contains(storeEntry))
-            {
-                StoreNames.add(storeEntry);
-                resetStoreSpinner();
-            }
 
-            storeSpinner.setSelection(getStoreSpinnerID(storeEntry), true);
         }
-    }
-
-    private int getStoreSpinnerID(String InStore)
-    {
-        int i = 0;
-        for (String StoreName : StoreNames)
-        {
-            if (StoreName.equals(InStore))
-            {
-                return i;
-            }
-
-            ++i;
-        }
-        return 0;
     }
 }

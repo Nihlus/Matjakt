@@ -40,22 +40,6 @@ public class PriceEntry
         return entry;
     }
 
-    public static PriceEntry getLoadingEntry(Context context)
-    {
-        PriceEntry entry = new PriceEntry();
-        entry.Chain = context.getResources().getString(R.string.ui_pricesLoading);
-        entry.Extra = "";
-        entry.Latitude = -1;
-        entry.Longitude = -1;
-        entry.Location = "";
-        entry.Price = 0;
-        entry.Timestamp = "0";
-
-        entry.isSpecial = true;
-
-        return entry;
-    }
-
     public HashMap<String, String> getHashMap()
     {
         HashMap<String, String> hashMap = new HashMap<>();
