@@ -83,4 +83,7 @@
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
     <string name="ui_settings_defaultMaximumStoreDistance">10</string>
     <string name="ui_price_storeHint">Store</string>
+    <string name="ui_price_isoffer">This price is a limited time offer</string>
+    <string name="ui_pricelist_isoffer">Offer</string>
+    <string name="ui_warning_noresult">Oops! Couldn\'t get the product - try again.</string>
 </resources>

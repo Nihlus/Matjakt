@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
+    private static Context context;
+
     /// GPS Service Binding ///
 
     private boolean isGPSBound;
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        context = this;
+
         setContentView(R.layout.activity_main);
 
         if (!hasStartedBefore())
@@ -202,9 +206,7 @@ public class MainActivity extends AppCompatActivity
         {
             // We inserted a new product
             Intent intent = new Intent(this, ViewProductActivity.class);
-
-            intent.putExtra(Constants.PRODUCT_NAME, data.getStringExtra(Constants.PRODUCT_NAME));
-            intent.putExtra(Constants.PRODUCT_EAN, data.getStringExtra(Constants.PRODUCT_EAN));
+            intent.putExtra(Constants.PRODUCT_BUNDLE, data.getBundleExtra(Constants.PRODUCT_BUNDLE));
 
             startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
         }
@@ -240,5 +242,10 @@ public class MainActivity extends AppCompatActivity
     {
         // Will fail if there's no network available
         ProductScan.initiate(this);
+    }
+
+    public static Context getStaticContext()
+    {
+        return context;
     }
 }

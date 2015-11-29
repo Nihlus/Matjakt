@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -117,7 +118,9 @@ public class AddPriceDialogFragment extends DialogFragment
                     filterTypes.add(Place.TYPE_ESTABLISHMENT);
 
                     AutocompleteFilter filter = AutocompleteFilter.create(filterTypes);
-                    LatLngBounds bounds = getLatLngBoundsFromLocation(Latitude, Longitude, getStoreSearchDistance(true));
+                    LatLngBounds bounds = getLatLngBoundsFromLocation(Latitude, Longitude,
+                            getStoreSearchDistance(true));
+
                     placeAutocompleteAdapter = new PlaceAutocompleteAdapter(ParentActivity,
                             ((ViewProductActivity) ParentActivity).getGoogleApiClient(),
                             bounds, filter);
@@ -169,6 +172,9 @@ public class AddPriceDialogFragment extends DialogFragment
                     EditText priceEntry = (EditText) v.getRootView().findViewById(R.id.priceEntry);
                     double inPrice = Double.valueOf(priceEntry.getText().toString());
 
+                    boolean isPriceOffer = ((CheckBox) v.getRootView().
+                            findViewById(R.id.isOfferCheckbox)).isChecked();
+
                     saveStoreState(selectedPlaceID, autoCompleteStoreText.getText().toString());
 
                     // TODO: Check the selected Google API place (if there is one)
@@ -178,7 +184,7 @@ public class AddPriceDialogFragment extends DialogFragment
                             inPrice,
                             getUserCurrency(),
                             selectedPlaceID,
-                            false);
+                            isPriceOffer);
 
                     insertPriceTask.execute();
                     dismiss();

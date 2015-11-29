@@ -52,12 +52,6 @@ public class AddProductDialogFragment extends DialogFragment
             @Override
             public void onClick(DialogInterface dialogInterface, int which)
             {
-                //userInput = input.getText().toString();
-
-                //if (!userInput.isEmpty())
-                //{
-                //   new UpdateOutpanProduct().execute(userInput);
-                //}
 
                 Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
                 intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.INSERT_NEW_PRODUCT);

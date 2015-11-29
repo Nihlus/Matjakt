@@ -247,12 +247,16 @@ public class ViewProductActivity extends AppCompatActivity
 
     public void setVisibleProduct(Bundle InProductBundle)
     {
-        this.ProductData = InProductBundle;
-
-        setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
-        if (GPS != null)
+        if (InProductBundle != null)
         {
-            loadPricesAsync();
+            this.ProductData = InProductBundle;
+
+            setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
+
+            if (GPS != null)
+            {
+                loadPricesAsync();
+            }
         }
     }
 

@@ -1,5 +1,9 @@
 package com.nihlus.matjakt.database.containers;
 
+import android.content.res.Resources;
+
+import com.nihlus.matjakt.MainActivity;
+import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
 
 import org.json.JSONException;
@@ -26,7 +30,7 @@ public class MatjaktPrice
     public String Currency;
     public int StoreID;
     public MatjaktStore Store;
-    public boolean Offer;
+    public boolean isOffer;
     public Date Timestamp;
 
     public MatjaktPrice(JSONObject InObject)
@@ -38,7 +42,7 @@ public class MatjaktPrice
             this.Price = InObject.getDouble(Constants.API_PARAM_PRICE);
             this.Currency = InObject.getString(Constants.API_PARAM_CURRENCY);
             this.StoreID = InObject.getInt(Constants.API_PARAM_STORE);
-            this.Offer = InObject.getBoolean(Constants.API_PARAM_OFFER);
+            this.isOffer = InObject.getBoolean(Constants.API_PARAM_OFFER);
 
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             this.Timestamp = formatter.parse(InObject.getString(Constants.API_PARAM_TIMESTAMP));
@@ -59,7 +63,17 @@ public class MatjaktPrice
 
 
         hashMap.put(Constants.PRICEMAPID_STORE, Store.storePlace.getName().toString());
-        hashMap.put(Constants.PRICEMAPID_EXTRA, "");
+
+        if (isOffer)
+        {
+            hashMap.put(Constants.PRICEMAPID_OFFER, MainActivity.getStaticContext().getResources().
+                    getString(R.string.ui_pricelist_isoffer));
+        }
+        else
+        {
+            hashMap.put(Constants.PRICEMAPID_OFFER, "");
+        }
+
         hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
 
         hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Store.Latitude));

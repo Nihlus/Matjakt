@@ -22,7 +22,7 @@
             android:maxLines="1"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            />
+            android:singleLine="true"/>
 
         <AutoCompleteTextView
             android:layout_width="match_parent"
@@ -31,7 +31,17 @@
             android:layout_below="@+id/priceEntry"
             android:layout_alignStart="@+id/priceEntry"
             android:layout_alignEnd="@+id/priceEntry"
-            android:hint="@string/ui_price_storeHint"/>
+            android:hint="@string/ui_price_storeHint"
+            android:singleLine="true"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_price_isoffer"
+            android:id="@+id/isOfferCheckbox"
+            android:layout_below="@+id/storeEntry"
+            android:layout_alignStart="@+id/storeEntry"
+            android:checked="false"/>
 
     </RelativeLayout>
 

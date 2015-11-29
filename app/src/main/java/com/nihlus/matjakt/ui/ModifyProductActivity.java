@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.nihlus.matjakt.MainActivity;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
@@ -88,42 +89,51 @@ public class ModifyProductActivity extends AppCompatActivity
     public void onClickOKButton(View view)
     {
         //verify data
-        if (areRequiredFieldsFilledOut())
+        if (haveFieldsChanged())
         {
-            //if OK, send to server
-            EditText brandName = (EditText) findViewById(R.id.brandEdit);
-            EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
-            EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
-
-            Spinner amountSpinner = (Spinner) findViewById(R.id.amountSpinner);
-
-            CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
-            CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
-
-            //bundle up the data needed by the server
-            Bundle newProductData = new Bundle();
-            newProductData.putParcelable(Constants.PRODUCT_EAN, ProductEAN);
-            newProductData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
-            newProductData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, productTitle.getText().toString());
-
-            newProductData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, productAmount.getText().toString()
-                    + amountSpinner.getSelectedItem().toString());
-
-
-            // Only include the checkboxes if they have been checked
-            if (isOrganic.isChecked())
+            // If we've altered any data, send it to the server
+            if (areRequiredFieldsFilledOut())
             {
-                newProductData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
-            }
+                EditText brandName = (EditText) findViewById(R.id.brandEdit);
+                EditText productTitle = (EditText) findViewById(R.id.productNameEdit);
+                EditText productAmount = (EditText) findViewById(R.id.productAmountEdit);
 
-            if (isFairtrade.isChecked())
-            {
-                newProductData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
-            }
+                Spinner amountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
-            //create the task and send it to the server, close the modify activity when done
-            UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProductData);
-            update.execute(getFinalProductString());
+                CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
+                CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
+
+                //bundle up the data needed by the server
+                Bundle newProductData = new Bundle();
+                newProductData.putParcelable(Constants.PRODUCT_EAN, ProductEAN);
+                newProductData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
+                newProductData.putString(Constants.PRODUCT_TITLE_ATTRIBUTE, productTitle.getText().toString());
+
+                newProductData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, productAmount.getText().toString()
+                        + amountSpinner.getSelectedItem().toString());
+
+
+                // Only include the checkboxes if they have been checked
+                if (isOrganic.isChecked())
+                {
+                    newProductData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, isOrganic.isChecked());
+                }
+
+                if (isFairtrade.isChecked())
+                {
+                    newProductData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, isFairtrade.isChecked());
+                }
+
+                //create the task and send it to the server, close the modify activity when done
+                UpdateOutpanProduct update = new UpdateOutpanProduct(this, getParent() ,newProductData);
+                update.execute(getFinalProductString());
+            }
+        }
+        else
+        {
+            // We didn't change anything, so we canceled the edit
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
@@ -347,17 +357,19 @@ public class ModifyProductActivity extends AppCompatActivity
     //async posting of the update to the database
     class UpdateOutpanProduct extends AsyncTask<String, Void, OutpanProduct>
     {
-        private final Activity modifyProductParentActivity;
+        private final Activity modifyProductActivity;
+        private final Activity parentActivity;
         private final Bundle ProductData;
 
         private final ProgressDialog dialog;
 
-        UpdateOutpanProduct(Activity InParentActivity, Bundle InProductData)
+        UpdateOutpanProduct(Activity inModifyProductActivity, Activity inParentActivity, Bundle InProductData)
         {
-            this.modifyProductParentActivity = InParentActivity;
+            this.modifyProductActivity = inModifyProductActivity;
+            this.parentActivity = inParentActivity;
             this.ProductData = InProductData;
 
-            dialog = new ProgressDialog(InParentActivity);
+            dialog = new ProgressDialog(inModifyProductActivity);
         }
 
         @Override
@@ -420,29 +432,34 @@ public class ModifyProductActivity extends AppCompatActivity
             {
                 this.dialog.dismiss();
 
-                if (modifyProductParentActivity.getParent() instanceof ViewProductActivity)
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
+
+                modifyProductActivity.setResult(RESULT_OK, resultIntent);
+                modifyProductActivity.finish();
+
+                /*
+                if (parentActivity instanceof MainActivity)
                 {
-                    ((ViewProductActivity) modifyProductParentActivity.getParent()).setVisibleProduct(result.getBundle());
-                    modifyProductParentActivity.setResult(RESULT_OK);
-                    modifyProductParentActivity.finish();
+                    Intent viewProductIntent = new Intent (parentActivity, ViewProductActivity.class);
+                    viewProductIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
+                    parentActivity.startActivity(viewProductIntent);
+
+                    modifyProductActivity.setResult(RESULT_OK);
+                    modifyProductActivity.finish();
                 }
                 else
                 {
-                    Intent resultIntent = new Intent(modifyProductParentActivity, ViewProductActivity.class);
 
-                    resultIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
-
-                    modifyProductParentActivity.setResult(RESULT_OK, resultIntent);
-                    modifyProductParentActivity.startActivityForResult(resultIntent, Constants.VIEW_EXISTING_PRODUCT);
-                    modifyProductParentActivity.finish();
                 }
+                */
             }
             else
             {
-                modifyProductParentActivity.setResult(RESULT_CANCELED);
+                modifyProductActivity.setResult(RESULT_CANCELED);
                 this.dialog.dismiss();
 
-                Toast.makeText(modifyProductParentActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();
+                Toast.makeText(modifyProductActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();
             }
         }
 

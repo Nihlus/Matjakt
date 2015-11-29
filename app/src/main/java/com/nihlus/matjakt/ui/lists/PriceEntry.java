@@ -45,12 +45,12 @@ public class PriceEntry
         //if the entry is an "Add" entry (i.e, just a plus sign) or Loading, don't add the price or the comma
         if (isSpecial)
         {
-            hashMap.put(Constants.PRICEMAPID_EXTRA, "");
+            hashMap.put(Constants.PRICEMAPID_OFFER, "");
             hashMap.put(Constants.PRICEMAPID_PRICE, "");
         }
         else
         {
-            hashMap.put(Constants.PRICEMAPID_EXTRA, Extra + ", " + Location);
+            hashMap.put(Constants.PRICEMAPID_OFFER, Extra + ", " + Location);
             hashMap.put(Constants.PRICEMAPID_PRICE, Double.toString(Price));
         }
 

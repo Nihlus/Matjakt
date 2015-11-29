@@ -76,4 +76,7 @@
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
     <string name="hello_blank_fragment">Hej tomt fragment</string>
     <string name="ui_price_storeHint">Butik</string>
+    <string name="ui_price_isoffer">Priset är ett tidsbegränsat erbjudande</string>
+    <string name="ui_pricelist_isoffer">Erbjudande</string>
+    <string name="ui_warning_noresult">Hoppsan! Kunde inte hämta produkten - försök igen.</string>
 </resources>

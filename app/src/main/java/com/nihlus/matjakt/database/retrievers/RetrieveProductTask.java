@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.Toast;
 
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
@@ -62,29 +64,39 @@ public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
             progressDialog.dismiss();
         }
 
-        //launch product view activity
-        if (!result.isNameValid())
+        if (result != null)
         {
-            //ask the user if they want to add a new product
-            AddProductDialogFragment dialog = new AddProductDialogFragment(ParentActivity, ean);
-            dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
-        }
-        else if (!result.isValid())
-        {
-            //broken product, ask if the user wants to edit it
-            RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, ean, result.getBundle());
-            dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
+            //launch product view activity
+            if (!result.isNameValid())
+            {
+                //ask the user if they want to add a new product
+                AddProductDialogFragment dialog = new AddProductDialogFragment(ParentActivity, ean);
+                dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
+            }
+            else if (!result.isValid())
+            {
+                //broken product, ask if the user wants to edit it
+                RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, ean, result.getBundle());
+                dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
+            }
+            else
+            {
+                if (ParentActivity instanceof ViewProductActivity)
+                {
+                    ((ViewProductActivity) ParentActivity).setVisibleProduct(result.getBundle());
+                }
+                else
+                {
+                    // First scan from MainActivity
+                    Intent intent = new Intent(ParentActivity, ViewProductActivity.class);
+                    intent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
+                    ParentActivity.startActivity(intent);
+                }
+            }
         }
         else
         {
-            Intent intent = new Intent(ParentActivity, ViewProductActivity.class);
-            intent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
-            ParentActivity.startActivity(intent);
-
-            if (ParentActivity instanceof ViewProductActivity)
-            {
-                ParentActivity.finish();
-            }
+            Toast.makeText(ParentActivity, ParentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
         }
     }
 }

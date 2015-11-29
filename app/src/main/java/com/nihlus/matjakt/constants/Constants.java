@@ -65,7 +65,7 @@ public final class Constants
     public static final String API_PARAM_PLACEID = "placeID";
 
     public static final String PRICEMAPID_STORE = "STORE";
-    public static final String PRICEMAPID_EXTRA = "EXTRA";
+    public static final String PRICEMAPID_OFFER = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
     public static final String PRICEMAPID_LAT = "LAT";
     public static final String PRICEMAPID_LON = "LON";
