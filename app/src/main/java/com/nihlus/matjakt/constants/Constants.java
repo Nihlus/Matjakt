@@ -12,7 +12,6 @@ public final class Constants
     public static final int INSERT_NEW_PRODUCT = 2;
     public static final int MODIFY_EXISTING_PRODUCT = 3;
     public static final int VIEW_EXISTING_PRODUCT = 4;
-    public static final int REQUEST_BARCODE_SCAN = 5;
 
     public static final String SHARED_PREFERENCES = "MATJAKTPREFS";
     public static final String PREF_HASSTARTEDBEFORE = "bHasStartedBefore";
@@ -22,8 +21,9 @@ public final class Constants
     public static final String PREF_USERCURRENCY = "userCurrency";
     public static final String PREF_STOREPLACEID = "storePlaceID";
     public static final String PREF_STOREPRIMARYTEXT = "storePrimaryText";
+    public static final String PREF_BRANDARRAY = "brandArray";
 
-    public static final String GENERIC_INTENT_ID = "INTENT";
+    public static final String MODIFY_INTENT_TYPE = "INTENT";
     public static final String SCANFRAGMENT_ID = "SCANFRAGMENT";
     public static final String SETTINGSFRAGMENT_ID = "SETTINGSFRAGMENT";
     public static final String ABOUTFRAGMENT_ID = "ABOUTFRAGMENT";
@@ -44,12 +44,12 @@ public final class Constants
     public static final String OutpanLegacyAPI_EditName = "http://www.outpan.com/api/edit-name.php";
     public static final String OutpanLegacyAPI_EditAttribute = "http://www.outpan.com/api/edit-attr.php";
 
-    public static final String MatjaktAPIURL = "http://directorate.asuscomm.com/api/v1/";
-    public static final String GETSTORES = "matjakt_getstores.php";
-    public static final String GETSTORE = "matjakt_getstore.php";
-    public static final String GETPRICES = "matjakt_getprices.php";
-    public static final String ADDSTORE = "matjakt_addstore.php";
-    public static final String ADDPRICE = "matjakt_addprice.php";
+    public static final String MATJAKT_API_URL = "http://directorate.asuscomm.com/api/v1/";
+    public static final String API_GETSTORE = "matjakt_getstore.php";
+    public static final String API_GETPRICES = "matjakt_getprices.php";
+    public static final String API_ADDSTORE = "matjakt_addstore.php";
+    public static final String API_ADDPRICE = "matjakt_addprice.php";
+    public static final String API_DELETEPRICE = "matjakt_deleteprice.php";
 
     public static final String API_PARAM_ID = "id";
     public static final String API_PARAM_EAN = "ean";
@@ -63,14 +63,15 @@ public final class Constants
     public static final String API_PARAM_TIMESTAMP = "timestamp";
     public static final String API_PARAM_STOREID = "storeid";
     public static final String API_PARAM_PLACEID = "placeID";
+    public static final String API_PARAM_KEY = "key";
 
     public static final String PRICEMAPID_STORE = "STORE";
     public static final String PRICEMAPID_OFFER = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
     public static final String PRICEMAPID_LAT = "LAT";
     public static final String PRICEMAPID_LON = "LON";
-    public static final String PRICEMAPID_LOC = "LOC";
     public static final String PRICEMAPID_TIMESTAMP = "NIXTIME";
+    public static final String PRICEMAPID_ISADDENTRY = "SPECIAL";
 
     public static final String PRODUCTKEY_EAN = "gtin";
     public static final String PRODUCTKEY_OUTPANURL = "outpan_url";
@@ -83,8 +84,42 @@ public final class Constants
     public static final String SPLITMAP_UNIT = "LETTER";
     public static final String SPLITMAP_NUMBER = "NUMBER";
 
+    public static final String DEVELOPEREMAIL = "jarl.gullberg@gmail.com";
+    public static final String EMAIL_BUGREPORT_SUBJECT = "[Matjakt] Bug Report: ";
+    public static final String EMAIL_FEATUREREQUEST_SUBJECT = "[Matjakt] Feature Request: ";
+
+    public static final String EMAIL_BUGREPORT_BODY =
+            "Please describe the issue in as much detail as possible - be specific!\n\n" +
+            "" +
+            "Your report should contain the following: \n\n" +
+            "" +
+            "* Steps to reproduce the issue. Don't assume anything - the more detail the better!\n" +
+            "* What should happen? What happens instead?\n" +
+            "* Attempted and/or successful workarounds" +
+            "* Handset model (Note 3, LG, Nexus etc)\n\n" +
+            "" +
+            "Thank you for taking the time to fill this out! I really appreciate it ^.=.^\n" +
+            "--------------\n\n" +
+            "" +
+            "";
+
+    public static final String EMAIL_FEATUREREQUEST_BODY =
+            "Please describe the feature you'd like in as much detail as possible.\n\n" +
+                    "" +
+                    "Your request should contain the following: \n\n" +
+                    "" +
+                    "* What the feature would do\n" +
+                    "* What the feature would solve or provide that isn't already in the app\n" +
+                    "* An alternative way of contacting you, if needed\n\n" +
+                    "" +
+                    "Thank you for taking the time to fill this out! I really appreciate it ^.=.^\n" +
+                    "--------------\n\n" +
+                    "" +
+                    "";
+
     public static final int DRAWERITEM_SCAN = 0;
     public static final int DRAWERITEM_SETTINGS = 1;
     public static final int DRAWERITEM_ABOUT = 2;
-
+    public static final int DRAWERITEM_BUGREPORT = 3;
+    public static final int DRAWERITEM_REQUESTFEATURE = 4;
 }

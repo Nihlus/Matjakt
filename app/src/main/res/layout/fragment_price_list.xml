@@ -1,0 +1,14 @@
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_above="@+id/bottomDivider">
+
+    <ListView
+        android:id="@+id/priceListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollAlwaysVisible="false"/>
+</android.support.v4.widget.SwipeRefreshLayout>

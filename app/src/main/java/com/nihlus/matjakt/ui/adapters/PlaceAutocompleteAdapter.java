@@ -17,7 +17,7 @@
 // Modified by Jarl Gullberg
 
 
-package com.nihlus.matjakt.ui.places;
+package com.nihlus.matjakt.ui.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by jarl on 11/27/15.
+ * Provides auto completion for local stores
  */
 public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePrediction>
     implements Filterable
@@ -56,13 +57,13 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
     private ArrayList<AutocompletePrediction> resultList;
 
     // Api client for autocomplete requests
-    private GoogleApiClient googleApiClient;
+    private final GoogleApiClient googleApiClient;
 
     // Location bounds for the requests
-    private LatLngBounds bounds;
+    private final LatLngBounds bounds;
 
     // The filter used to restrict the queries to specific place types
-    private AutocompleteFilter placeFilter;
+    private final AutocompleteFilter placeFilter;
 
     public PlaceAutocompleteAdapter(Context context, GoogleApiClient InGoogleApiClient,
                                     LatLngBounds InBounds, AutocompleteFilter InPlaceFilter)
@@ -71,11 +72,6 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
         googleApiClient = InGoogleApiClient;
         bounds = InBounds;
         placeFilter = InPlaceFilter;
-    }
-
-    public void setBounds(LatLngBounds inBounds)
-    {
-        this.bounds = inBounds;
     }
 
     @Override

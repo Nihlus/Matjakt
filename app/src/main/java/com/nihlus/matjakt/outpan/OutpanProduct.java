@@ -22,7 +22,7 @@ import java.util.List;
  * Represents a response object from the Outpan database.
  */
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class OutpanProduct
 {
     public EAN ean;

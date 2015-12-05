@@ -6,15 +6,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.model.LatLng;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.database.containers.MatjaktStore;
+import com.nihlus.matjakt.database.inserters.InsertPriceTask;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONArray;
@@ -29,7 +26,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Retrieves and sorts prices from the database
@@ -75,7 +71,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
 
         try
         {
-            String rawUrl = Constants.MatjaktAPIURL + Constants.GETPRICES + "?" +
+            String rawUrl = Constants.MATJAKT_API_URL + Constants.API_GETPRICES + "?" +
                     Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
                     Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
                     Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
@@ -87,7 +83,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                 for (int i = 0; i < Result.length(); ++i)
                 {
                     MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
-                    newPrice.Store = RetrieveStoresTask.getStore(newPrice.StoreID, ((ViewProductActivity)ParentActivity).getGoogleApiClient());
+                    newPrice.Store = getStore(newPrice.StoreID, ((ViewProductActivity)ParentActivity).getGoogleApiClient());
 
                     retrievedPrices.add(newPrice);
                 }
@@ -135,5 +131,48 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
             // TODO: Sort list based on price
             ((ViewProductActivity) ParentActivity).onPricesRetrieved(retrievedPrices);
         }
+    }
+
+    private static MatjaktStore getStore(int id, GoogleApiClient inApiClient)
+    {
+        JSONObject Result = null;
+        Place storePlace = null;
+        try
+        {
+            String rawUrl = Constants.MATJAKT_API_URL + Constants.API_GETSTORE + "?" +
+                    Constants.API_PARAM_STOREID + "=" + String.valueOf(id);
+
+            String responseContent = "";
+            URL url = new URL(rawUrl);
+            URLConnection requestConnection = url.openConnection();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
+
+            // Read the entire input stream
+            String currentLine;
+            while ((currentLine = br.readLine()) != null)
+            {
+                responseContent += currentLine;
+            }
+
+            Result = new JSONObject(responseContent);
+
+            String placeID = Result.getString(Constants.API_PARAM_PLACEID);
+            storePlace = InsertPriceTask.getStorePlaceByID(inApiClient, placeID);
+        }
+        catch (MalformedURLException mex)
+        {
+            mex.printStackTrace();
+        }
+        catch (IOException iex)
+        {
+            iex.printStackTrace();
+        }
+        catch (JSONException jex)
+        {
+            jex.printStackTrace();
+        }
+
+        return new MatjaktStore(Result, storePlace);
     }
 }

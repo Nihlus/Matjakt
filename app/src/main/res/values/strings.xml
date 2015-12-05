@@ -14,7 +14,7 @@
     <string name="dialog_RetrievingProduct">Retrieving product information…</string>
     <string name="dialog_updatingProductInfo">Updating product information…</string>
     <string name="dialog_insertingStore">Updating store database…</string>
-    <string name="dialog_insertingPrice">Updating price database…</string>
+    <string name="dialog_insertingPrice" translatable="false">Updating price database…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>
     <string name="dialog_loadingStoresAndPrices">Loading local stores and prices…</string>
 
@@ -24,7 +24,7 @@
     <string name="prompt_addNewPrice">Add new price</string>
 
     <string name="debug_howDidYouGetHere">How did you get here?</string>
-    <string name="debug_noInternet">No internet connection :(</string>
+    <string name="debug_noInternet" translatable="false">No internet connection :(</string>
 
     <string name="ui_editBrand">Brand:</string>
     <string name="ui_editName">Name:</string>
@@ -44,7 +44,7 @@
     <string name="ui_pricesLoading">Loading…</string>
     <string name="ui_editStoreChainHint">Chain (ACME)</string>
     <string name="ui_editStoreNameHint">Name (GroceryMart)</string>
-    <string name="ui_addPriceTitle">Add new price</string>
+    <string name="ui_dialog_addprice">Add new price</string>
     <string name="ui_addStoreTitle">Add new store</string>
 
     <string name="action_edit">Edit</string>
@@ -64,6 +64,8 @@
         <item>Scan</item>
         <item>Settings</item>
         <item>About</item>
+        <item>Bug Report</item>
+        <item>Feature Request</item>
     </string-array>
 
     <string name="title_activity_view_product">View Product</string>
@@ -71,12 +73,10 @@
     <string name="title_activity_edit_product">Edit Product</string>
     <string name="title_activity_scanned_product">Scanned Product</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ui_settings_location">Location</string>
     <string name="ui_settings_preferredStoreDistance">Preferred store distance:</string>
     <string name="ui_settings_maxStoreDistance">Maximum store distance:</string>
-    <string name="ui_settings_locationHint">All distances are in metric kilometers.</string>
+    <string name="ui_settings_locationHint">Change search distance settings</string>
     <string name="ui_settings_currency">Currency</string>
     <string name="ui_settings_appearance">Appearance</string>
     <string name="ui_settings_useDarkTheme">Use dark theme</string>
@@ -86,4 +86,25 @@
     <string name="ui_price_isoffer">This price is a limited time offer</string>
     <string name="ui_pricelist_isoffer">Offer</string>
     <string name="ui_warning_noresult">Oops! Couldn\'t get the product - try again.</string>
+    <string name="ui_sendbugreport">Send bug report</string>
+    <string name="ui_about_aboutapp">About the App</string>
+    <string name="ui_about_aboutattributions">Attributions</string>
+    <string name="ui_about_aboutapp_body">Matjakt was created by Jarl Gullberg (jarl.gullberg@gmail.com). \n\nThe app is copyright 2015 to Jarl Gullberg, as is the Matjakt database of prices. \n\nThe app is currently maintained by Jarl Gullberg.</string>
+    <string name="ui_about_aboutattributions_body">Product matching is provided by Outpan Technologies Inc. \n\nStore location matching is powered by Google. \n\nCheck icon was designed by Freepik.</string>
+    <string name="ui_drawer_open">Open drawer</string>
+    <string name="ui_drawer_close">Close drawer</string>
+    <string name="ui_price_addnewprice">+ Add new price…</string>
+    <string name="ui_price_lastupdated">Last updated:</string>
+    <string name="ui_price_expires">Expires:</string>
+    <string name="ui_price_store_address">Store Address:</string>
+    <string name="ui_general_edit">Edit</string>
+    <string name="ui_expires_never">Never</string>
+    <string name="ui_dialog_editprice">Edit Price</string>
+    <string name="ui_general_delete">Delete</string>
+    <string name="management_unauthorized">Oops! You\'re not authorized to do that :(</string>
+    <string name="ui_preview_somedate">Some Date</string>
+    <string name="ui_preview_someexpirationdate">Some Expiration Date</string>
+    <string name="ui_preview_someaddress">Some Address</string>
+    <string name="ui_content_poweredbygoogle">Powered by Google</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

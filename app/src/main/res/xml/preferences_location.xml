@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference android:title="@string/ui_settings_preferredStoreDistance"
+                        android:key="preferredStoreDistance"/>
+
+    <EditTextPreference android:title="@string/ui_settings_maxStoreDistance"
+                        android:key="maxStoreDistance"/>
+
+</PreferenceScreen>

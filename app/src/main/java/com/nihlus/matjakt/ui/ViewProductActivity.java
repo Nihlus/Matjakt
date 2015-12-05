@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,17 +22,11 @@ import com.nihlus.matjakt.ProductScan;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
-import com.nihlus.matjakt.database.containers.MatjaktStore;
 import com.nihlus.matjakt.R;
-import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
 import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
-import com.nihlus.matjakt.database.retrievers.RetrieveStoresTask;
 import com.nihlus.matjakt.services.GPSService;
-import com.nihlus.matjakt.ui.lists.PriceEntry;
-import com.nihlus.matjakt.ui.lists.PriceViewAdapter;
+import com.nihlus.matjakt.ui.adapters.PricePagerAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ViewProductActivity extends AppCompatActivity
@@ -43,17 +34,17 @@ public class ViewProductActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener
 
 {
-    private final ArrayList<HashMap<String, String>> priceList = new ArrayList<>();
-    private final PriceViewAdapter adapter = new PriceViewAdapter(this, priceList);
+    public Bundle ProductData;
 
-    private Bundle ProductData;
-
-    private SwipeRefreshLayout swipeContainer;
     private GoogleApiClient googleApiClient;
 
+    // Price list and info tabs //
+    private PricePagerAdapter pricePagerAdapter;
+    private ViewPager pricePager;
 
+    // GPS //
     private boolean isGPSBound;
-    private GPSService GPS;
+    public GPSService GPS;
     private final ServiceConnection GPSConnection = new ServiceConnection()
     {
         @Override
@@ -105,33 +96,8 @@ public class ViewProductActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        // Setup ListView and its associated swipe container
-        setupPriceView();
-        setListStatusLoading();
-
-        swipeContainer = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                // Load new prices from a new location
-                if (GPS != null)
-                {
-                    loadPricesAsync();
-                }
-                else
-                {
-                    bindGPS();
-                }
-            }
-        });
-
-        swipeContainer.setColorSchemeResources(
-                R.color.holo_blue_bright,
-                R.color.holo_green_light,
-                R.color.holo_orange_light,
-                R.color.holo_red_light);
+        // Setup the pager for the price information -i.e, the tabbed container
+        setupPricePager();
 
         // Start up the GPS and wait for that. Execution continues in onGPSConnected()
         bindGPS();
@@ -142,7 +108,8 @@ public class ViewProductActivity extends AppCompatActivity
         // Load the prices using the available location
         if (GPS != null)
         {
-            loadPricesAsync();
+            showPriceList();
+            pricePagerAdapter.getPriceListFragment().loadPricesAsync();
         }
     }
 
@@ -210,7 +177,7 @@ public class ViewProductActivity extends AppCompatActivity
         if (id == R.id.action_edit)
         {
             Intent intent = new Intent(this, ModifyProductActivity.class);
-            intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.MODIFY_EXISTING_PRODUCT);
+            intent.putExtra(Constants.MODIFY_INTENT_TYPE, Constants.MODIFY_EXISTING_PRODUCT);
             intent.putExtra(Constants.PRODUCT_BUNDLE, ProductData);
 
             startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
@@ -233,15 +200,14 @@ public class ViewProductActivity extends AppCompatActivity
                 new RetrieveProductTask(this).execute(new EAN(result.getContents()));
             }
         }
-        else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT && resultCode == RESULT_OK)
+        else if ((requestCode == Constants.MODIFY_EXISTING_PRODUCT ||
+                 requestCode == Constants.INSERT_NEW_PRODUCT) &&
+                 resultCode == RESULT_OK)
         {
-            if (data.getIntExtra(Constants.GENERIC_INTENT_ID, -1) != Constants.REQUEST_BARCODE_SCAN)
-            {
-                //update from bundle
-                this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE);
+            //update from bundle
+            this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE);
 
-                setVisibleProductTitle(getFinalProductString(ProductData));
-            }
+            setVisibleProductTitle(getFinalProductString(ProductData));
         }
     }
 
@@ -255,7 +221,8 @@ public class ViewProductActivity extends AppCompatActivity
 
             if (GPS != null)
             {
-                loadPricesAsync();
+                showPriceList();
+                pricePagerAdapter.getPriceListFragment().loadPricesAsync();
             }
         }
     }
@@ -276,84 +243,40 @@ public class ViewProductActivity extends AppCompatActivity
         }
     }
 
-    private void setupPriceView()
+    private void setupPricePager()
     {
-        ListView priceView = (ListView)findViewById(R.id.listView_Prices);
-        if (priceView != null)
-        {
-            priceView.setOnItemClickListener(new onPriceClickedListener());
+        pricePagerAdapter = new PricePagerAdapter(getSupportFragmentManager());
+        pricePager = (ViewPager)findViewById(R.id.pricePageContainer);
+        pricePager.setAdapter(pricePagerAdapter);
+    }
 
-            resetListViewAdapter();
+    private void showPriceList()
+    {
+        if (pricePager != null)
+        {
+            pricePager.setCurrentItem(PricePagerAdapter.PAGE_PRICELIST, true);
+        }
+    }
+
+    public void showPriceInfo(MatjaktPrice price)
+    {
+        if (pricePager != null)
+        {
+            pricePagerAdapter.getPriceInfoFragment().setVisibleInfo(price);
+            pricePager.setCurrentItem(PricePagerAdapter.PAGE_PRICEINFO, true);
         }
     }
 
     public void loadPricesAsync()
     {
-        swipeContainer.setRefreshing(true);
-        RetrievePricesTask pricesTask = new RetrievePricesTask(this, (EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
-                GPS.getCurrentLocation().getLatitude(),
-                GPS.getCurrentLocation().getLongitude());
-
-        pricesTask.execute();
+        showPriceList();
+        pricePagerAdapter.getPriceListFragment().loadPricesAsync();
     }
 
-
-    public void onPricesRetrieved(List<MatjaktPrice> entries)
+    public void onPricesRetrieved(List<MatjaktPrice> prices)
     {
-        clearPrices();
-
-        //add the prices
-        for (MatjaktPrice entry : entries)
-        {
-            addPriceItem(entry);
-        }
-
-        addPlusItem();
-        swipeContainer.setRefreshing(false);
-    }
-
-    private void addPriceItem(MatjaktPrice entry)
-    {
-        if (adapter != null && priceList != null)
-        {
-            priceList.add(entry.getHashMap());
-
-            resetListViewAdapter();
-        }
-    }
-
-    public void setListStatusLoading()
-    {
-        clearPrices();
-        resetListViewAdapter();
-    }
-
-    private void addPlusItem()
-    {
-        priceList.add(PriceEntry.getAddEntry().getHashMap());
-        resetListViewAdapter();
-    }
-
-    private void clearPrices()
-    {
-        if (adapter != null)
-        {
-            priceList.clear();
-
-            resetListViewAdapter();
-        }
-    }
-
-    private void resetListViewAdapter()
-    {
-        ListView priceView = (ListView)findViewById(R.id.listView_Prices);
-        if (priceView != null)
-        {
-            priceView.setAdapter(adapter);
-
-            //probably not needed
-            adapter.notifyDataSetChanged();
-        }
+        showPriceList();
+        pricePagerAdapter.getPriceListFragment().onPricesRetrieved(prices);
     }
 
     @SuppressWarnings({"unused", "UnusedParameters"})
@@ -362,32 +285,14 @@ public class ViewProductActivity extends AppCompatActivity
         ProductScan.initiate(this);
     }
 
-    private class onPriceClickedListener implements AdapterView.OnItemClickListener
+    @SuppressWarnings({"unused", "UnusedParameters"})
+    public void onEditPriceButtonClicked(View view)
     {
-        @Override
-        public void onItemClick(AdapterView<?> parent, final View view, int position, long id)
-        {
-            String storeName = adapter.getItem(position).get(Constants.PRICEMAPID_STORE);
-            if (storeName.equals("+"))
-            {
-                //add new price
-                Toast.makeText(ViewProductActivity.this, getResources().getString(R.string.prompt_addNewPrice), Toast.LENGTH_LONG).show();
+        MatjaktPrice currentPrice = pricePagerAdapter.getPriceInfoFragment().getCurrentPrice();
 
-                // Retrieve the local stores, and then show an add price dialog
-                RetrieveStoresTask retrieveStoresTask = new RetrieveStoresTask(ViewProductActivity.this,
-                        GPS.getCurrentLocation().getLatitude(),
-                        GPS.getCurrentLocation().getLongitude());
-
-                retrieveStoresTask.execute();
-            }
-        }
-    }
-
-    public void onStoresLoaded(List<MatjaktStore> Stores)
-    {
-        AddPriceDialogFragment addPriceDialog = new AddPriceDialogFragment(this,
-                Stores,
+        ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment(this,
                 ProductData,
+                currentPrice,
                 GPS.getCurrentLocation().getLatitude(),
                 GPS.getCurrentLocation().getLongitude());
 

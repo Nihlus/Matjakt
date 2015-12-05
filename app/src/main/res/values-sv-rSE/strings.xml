@@ -24,6 +24,8 @@
         <item>Skanna</item>
         <item>Inställningar</item>
         <item>Om</item>
+        <item>Rapportera bugg</item>
+        <item>Skicka funktionsförslag</item>
     </string-array>
 
     <string name="title_activity_view_product">Visa produkt</string>
@@ -60,7 +62,7 @@
     <string name="ui_editPriceHint">Nytt pris</string>
     <string name="dialog_insertingPrice">Uppdaterar prisdatabas…</string>
     <string name="dialog_insertingStore">Uppdaterar butiksdatabas…</string>
-    <string name="ui_addPriceTitle">Lägg till nytt pris</string>
+    <string name="ui_dialog_addprice">Lägg till nytt pris</string>
     <string name="ui_addStoreTitle">Lägg till ny butik</string>
     <string name="ui_editStoreChainHint">Kedja (ACME)</string>
     <string name="ui_editStoreNameHint">Namn (Livs)</string>
@@ -79,4 +81,24 @@
     <string name="ui_price_isoffer">Priset är ett tidsbegränsat erbjudande</string>
     <string name="ui_pricelist_isoffer">Erbjudande</string>
     <string name="ui_warning_noresult">Hoppsan! Kunde inte hämta produkten - försök igen.</string>
+    <string name="ui_sendbugreport">Skicka buggrapport</string>
+    <string name="ui_about_aboutapp">Om Appen</string>
+    <string name="ui_about_aboutattributions">Erkännanden</string>
+    <string name="ui_about_aboutapp_body">Matjakt utvecklades av Jarl Gullberg (jarl.gullberg@gmail.com). \n\nAppen är upphovsrätsskyddad år 2015 till Jarl Gullberg, likväl Matjakt\'s prisdatabas. \n\nAppen är för närvarande underhållen av Jarl Gullberg.</string>
+    <string name="ui_about_aboutattributions_body">Produktmatchning drivs av Outpan Technologies Inc. \n\nButiksplaceringen drivs av Google. \n\nBockikonen designades av Freepik.</string>
+    <string name="ui_drawer_close">Öppna sidmeny</string>
+    <string name="ui_drawer_open">Stäng sidmeny</string>
+    <string name="ui_price_addnewprice">+ Lägg till pris…</string>
+    <string name="ui_price_lastupdated">Senast uppdaterad:</string>
+    <string name="ui_price_expires">Utgår: </string>
+    <string name="ui_price_store_address">Butiksadress:</string>
+    <string name="ui_general_edit">Redigera</string>
+    <string name="ui_expires_never">Aldrig</string>
+    <string name="ui_dialog_editprice">Redigera Pris</string>
+    <string name="ui_general_delete">Radera</string>
+    <string name="management_unauthorized">Hoppsan! Du har inte tillstånd att göra det där :(</string>
+    <string name="ui_preview_someaddress">Någon Address</string>
+    <string name="ui_preview_somedate">Något Datum</string>
+    <string name="ui_preview_someexpirationdate">Något Utgångsdatum</string>
+    <string name="ui_content_poweredbygoogle">Powered by Google</string>
 </resources>

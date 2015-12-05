@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +28,7 @@ import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
 import com.nihlus.matjakt.services.GPSService;
 import com.nihlus.matjakt.ui.MainAboutFragment;
 import com.nihlus.matjakt.ui.MainSettingsFragment;
+import com.nihlus.matjakt.ui.SettingsActivity;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import java.util.Currency;
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity
 {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
+
+    private ActionBarDrawerToggle drawerToggle;
 
     private static Context context;
 
@@ -116,9 +122,41 @@ public class MainActivity extends AppCompatActivity
 
     private void setupLeftDrawer()
     {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+
+            actionBar.setHomeButtonEnabled(true);
+        }
+
         String[] menuItems = getResources().getStringArray(R.array.ui_sidebar_menu_items);
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+        drawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                R.string.ui_drawer_open,
+                R.string.ui_drawer_close
+                )
+                {
+                    @Override
+                    public void onDrawerClosed(View drawerView)
+                    {
+                        invalidateOptionsMenu();
+                    }
+
+                    @Override
+                    public void onDrawerOpened(View drawerView)
+                    {
+                        invalidateOptionsMenu();
+                    }
+                };
+        drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, menuItems));
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -135,7 +173,8 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.DRAWERITEM_SETTINGS:
                     {
-                        setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
+                        //setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     }
                     case Constants.DRAWERITEM_ABOUT:
@@ -143,11 +182,68 @@ public class MainActivity extends AppCompatActivity
                         setFragment(new MainAboutFragment(), Constants.ABOUTFRAGMENT_ID);
                         break;
                     }
+                    case Constants.DRAWERITEM_BUGREPORT:
+                    {
+                        Intent bugReportEmail = new Intent(Intent.ACTION_SENDTO);
+                        bugReportEmail.setType("message/rfc822");
+                        bugReportEmail.setData(Uri.parse("mailto:" + Constants.DEVELOPEREMAIL));
+                        bugReportEmail.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.DEVELOPEREMAIL});
+                        bugReportEmail.putExtra(Intent.EXTRA_SUBJECT, Constants.EMAIL_BUGREPORT_SUBJECT);
+                        bugReportEmail.putExtra(Intent.EXTRA_TEXT, Constants.EMAIL_BUGREPORT_BODY);
+
+                        if (bugReportEmail.resolveActivity(getPackageManager()) != null)
+                        {
+                            startActivity(Intent.createChooser(bugReportEmail, getResources().getString(R.string.ui_sendbugreport)));
+                        }
+
+                        drawerLayout.closeDrawer(drawerList);
+                        break;
+                    }
+                    case Constants.DRAWERITEM_REQUESTFEATURE:
+                    {
+                        Intent featureRequestEmail = new Intent(Intent.ACTION_SENDTO);
+                        featureRequestEmail.setType("text/plain");
+                        featureRequestEmail.setData(Uri.parse("mailto:" + Constants.DEVELOPEREMAIL));
+                        featureRequestEmail.putExtra(Intent.EXTRA_EMAIL, Constants.DEVELOPEREMAIL);
+                        featureRequestEmail.putExtra(Intent.EXTRA_SUBJECT, Constants.EMAIL_FEATUREREQUEST_SUBJECT);
+                        featureRequestEmail.putExtra(Intent.EXTRA_TEXT, Constants.EMAIL_FEATUREREQUEST_BODY);
+
+                        if (featureRequestEmail.resolveActivity(getPackageManager()) != null)
+                        {
+                            startActivity(featureRequestEmail);
+                        }
+
+                        drawerLayout.closeDrawer(drawerList);
+                        break;
+                    }
                 }
             }
         });
 
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState)
+    {
+        super.onPostCreate(savedInstanceState);
+        if (drawerToggle != null)
+        {
+            drawerToggle.syncState();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void setFragment(Fragment InFragment, String FragmentID)
@@ -164,32 +260,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content_frame);
-        if (id == R.id.action_settings && !(currentFragment instanceof MainSettingsFragment))
-        {
-            setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -202,7 +272,9 @@ public class MainActivity extends AppCompatActivity
                 new RetrieveProductTask(this).execute(new EAN(result.getContents()));
             }
         }
-        else if (requestCode == Constants.INSERT_NEW_PRODUCT && resultCode == RESULT_OK)
+        else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT ||
+                requestCode == Constants.INSERT_NEW_PRODUCT &&
+                resultCode == RESULT_OK)
         {
             // We inserted a new product
             Intent intent = new Intent(this, ViewProductActivity.class);

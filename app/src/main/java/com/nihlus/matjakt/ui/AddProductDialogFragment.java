@@ -54,7 +54,7 @@ public class AddProductDialogFragment extends DialogFragment
             {
 
                 Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
-                intent.putExtra(Constants.GENERIC_INTENT_ID, Constants.INSERT_NEW_PRODUCT);
+                intent.putExtra(Constants.MODIFY_INTENT_TYPE, Constants.INSERT_NEW_PRODUCT);
                 intent.putExtra(Constants.PRODUCT_EAN, ean);
 
                 ParentActivity.startActivityForResult(intent, Constants.INSERT_NEW_PRODUCT);

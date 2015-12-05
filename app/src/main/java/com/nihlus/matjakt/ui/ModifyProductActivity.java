@@ -3,14 +3,16 @@ package com.nihlus.matjakt.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -23,6 +25,10 @@ import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ModifyProductActivity extends AppCompatActivity
@@ -38,10 +44,14 @@ public class ModifyProductActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        int incomingIntent = intent.getIntExtra(Constants.GENERIC_INTENT_ID, -1);
+        int modifyType = intent.getIntExtra(Constants.MODIFY_INTENT_TYPE, -1);
 
-        boolean bIsNewProduct = incomingIntent == Constants.INSERT_NEW_PRODUCT;
-        boolean bIsModifyingProduct = incomingIntent == Constants.MODIFY_EXISTING_PRODUCT;
+        boolean bIsNewProduct = modifyType == Constants.INSERT_NEW_PRODUCT;
+        boolean bIsModifyingProduct = modifyType == Constants.MODIFY_EXISTING_PRODUCT;
+
+        // Setup Brand autocomplete
+        setupBrandAutocomplete();
+
 
         if (bIsNewProduct)
         {
@@ -60,29 +70,17 @@ public class ModifyProductActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    private void setupBrandAutocomplete()
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_new_product, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent parentActivity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        AutoCompleteTextView brandEdit = (AutoCompleteTextView)findViewById(R.id.brandEdit);
+        if (brandEdit != null)
         {
-            return true;
-        }
+            ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1,
+                    getStoredBrands());
 
-        return super.onOptionsItemSelected(item);
+            brandEdit.setAdapter(autocompleteAdapter);
+        }
     }
 
     @SuppressWarnings({"unused", "UnusedParameters"})
@@ -125,13 +123,15 @@ public class ModifyProductActivity extends AppCompatActivity
                 }
 
                 //create the task and send it to the server, close the modify activity when done
-                UpdateOutpanProduct update = new UpdateOutpanProduct(this, getParent() ,newProductData);
+                UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProductData);
                 update.execute(getFinalProductString());
             }
         }
         else
         {
             // We didn't change anything, so we canceled the edit
+
+
             setResult(RESULT_CANCELED);
             finish();
         }
@@ -176,12 +176,18 @@ public class ModifyProductActivity extends AppCompatActivity
         }
         else
         {
-            setResult(RESULT_CANCELED);
+            // We didn't change anything, so we canceled the edit
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(Constants.PRODUCT_BUNDLE, productData);
+
+            setResult(RESULT_CANCELED, resultIntent);
+            finish();
+
             super.onBackPressed();
         }
     }
 
-    public void setVisibleProduct(Bundle InProductData)
+    private void setVisibleProduct(Bundle InProductData)
     {
         // Replace the member product data
         this.productData = InProductData;
@@ -340,6 +346,45 @@ public class ModifyProductActivity extends AppCompatActivity
         return 0;
     }
 
+    private void addStoredBrand(String brand)
+    {
+        ArrayList<String> storedBrands = getStoredBrands();
+        if (!storedBrands.contains(brand) && !brand.isEmpty())
+        {
+            storedBrands.add(brand);
+            JSONArray brandArray = new JSONArray(storedBrands);
+
+            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putString(Constants.PREF_BRANDARRAY, brandArray.toString());
+            editor.apply();
+        }
+    }
+
+    // TODO: Refactor this and merge with BrandNameAdapter#getStoredBrands()
+    private ArrayList<String> getStoredBrands()
+    {
+        ArrayList<String> brands = new ArrayList<>();
+        try
+        {
+            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            JSONArray brandArray = new JSONArray(preferences.getString(Constants.PREF_BRANDARRAY, "[]"));
+
+            for (int i = 0; i < brandArray.length(); i++)
+            {
+                brands.add(brandArray.getString(i));
+            }
+        }
+        catch (JSONException jex)
+        {
+            // TODO: Create global exception handler
+            jex.printStackTrace();
+        }
+
+        return brands;
+    }
+
     private String getFinalProductString()
     {
         EditText manufacturerName = (EditText) findViewById(R.id.brandEdit);
@@ -358,15 +403,13 @@ public class ModifyProductActivity extends AppCompatActivity
     class UpdateOutpanProduct extends AsyncTask<String, Void, OutpanProduct>
     {
         private final Activity modifyProductActivity;
-        private final Activity parentActivity;
         private final Bundle ProductData;
 
         private final ProgressDialog dialog;
 
-        UpdateOutpanProduct(Activity inModifyProductActivity, Activity inParentActivity, Bundle InProductData)
+        UpdateOutpanProduct(Activity inModifyProductActivity, Bundle InProductData)
         {
             this.modifyProductActivity = inModifyProductActivity;
-            this.parentActivity = inParentActivity;
             this.ProductData = InProductData;
 
             dialog = new ProgressDialog(inModifyProductActivity);
@@ -388,6 +431,9 @@ public class ModifyProductActivity extends AppCompatActivity
             api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
                     Constants.PRODUCT_BRAND_ATTRIBUTE,
                     ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+
+            // Store the brand for autocomplete purposes
+            addStoredBrand(ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE, ""));
 
             api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
                     Constants.PRODUCT_TITLE_ATTRIBUTE,
@@ -416,7 +462,7 @@ public class ModifyProductActivity extends AppCompatActivity
 
             if (ProductData.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
             {
-                api.setProductAttribute((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN),
+                api.setProductAttribute((EAN) ProductData.getParcelable(Constants.PRODUCT_EAN),
                         Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
                         String.valueOf(ProductData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
             }

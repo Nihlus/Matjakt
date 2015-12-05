@@ -1,0 +1,45 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:context=".ui.ModifyPriceDialogFragment"
+                android:layout_gravity="center_horizontal|top">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/priceEntry"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/ui_editPriceHint"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_alignParentEnd="true"/>
+
+    <AutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/storeEntry"
+        android:layout_below="@+id/priceEntry"
+        android:hint="@string/ui_price_storeHint"
+        android:singleLine="true"
+        android:layout_alignStart="@+id/priceEntry"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ui_price_isoffer"
+        android:id="@+id/isOfferCheckbox"
+        android:layout_below="@+id/storeEntry"
+        android:checked="false"
+        android:layout_alignStart="@+id/storeEntry"/>
+
+</RelativeLayout>
+
+
+

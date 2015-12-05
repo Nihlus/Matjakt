@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -16,39 +15,33 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
-import com.nihlus.matjakt.database.containers.MatjaktStore;
+import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.inserters.InsertPriceTask;
-import com.nihlus.matjakt.ui.places.PlaceAutocompleteAdapter;
+import com.nihlus.matjakt.ui.adapters.PlaceAutocompleteAdapter;
 
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 
-public class AddPriceDialogFragment extends DialogFragment
+public class ModifyPriceDialogFragment extends DialogFragment
 {
     private final Activity ParentActivity;
-    private final List<MatjaktStore> Stores;
     private final Bundle ProductData;
+    private final MatjaktPrice PriceToEdit;
     private final double Latitude;
     private final double Longitude;
 
@@ -58,21 +51,31 @@ public class AddPriceDialogFragment extends DialogFragment
     private String selectedPlaceID;
 
     @SuppressWarnings("ValidFragment")
-    public AddPriceDialogFragment(Activity InActivity, List<MatjaktStore> InStores, Bundle InProductData, double InLatitude, double InLongitude)
+    public ModifyPriceDialogFragment(Activity InActivity, Bundle InProductData, double InLatitude, double InLongitude)
     {
         this.ParentActivity = InActivity;
-        this.Stores = InStores;
         this.ProductData = InProductData;
+        this.PriceToEdit = null;
         this.Latitude = InLatitude;
         this.Longitude = InLongitude;
     }
 
-    public AddPriceDialogFragment()
+    @SuppressWarnings("ValidFragment")
+    public ModifyPriceDialogFragment(Activity InActivity, Bundle InProductData, MatjaktPrice InNewPrice, double InLatitude, double InLongitude)
+    {
+        this.ParentActivity = InActivity;
+        this.ProductData = InProductData;
+        this.PriceToEdit = InNewPrice;
+        this.Latitude = InLatitude;
+        this.Longitude = InLongitude;
+    }
+
+    public ModifyPriceDialogFragment()
     {
         // Required empty public constructor
         this.ParentActivity = null;
-        this.Stores = null;
         this.ProductData = null;
+        this.PriceToEdit = null;
         this.Latitude = 0;
         this.Longitude = 0;
     }
@@ -81,9 +84,17 @@ public class AddPriceDialogFragment extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getActivity().getResources().getString(R.string.ui_addPriceTitle));
 
-        final View view = View.inflate(ParentActivity, R.layout.fragment_add_price_dialog, null);
+        if (PriceToEdit != null)
+        {
+            builder.setTitle(getActivity().getResources().getString(R.string.ui_dialog_editprice));
+        }
+        else
+        {
+            builder.setTitle(getActivity().getResources().getString(R.string.ui_dialog_addprice));
+        }
+
+        final View view = View.inflate(ParentActivity, R.layout.fragment_modify_price_dialog, null);
 
         if (ParentActivity instanceof ViewProductActivity)
         {
@@ -102,6 +113,22 @@ public class AddPriceDialogFragment extends DialogFragment
                             selectedPlaceID = item.getPlaceId();
                         }
                     });
+
+                    // If we have an input price, load that as well
+                    if (PriceToEdit != null)
+                    {
+                        TextView priceEdit = (TextView)view.findViewById(R.id.priceEntry);
+                        if (priceEdit != null)
+                        {
+                            priceEdit.setText(String.valueOf(PriceToEdit.Price));
+                        }
+
+                        CheckBox offerCheck = (CheckBox)view.findViewById(R.id.isOfferCheckbox);
+                        if (offerCheck != null)
+                        {
+                            offerCheck.setChecked(PriceToEdit.isOffer);
+                        }
+                    }
 
                     // Load the previous store data, if we have some
                     if (!getSavedPrimaryText().isEmpty())
@@ -177,16 +204,30 @@ public class AddPriceDialogFragment extends DialogFragment
 
                     saveStoreState(selectedPlaceID, autoCompleteStoreText.getText().toString());
 
-                    // TODO: Check the selected Google API place (if there is one)
-                    // If not, add a new store using the provided name, then add the price
-                    InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
-                            (EAN) ProductData.getParcelable(Constants.PRODUCT_EAN),
-                            inPrice,
-                            getUserCurrency(),
-                            selectedPlaceID,
-                            isPriceOffer);
+                    if (PriceToEdit != null)
+                    {
+                        InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
+                                PriceToEdit.ID,
+                                (EAN) ProductData.getParcelable(Constants.PRODUCT_EAN),
+                                inPrice,
+                                getUserCurrency(),
+                                selectedPlaceID,
+                                isPriceOffer);
 
-                    insertPriceTask.execute();
+                        insertPriceTask.execute();
+                    }
+                    else
+                    {
+                        InsertPriceTask insertPriceTask = new InsertPriceTask(ParentActivity,
+                                (EAN) ProductData.getParcelable(Constants.PRODUCT_EAN),
+                                inPrice,
+                                getUserCurrency(),
+                                selectedPlaceID,
+                                isPriceOffer);
+
+                        insertPriceTask.execute();
+                    }
+
                     dismiss();
                 }
             }

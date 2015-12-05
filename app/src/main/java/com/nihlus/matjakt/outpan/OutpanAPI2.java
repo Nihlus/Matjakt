@@ -17,6 +17,8 @@ import java.net.URLConnection;
 public class OutpanAPI2
 {
     private final String APIKey;
+
+    @SuppressWarnings("SameParameterValue")
     public OutpanAPI2(String InAPIKey)
     {
         this.APIKey = InAPIKey;

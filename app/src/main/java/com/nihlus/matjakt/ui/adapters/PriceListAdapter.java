@@ -1,4 +1,4 @@
-package com.nihlus.matjakt.ui.lists;
+package com.nihlus.matjakt.ui.adapters;
 
 /**
  * Adapter for the columnar ListView for prices
@@ -13,20 +13,21 @@ import android.widget.TextView;
 
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.database.containers.MatjaktPrice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PriceViewAdapter extends BaseAdapter
+public class PriceListAdapter extends BaseAdapter
 {
 
-    private final ArrayList<HashMap<String, String>> list;
+    private final ArrayList<MatjaktPrice> list;
     private final Activity ParentActivity;
     private TextView storeChainText;
     private TextView storeNameText;
     private TextView priceValueText;
 
-    public PriceViewAdapter(Activity activity, ArrayList<HashMap<String, String>> list)
+    public PriceListAdapter(Activity activity, ArrayList<MatjaktPrice> list)
     {
         super();
         this.ParentActivity = activity;
@@ -41,7 +42,7 @@ public class PriceViewAdapter extends BaseAdapter
     }
 
     @Override
-    public HashMap<String, String> getItem(int position)
+    public MatjaktPrice getItem(int position)
     {
         // TODO Auto-generated method stub
         return list.get(position);
@@ -69,7 +70,7 @@ public class PriceViewAdapter extends BaseAdapter
             priceValueText = (TextView) convertView.findViewById(R.id.price);
         }
 
-        HashMap<String, String> map = list.get(position);
+        HashMap<String, String> map = list.get(position).getHashMap();
         if (map.containsKey(Constants.PRICEMAPID_STORE))
         {
             storeChainText.setText(map.get(Constants.PRICEMAPID_STORE));

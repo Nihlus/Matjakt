@@ -1,0 +1,90 @@
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_gravity="start|top"
+    tools:context="com.nihlus.matjakt.ui.fragments.PriceInfoFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/ui_price_lastupdated"
+            android:id="@+id/lastUpdatedText"
+            android:layout_gravity="start|top"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/ui_preview_someaddress"
+            android:id="@+id/dateText"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/lastUpdatedText"
+            android:layout_toEndOf="@+id/lastUpdatedText"
+            android:layout_marginStart="32dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/ui_price_expires"
+            android:id="@+id/expiresText"
+            android:layout_below="@+id/lastUpdatedText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/ui_preview_someexpirationdate"
+            android:id="@+id/expirationDateText"
+            android:layout_alignParentBottom="false"
+            android:layout_alignBottom="@+id/expiresText"
+            android:layout_alignStart="@+id/dateText"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/ui_price_store_address"
+            android:id="@+id/addressText"
+            android:layout_below="@+id/expiresText"
+            android:layout_marginTop="16dp"/>
+
+        <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+
+            android:text="@string/ui_preview_somedate"
+            android:layout_centerVertical="true"
+            android:id="@+id/storeAddressText"
+            android:layout_alignBottom="@+id/addressText"
+            android:layout_alignStart="@+id/expirationDateText"
+            android:layout_alignParentEnd="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_general_edit"
+            android:id="@+id/button"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@+id/storeAddressText"
+            android:drawableStart="@drawable/ic_mode_edit_black_24dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:onClick="onEditPriceButtonClicked"/>
+
+    </RelativeLayout>
+</ScrollView>
+

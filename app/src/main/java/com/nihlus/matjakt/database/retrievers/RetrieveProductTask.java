@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.R;
@@ -76,7 +75,7 @@ public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
             else if (!result.isValid())
             {
                 //broken product, ask if the user wants to edit it
-                RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, ean, result.getBundle());
+                RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, result.getBundle());
                 dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
             }
             else

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 /**
  * Represents a store from the Matjakt database.
  */
+@SuppressWarnings("unused")
 public class MatjaktStore
 {
     public int ID;

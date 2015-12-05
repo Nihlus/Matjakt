@@ -11,7 +11,7 @@
     <com.nihlus.matjakt.ui.widgets.AutoResizeTextView
         android:id="@+id/textView_ProductTitle"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="28dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:ellipsize="none"
@@ -22,7 +22,7 @@
         />
 
     <View
-        android:id="@+id/divider1"
+        android:id="@+id/topDivider"
         android:layout_width="fill_parent"
         android:layout_height="2dip"
         android:layout_alignBottom="@+id/textView_ProductTitle"
@@ -30,69 +30,51 @@
         android:background="#5c6b65"
         android:paddingBottom="16dp"/>
 
-    <HorizontalScrollView
-        android:id="@+id/imageGalleryScrollView"
-        android:layout_width="fill_parent"
-        android:layout_height="208dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/divider1"
-        android:fillViewport="false"
-        android:paddingTop="0dp">
-
-    </HorizontalScrollView>
-
     <View
-        android:id="@+id/divider2"
+        android:id="@+id/middleDivider"
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:layout_alignBottom="@+id/imageGalleryScrollView"
         android:layout_alignParentStart="true"
         android:background="#5c6b65"
-        android:paddingBottom="16dp"/>
+        android:paddingBottom="16dp"
+        android:layout_above="@+id/pricePageContainer"
+        />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
-        android:layout_width="wrap_content"
+        android:id="@+id/pricePageContainer"
+        android:layout_width="match_parent"
         android:layout_height="192dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/divider2" >
-
-        <ListView
-            android:id="@+id/listView_Prices"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fastScrollAlwaysVisible="false"/>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_above="@+id/bottomDivider">
+    </android.support.v4.view.ViewPager>
 
     <View
-        android:id="@+id/divider3"
+        android:id="@+id/bottomDivider"
         android:layout_width="fill_parent"
         android:layout_height="2dip"
-        android:layout_alignBottom="@+id/swipeContainer"
         android:layout_alignParentStart="true"
         android:background="#5c6b65"
-        android:paddingBottom="16dp"/>
-
-    <Button
-        android:id="@+id/button_AddAttribute"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:text="@string/ui_addAttributeButton"/>
+        android:paddingBottom="16dp"
+        android:layout_above="@+id/button_Scan"/>
 
     <Button
         android:id="@+id/button_Scan"
         android:layout_width="128dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false"
-        android:layout_alignTop="@+id/button_AddAttribute"
-        android:layout_below="@+id/divider3"
         android:text="@string/ui_scanButton"
-        android:onClick="onScanButtonClicked"/>
+        android:onClick="onScanButtonClicked"
+        android:layout_above="@+id/imageView2"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:src="@drawable/powered_by_google_light"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/ui_content_poweredbygoogle"/>
 
 </RelativeLayout>
