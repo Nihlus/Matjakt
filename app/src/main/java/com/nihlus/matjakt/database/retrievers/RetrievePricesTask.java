@@ -130,7 +130,6 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         //update list with the retrieved prices
         if (ParentActivity instanceof ViewProductActivity)
         {
-            // TODO: Sort list based on price
             Collections.sort(retrievedPrices, MatjaktPrice.LOWEST_FIRST);
             ((ViewProductActivity) ParentActivity).onPricesRetrieved(retrievedPrices);
         }

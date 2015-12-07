@@ -481,7 +481,6 @@ public class ModifyProductActivity extends AppCompatActivity
             return api.getProduct((EAN)ProductData.getParcelable(Constants.PRODUCT_EAN));
         }
 
-        // TODO: Update the values in the existing ViewProductActivity instead of loading a new one
         protected void onPostExecute(OutpanProduct result)
         {
             super.onPostExecute(result);
@@ -494,22 +493,6 @@ public class ModifyProductActivity extends AppCompatActivity
 
                 modifyProductActivity.setResult(RESULT_OK, resultIntent);
                 modifyProductActivity.finish();
-
-                /*
-                if (parentActivity instanceof MainActivity)
-                {
-                    Intent viewProductIntent = new Intent (parentActivity, ViewProductActivity.class);
-                    viewProductIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
-                    parentActivity.startActivity(viewProductIntent);
-
-                    modifyProductActivity.setResult(RESULT_OK);
-                    modifyProductActivity.finish();
-                }
-                else
-                {
-
-                }
-                */
             }
             else
             {

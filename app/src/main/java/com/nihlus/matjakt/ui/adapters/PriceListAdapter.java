@@ -37,22 +37,19 @@ public class PriceListAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        // TODO Auto-generated method stub
         return list.size();
     }
 
     @Override
     public MatjaktPrice getItem(int position)
     {
-        // TODO Auto-generated method stub
         return list.get(position);
     }
 
     @Override
     public long getItemId(int position)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return list.get(position).ID;
     }
 
     @Override
