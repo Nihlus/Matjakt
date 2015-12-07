@@ -4,31 +4,26 @@ package com.nihlus.matjakt.ui.adapters;
  * Adapter for the columnar ListView for prices
  */
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.nihlus.matjakt.MainActivity;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
-import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.ui.ModifyProductActivity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
+@SuppressWarnings("UnusedAssignment")
 public class BrandNameAdapter extends ArrayAdapter<String>
 {
 
@@ -47,6 +42,7 @@ public class BrandNameAdapter extends ArrayAdapter<String>
 
         row.setOnLongClickListener(new View.OnLongClickListener()
         {
+            @SuppressWarnings("UnusedAssignment")
             @Override
             public boolean onLongClick(final View v)
             {

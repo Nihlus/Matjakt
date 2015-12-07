@@ -146,7 +146,7 @@ public class ModifyPriceDialogFragment extends DialogFragment
 
                     AutocompleteFilter filter = AutocompleteFilter.create(filterTypes);
                     LatLngBounds bounds = getLatLngBoundsFromLocation(Latitude, Longitude,
-                            getStoreSearchDistance(true));
+                            getStoreSearchDistance());
 
                     placeAutocompleteAdapter = new PlaceAutocompleteAdapter(ParentActivity,
                             ((ViewProductActivity) ParentActivity).getGoogleApiClient(),
@@ -270,18 +270,10 @@ public class ModifyPriceDialogFragment extends DialogFragment
         return preferences.getString(Constants.PREF_USERCURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
     }
 
-    private double getStoreSearchDistance(boolean maxAllowedDistance)
+    private double getStoreSearchDistance()
     {
         SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-
-        if (maxAllowedDistance)
-        {
-            return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 10.0f);
-        }
-        else
-        {
-            return preferences.getFloat(Constants.PREF_PREFERREDSTOREDISTANCE, 2.0f);
-        }
+        return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 10.0f);
     }
 
     private void saveStoreState(String placeID, String primaryText)

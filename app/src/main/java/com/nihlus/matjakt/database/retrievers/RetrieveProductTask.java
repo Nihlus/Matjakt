@@ -1,7 +1,6 @@
 package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +22,7 @@ import com.nihlus.matjakt.ui.ViewProductActivity;
 public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
 {
     private final Activity ParentActivity;
-    private EAN ean;
+    private final EAN ean;
 
     private ProgressDialog progressDialog;
 

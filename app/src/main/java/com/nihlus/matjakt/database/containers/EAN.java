@@ -30,7 +30,7 @@ public class EAN implements Parcelable
         return rawEAN;
     }
 
-    public EANType getType()
+    private EANType getType()
     {
         int eanLength = rawEAN.length();
         if (eanLength == 14)
@@ -92,7 +92,7 @@ public class EAN implements Parcelable
     }
 
     // TODO: Optimize
-    public static int getChecksum(String inEAN)
+    private static int getChecksum(String inEAN)
     {
         // Implementation of the mod10 algorithm
         ArrayList<Character> group1 = new ArrayList<>();

@@ -14,7 +14,7 @@
     <string name="dialog_RetrievingProduct">Retrieving product information…</string>
     <string name="dialog_updatingProductInfo">Updating product information…</string>
     <string name="dialog_insertingStore">Updating store database…</string>
-    <string name="dialog_insertingPrice" translatable="false">Updating price database…</string>
+    <string name="dialog_insertingPrice">Updating price database…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>
     <string name="dialog_loadingStoresAndPrices">Loading local stores and prices…</string>
 
@@ -24,7 +24,7 @@
     <string name="prompt_addNewPrice">Add new price</string>
 
     <string name="debug_howDidYouGetHere">How did you get here?</string>
-    <string name="debug_noInternet" translatable="false">No internet connection :(</string>
+    <string name="debug_noInternet">No internet connection :(</string>
 
     <string name="ui_editBrand">Brand:</string>
     <string name="ui_editName">Name:</string>

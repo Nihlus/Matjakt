@@ -3,17 +3,14 @@ package com.nihlus.matjakt.outpan;
 
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.retrievers.Utility;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 
 public class OutpanAPI2
 {
@@ -29,36 +26,11 @@ public class OutpanAPI2
     {
         OutpanProduct OutProduct = null;
 
-        try
+        JSONObject responseObject = Utility.getRemoteJSONObject(buildRequestURL(InEAN));
+
+        if (responseObject != null)
         {
-            String responseContent = "";
-            URL requestURL = buildRequestURL(InEAN);
-            URLConnection requestConnection = requestURL.openConnection();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
-            {
-                responseContent += currentLine;
-            }
-
-            if (!responseContent.isEmpty())
-            {
-                OutProduct = new OutpanProduct(new JSONObject(responseContent));
-            }
-
-        }
-        catch (IOException iex)
-        {
-            //TODO: Create global exception handler
-            iex.printStackTrace();
-        }
-        catch (JSONException jex)
-        {
-            //TODO: Create global exception handler
-            jex.printStackTrace();
+            OutProduct = new OutpanProduct(responseObject);
         }
 
         return OutProduct;

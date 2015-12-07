@@ -20,7 +20,7 @@ import java.util.Locale;
  * Represents a price from the Matjakt database.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class MatjaktPrice implements Comparable<MatjaktPrice>
+public class MatjaktPrice
 {
     public int ID;
     public String EAN;
@@ -132,17 +132,4 @@ public class MatjaktPrice implements Comparable<MatjaktPrice>
             return Double.compare(lhs.Price, rhs.Price);
         }
     };
-
-    @Override
-    public int compareTo(MatjaktPrice another)
-    {
-        if (this.Price > another.Price)
-        {
-            return -1;
-        }
-        else
-        {
-            return 1;
-        }
-    }
 }

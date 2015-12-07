@@ -1,46 +1,80 @@
 <component name="ProjectDictionaryState">
   <dictionary name="jarl">
     <words>
+      <w>aboutapp</w>
+      <w>aboutattributions</w>
       <w>aboutfragment</w>
+      <w>addnewprice</w>
       <w>addprice</w>
       <w>addproductfragment</w>
       <w>addstore</w>
       <w>addstoredialog</w>
       <w>apikey</w>
+      <w>brandarray</w>
+      <w>bugreport</w>
       <w>cccccc</w>
+      <w>couldn</w>
       <w>ddff</w>
       <w>dedca</w>
+      <w>deleteprice</w>
+      <w>developeremail</w>
       <w>doesn</w>
       <w>draweritem</w>
+      <w>editprice</w>
+      <w>everyone's</w>
       <w>fairtrade</w>
+      <w>featurerequest</w>
+      <w>freepik</w>
+      <w>fullname</w>
       <w>geooding</w>
       <w>getprices</w>
       <w>getstore</w>
       <w>getstores</w>
+      <w>gnomovision</w>
       <w>gtin</w>
+      <w>gullberg</w>
       <w>hasstartedbefore</w>
       <w>hocevar</w>
+      <w>isaddentry</w>
+      <w>isoffer</w>
       <w>jarl</w>
+      <w>lastupdated</w>
+      <w>mailto</w>
       <w>matjakt</w>
       <w>matjaktprefs</w>
       <w>maxstoredistance</w>
+      <w>mult</w>
       <w>nihlus</w>
       <w>nixtime</w>
+      <w>noresult</w>
       <w>nära</w>
       <w>outpan</w>
       <w>outpanurl</w>
+      <w>placeid</w>
+      <w>poweredbygoogle</w>
       <w>preferredstoredistance</w>
       <w>pricedialog</w>
+      <w>priceinfo</w>
+      <w>pricelist</w>
       <w>pricemapid</w>
       <w>productdata</w>
       <w>productkey</w>
+      <w>redistributors</w>
       <w>repairproductfragment</w>
+      <w>requestfeature</w>
       <w>scanfragment</w>
+      <w>sendbugreport</w>
       <w>settingsfragment</w>
+      <w>someaddress</w>
+      <w>somedate</w>
+      <w>someexpirationdate</w>
       <w>splitmap</w>
       <w>storeid</w>
+      <w>storeplaceid</w>
+      <w>storeprimarytext</w>
       <w>usedarktheme</w>
       <w>usercurrency</w>
+      <w>yoyodyne</w>
       <w>zxing</w>
     </words>
   </dictionary>

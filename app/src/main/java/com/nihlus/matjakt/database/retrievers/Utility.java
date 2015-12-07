@@ -13,7 +13,7 @@ import java.net.URLConnection;
 /**
  * Remote JSON retrieval utility class
  */
-class Utility
+public class Utility
 {
     public static JSONObject getRemoteJSONObject(URL InURL)
     {
