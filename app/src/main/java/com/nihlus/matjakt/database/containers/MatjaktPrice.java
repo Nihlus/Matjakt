@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,7 +20,7 @@ import java.util.Locale;
  * Represents a price from the Matjakt database.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class MatjaktPrice
+public class MatjaktPrice implements Comparable<MatjaktPrice>
 {
     public int ID;
     public String EAN;
@@ -96,8 +97,6 @@ public class MatjaktPrice
             hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Store.Latitude));
             hashMap.put(Constants.PRICEMAPID_LON, String.valueOf(Store.Longitude));
 
-            //TODO: Add city reverse Geooding here
-            //hashMap.put(Constants.PRICEMAPID_LOC, Location);
             hashMap.put(Constants.PRICEMAPID_TIMESTAMP, Timestamp.toString());
             hashMap.put(Constants.PRICEMAPID_ISADDENTRY, String.valueOf(isAddEntry));
 
@@ -114,5 +113,36 @@ public class MatjaktPrice
 
         numberString += " " + InCurrency;
         return numberString;
+    }
+
+    public static final Comparator<MatjaktPrice> HIGHEST_FIRST = new Comparator<MatjaktPrice>()
+    {
+        @Override
+        public int compare(MatjaktPrice lhs, MatjaktPrice rhs)
+        {
+            return Double.compare(rhs.Price, lhs.Price);
+        }
+    };
+
+    public static final Comparator<MatjaktPrice> LOWEST_FIRST = new Comparator<MatjaktPrice>()
+    {
+        @Override
+        public int compare(MatjaktPrice lhs, MatjaktPrice rhs)
+        {
+            return Double.compare(lhs.Price, rhs.Price);
+        }
+    };
+
+    @Override
+    public int compareTo(MatjaktPrice another)
+    {
+        if (this.Price > another.Price)
+        {
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
     }
 }

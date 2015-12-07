@@ -73,6 +73,8 @@
     <string name="ui_settings_locationHint">Alla avstånd är i metriska kilometer.</string>
     <string name="ui_settings_maxStoreDistance">Maximalt butiksavstånd</string>
     <string name="ui_settings_preferredStoreDistance">Föredraget butiksavstånd</string>
+    <string name="ui_settings_general">Allmänt</string>
+    <string name="ui_settings_appearanceHint">Ändra apptema och annat visuellt</string>
     <string name="ui_settings_useDarkTheme">Använd ett mörkt tema</string>
     <string name="ui_settings_defaultMaximumStoreDistance">10</string>
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
@@ -100,5 +102,8 @@
     <string name="ui_preview_someaddress">Någon Address</string>
     <string name="ui_preview_somedate">Något Datum</string>
     <string name="ui_preview_someexpirationdate">Något Utgångsdatum</string>
-    <string name="ui_content_poweredbygoogle">Powered by Google</string>
+    <string name="ui_content_poweredbygoogle">Powered by Google</string>'
+    <string name="dialog_deleteEntry">Vill du radera det här förslaget?</string>
+    <string name="dialog_mightBeByWeight">Möjlig kilopris-produkt</string>
+    <string name="dialog_mightBeByWeight_body">Den här produkten verkar säljas efter kilopris. Vill du ladda produkten som det?</string>
 </resources>

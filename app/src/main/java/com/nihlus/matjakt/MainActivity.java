@@ -173,8 +173,9 @@ public class MainActivity extends AppCompatActivity
                     }
                     case Constants.DRAWERITEM_SETTINGS:
                     {
-                        //setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        // TODO: Implement new settings activity
+                        setFragment(new MainSettingsFragment(), Constants.SETTINGSFRAGMENT_ID);
+                        //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     }
                     case Constants.DRAWERITEM_ABOUT:
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity
             if (result.getContents() != null)
             {
                 //retrieve data and show it to the user if the product exists
-                new RetrieveProductTask(this).execute(new EAN(result.getContents()));
+                new RetrieveProductTask(this, new EAN(result.getContents())).execute();
             }
         }
         else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT ||

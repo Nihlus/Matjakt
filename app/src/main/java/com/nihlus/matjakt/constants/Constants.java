@@ -65,6 +65,8 @@ public final class Constants
     public static final String API_PARAM_PLACEID = "placeID";
     public static final String API_PARAM_KEY = "key";
 
+    public static final String UTF_8 = "UTF-8";
+
     public static final String PRICEMAPID_STORE = "STORE";
     public static final String PRICEMAPID_OFFER = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";

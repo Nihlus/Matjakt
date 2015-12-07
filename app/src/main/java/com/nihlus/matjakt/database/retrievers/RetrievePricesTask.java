@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -129,6 +131,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         if (ParentActivity instanceof ViewProductActivity)
         {
             // TODO: Sort list based on price
+            Collections.sort(retrievedPrices, MatjaktPrice.LOWEST_FIRST);
             ((ViewProductActivity) ParentActivity).onPricesRetrieved(retrievedPrices);
         }
     }

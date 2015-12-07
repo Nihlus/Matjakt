@@ -1,7 +1,9 @@
 package com.nihlus.matjakt.ui;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -190,14 +192,53 @@ public class ViewProductActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        final IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null)
         {
             // We scanned an EAN code!
             if (result.getContents() != null)
             {
-                //retrieve data and show it to the user if the product exists
-                new RetrieveProductTask(this).execute(new EAN(result.getContents()));
+                final EAN ean = new EAN(result.getContents());
+                if (ean.isInternalCode())
+                {
+                    AlertDialog.Builder isProductAByWeightProductDialog = new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.dialog_mightBeByWeight))
+                            .setMessage(getString(R.string.dialog_mightBeByWeight_body))
+                            .setPositiveButton(getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Load the EAN as a by-weight product
+                                    new RetrieveProductTask(ViewProductActivity.this, ean.getEmbeddedPriceEAN()).execute();
+                                }
+                            })
+                            .setNegativeButton(getString(R.string.dialog_No), new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Load the EAN as if it were a normal product
+                                    new RetrieveProductTask(ViewProductActivity.this, new EAN(result.getContents())).execute();
+                                }
+                            })
+                            .setOnCancelListener(new DialogInterface.OnCancelListener()
+                            {
+                                @Override
+                                public void onCancel(DialogInterface dialog)
+                                {
+
+                                }
+                            });
+
+                    isProductAByWeightProductDialog.setCancelable(true);
+                    isProductAByWeightProductDialog.show();
+                }
+                else
+                {
+                    //retrieve data and show it to the user if the product exists
+                    new RetrieveProductTask(this, new EAN(result.getContents())).execute();
+                }
             }
         }
         else if ((requestCode == Constants.MODIFY_EXISTING_PRODUCT ||

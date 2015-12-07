@@ -1,6 +1,7 @@
 package com.nihlus.matjakt.database.retrievers;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,16 +20,17 @@ import com.nihlus.matjakt.ui.ViewProductActivity;
 /**
  * Retrieves a product from the Outpan database by its ean
  */
-public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
+public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
 {
     private final Activity ParentActivity;
     private EAN ean;
 
     private ProgressDialog progressDialog;
 
-    public RetrieveProductTask(Activity InParentActivity)
+    public RetrieveProductTask(Activity InParentActivity, EAN inEAN)
     {
         this.ParentActivity = InParentActivity;
+        this.ean = inEAN;
     }
 
     @Override
@@ -47,12 +49,10 @@ public class RetrieveProductTask extends AsyncTask<EAN, Integer, OutpanProduct>
     }
 
     @Override
-    protected OutpanProduct doInBackground(EAN... inEANs)
+    protected OutpanProduct doInBackground(Void... Nothing)
     {
-        this.ean = inEANs[0];
-
         OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-        return api.getProduct(inEANs[0]);
+        return api.getProduct(ean);
     }
 
     @Override

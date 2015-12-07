@@ -10,12 +10,15 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.MainActivity;
@@ -24,6 +27,7 @@ import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.ui.adapters.BrandNameAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +44,8 @@ public class ModifyProductActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // TODO: Detect if the product is a by-weight product and needs special layout
         setContentView(R.layout.activity_modify_product);
 
         Intent intent = getIntent();
@@ -52,11 +58,9 @@ public class ModifyProductActivity extends AppCompatActivity
         // Setup Brand autocomplete
         setupBrandAutocomplete();
 
-
         if (bIsNewProduct)
         {
             setTitle(getResources().getString(R.string.title_activity_new_product));
-
             this.ProductEAN = intent.getParcelableExtra(Constants.PRODUCT_EAN);
         }
         else if (bIsModifyingProduct)
@@ -72,14 +76,21 @@ public class ModifyProductActivity extends AppCompatActivity
 
     private void setupBrandAutocomplete()
     {
-        AutoCompleteTextView brandEdit = (AutoCompleteTextView)findViewById(R.id.brandEdit);
+        final AutoCompleteTextView brandEdit = (AutoCompleteTextView)findViewById(R.id.brandEdit);
         if (brandEdit != null)
         {
-            ArrayAdapter<String> autocompleteAdapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1,
-                    getStoredBrands());
+            brandEdit.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+                    brandEdit.setText(((TextView)view).getText().toString());
+                }
+            });
 
+            ArrayAdapter<String> autocompleteAdapter = new BrandNameAdapter(this, getStoredBrands());
             brandEdit.setAdapter(autocompleteAdapter);
+
         }
     }
 
