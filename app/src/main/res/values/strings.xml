@@ -13,8 +13,6 @@
     <string name="dialog_brokenProductBody">This product is in the database, but is missing some information. Would you like to add it?</string>
     <string name="dialog_RetrievingProduct">Retrieving product information…</string>
     <string name="dialog_updatingProductInfo">Updating product information…</string>
-    <string name="dialog_insertingStore">Updating store database…</string>
-    <string name="dialog_insertingPrice">Updating price database…</string>
     <string name="dialog_productDataChanged">You\'ve changed some data. Do you want to discard it?</string>
     <string name="dialog_loadingStoresAndPrices">Loading local stores and prices…</string>
 
@@ -112,4 +110,6 @@
     <string name="title_activity_settings">Settings</string>
     <string name="dialog_mightBeByWeight">Possible by-weight product</string>
     <string name="dialog_mightBeByWeight_body">This product might be sold by weight, instead of using a fixed price. Would you like to view it as one?</string>
+    <string name="ui_editAmount_circa">Amount (Ca)</string>
+    <string name="ui_editWeightType">Price Unit:</string>
 </resources>

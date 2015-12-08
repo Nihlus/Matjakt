@@ -45,7 +45,7 @@ public class PriceListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        priceListAdapter = new PriceListAdapter(getActivity(), priceList);
+        priceListAdapter = new PriceListAdapter((ViewProductActivity)getActivity(), priceList);
     }
 
     @Override

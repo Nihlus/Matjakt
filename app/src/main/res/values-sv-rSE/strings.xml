@@ -78,6 +78,7 @@
     <string name="ui_settings_useDarkTheme">Använd ett mörkt tema</string>
     <string name="ui_settings_defaultMaximumStoreDistance">10</string>
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
+    <string name="hello_blank_fragment">Hej tomt fragment</string>
     <string name="ui_price_storeHint">Butik</string>
     <string name="ui_price_isoffer">Priset är ett tidsbegränsat erbjudande</string>
     <string name="ui_pricelist_isoffer">Erbjudande</string>
@@ -86,7 +87,7 @@
     <string name="ui_about_aboutapp">Om Appen</string>
     <string name="ui_about_aboutattributions">Erkännanden</string>
     <string name="ui_about_aboutapp_body">Matjakt utvecklades av Jarl Gullberg (jarl.gullberg@gmail.com). \n\nAppen är upphovsrätsskyddad år 2015 till Jarl Gullberg, likväl Matjakt\'s prisdatabas. \n\nAppen är för närvarande underhållen av Jarl Gullberg.</string>
-    <string name="ui_about_aboutattributions_body">Produktmatchning drivs av Outpan Technologies Inc. \n\nButiksplaceringen drivs av Google. \n\nBockikonen designades av Freepik.</string>
+    <string name="ui_about_aboutattributions_body">Produktmatchning drivs av Outpan Technologies Inc. \n\nButiksidentifieringen drivs av Google. \n\nBockikonen designades av Freepik.</string>
     <string name="ui_drawer_close">Öppna sidmeny</string>
     <string name="ui_drawer_open">Stäng sidmeny</string>
     <string name="ui_price_addnewprice">+ Lägg till pris…</string>
@@ -105,5 +106,6 @@
     <string name="dialog_deleteEntry">Vill du radera det här förslaget?</string>
     <string name="dialog_mightBeByWeight">Möjlig kilopris-produkt</string>
     <string name="dialog_mightBeByWeight_body">Den här produkten verkar säljas efter kilopris. Vill du ladda produkten som det?</string>
-    <string name="title_activity_settings">Inställningar</string>
+    <string name="ui_editAmount_circa">Mängd (Ca)</string>
+    <string name="ui_editWeightType">Prisenhet:</string>
 </resources>

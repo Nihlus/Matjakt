@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
+import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +23,12 @@ public class PriceListAdapter extends BaseAdapter
 {
 
     private final ArrayList<MatjaktPrice> list;
-    private final Activity ParentActivity;
+    private final ViewProductActivity ParentActivity;
     private TextView storeChainText;
     private TextView storeNameText;
     private TextView priceValueText;
 
-    public PriceListAdapter(Activity activity, ArrayList<MatjaktPrice> list)
+    public PriceListAdapter(ViewProductActivity activity, ArrayList<MatjaktPrice> list)
     {
         super();
         this.ParentActivity = activity;
@@ -80,7 +81,17 @@ public class PriceListAdapter extends BaseAdapter
 
         if (map.containsKey(Constants.PRICEMAPID_PRICE))
         {
-            priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
+            if (ParentActivity.isProductByWeight())
+            {
+                // TODO: Clean this crap up
+                String basePriceString = map.get(Constants.PRICEMAPID_PRICE);
+                String finalPriceString = basePriceString + "/" + ParentActivity.getProductWeightUnit();
+                priceValueText.setText(finalPriceString);
+            }
+            else
+            {
+                priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
+            }
         }
 
         return convertView;

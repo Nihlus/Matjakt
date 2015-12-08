@@ -3,6 +3,7 @@ package com.nihlus.matjakt.database.containers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -18,11 +19,20 @@ public class EAN implements Parcelable
         EAN8
     }
 
+    // Remember to update the parcelable interface if you add more members here.
     private final String rawEAN;
+    public final boolean isByWeight;
 
     public EAN(String InRawEAN)
     {
         this.rawEAN = InRawEAN;
+        this.isByWeight = false;
+    }
+
+    public EAN(String InRawEAN, boolean InIsByWeight)
+    {
+        this.rawEAN = InRawEAN;
+        this.isByWeight = InIsByWeight;
     }
 
     public String getCode()
@@ -61,13 +71,38 @@ public class EAN implements Parcelable
         return eanType.startsWith("2");
     }
 
+    public boolean mayHaveEmbeddedWeight()
+    {
+        return rawEAN.startsWith("23");
+    }
+
+    public boolean mayHaveEmbeddedPrice()
+    {
+        return rawEAN.startsWith("20");
+    }
+
     public double getEmbeddedWeight()
     {
         // Only allow this for EAN13 products
-        if (getType() == EANType.EAN13 && isInternalCode())
+        if (getType() == EANType.EAN13 && mayHaveEmbeddedWeight())
         {
             String weightString = this.rawEAN.substring(8, 12);
-            return Double.parseDouble(weightString) / 1000;
+            DecimalFormat df = new DecimalFormat("0.000");
+
+            return Double.parseDouble(df.format(weightString));
+        }
+
+        return 0;
+    }
+
+    public double getEmbeddedPrice()
+    {
+        if (getType() == EANType.EAN13 && mayHaveEmbeddedPrice())
+        {
+            String weightString = this.rawEAN.substring(8, 12);
+            DecimalFormat df = new DecimalFormat("#0.00");
+
+            return Double.parseDouble(df.format(weightString));
         }
 
         return 0;
@@ -85,7 +120,7 @@ public class EAN implements Parcelable
             String baseEAN = strippedEAN + "0000";
 
             // Recalculate the checksum and return the final code
-            return new EAN(baseEAN + getChecksum(baseEAN));
+            return new EAN(baseEAN + getChecksum(baseEAN), true);
         }
 
         return null;
@@ -157,14 +192,14 @@ public class EAN implements Parcelable
     public void writeToParcel(Parcel out, int flags)
     {
         out.writeString(rawEAN);
+        out.writeByte((byte) (isByWeight ? 1 : 0));
     }
 
     public static final Parcelable.Creator<EAN> CREATOR = new Parcelable.Creator<EAN>()
     {
         public EAN createFromParcel(Parcel in)
         {
-            return new EAN(in.readString());
-
+            return new EAN(in.readString(), in.readByte() != 0);
         }
 
         public EAN[] newArray(int size)

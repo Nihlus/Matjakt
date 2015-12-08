@@ -270,47 +270,9 @@ public class MainActivity extends AppCompatActivity
             // We scanned an EAN code!
             if (result.getContents() != null)
             {
-                final EAN ean = new EAN(result.getContents());
-                if (ean.isInternalCode())
-                {
-                    AlertDialog.Builder isProductAByWeightProductDialog = new AlertDialog.Builder(this)
-                            .setTitle(getString(R.string.dialog_mightBeByWeight))
-                            .setMessage(getString(R.string.dialog_mightBeByWeight_body))
-                            .setPositiveButton(getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which)
-                                {
-                                    // Load the EAN as a by-weight product
-                                    new RetrieveProductTask(MainActivity.this, ean.getEmbeddedPriceEAN()).execute();
-                                }
-                            })
-                            .setNegativeButton(getString(R.string.dialog_No), new DialogInterface.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which)
-                                {
-                                    // Load the EAN as if it were a normal product
-                                    new RetrieveProductTask(MainActivity.this, new EAN(result.getContents())).execute();
-                                }
-                            })
-                            .setOnCancelListener(new DialogInterface.OnCancelListener()
-                            {
-                                @Override
-                                public void onCancel(DialogInterface dialog)
-                                {
+                //retrieve data and show it to the user if the product exists
+                new RetrieveProductTask(this, new EAN(result.getContents())).execute();
 
-                                }
-                            });
-
-                    isProductAByWeightProductDialog.setCancelable(true);
-                    isProductAByWeightProductDialog.show();
-                }
-                else
-                {
-                    //retrieve data and show it to the user if the product exists
-                    new RetrieveProductTask(this, new EAN(result.getContents())).execute();
-                }
             }
         }
         else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT ||

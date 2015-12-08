@@ -1,9 +1,12 @@
 package com.nihlus.matjakt.outpan;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.containers.MatjaktPrice;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,7 +71,7 @@ public class OutpanProduct
     {
         Bundle productData = new Bundle();
 
-        if (isNameValid())
+        if (isValid())
         {
             productData.putString(Constants.PRODUCT_NAME, Name);
         }
@@ -95,6 +98,16 @@ public class OutpanProduct
                 productData.putString(Constants.PRODUCT_AMOUNT_ATTRIBUTE, Attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
             }
 
+            if (Attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
+            {
+                productData.putBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE)));
+            }
+
+            if (Attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
+            {
+                productData.putString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE, Attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
+            }
+
             if (Attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
             {
                 productData.putBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, Boolean.valueOf(Attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
@@ -109,11 +122,11 @@ public class OutpanProduct
         return productData;
     }
 
-    public boolean isValid()
+    public boolean isMissingRequiredAttributes()
     {
         boolean isMissingRequiredAttributes = false;
 
-        if (!isNameValid())
+        if (!isValid())
         {
             isMissingRequiredAttributes = true;
         }
@@ -141,7 +154,7 @@ public class OutpanProduct
         return !isMissingRequiredAttributes;
     }
 
-    public boolean isNameValid()
+    public boolean isValid()
     {
         //if name is empty or says null, return false
         boolean nameIsEmpty = Name.isEmpty();

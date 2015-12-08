@@ -37,6 +37,8 @@ public final class Constants
     public static final String PRODUCT_AMOUNT_ATTRIBUTE = "Amount";
     public static final String PRODUCT_FAIRTRADE_ATTRIBUTE = "Fairtrade";
     public static final String PRODUCT_ORGANIC_ATTRIBUTE = "Organic";
+    public static final String PRODUCT_BYWEIGHT_ATTRIBUTE = "Sold by weight";
+    public static final String PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE = "Weight Unit";
     public static final String PRODUCT_BUNDLE = "PRODUCTDATA";
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
