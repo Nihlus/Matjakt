@@ -1,10 +1,8 @@
 package com.nihlus.matjakt;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -281,7 +279,7 @@ public class MainActivity extends AppCompatActivity
         {
             // We inserted a new product
             Intent intent = new Intent(this, ViewProductActivity.class);
-            intent.putExtra(Constants.PRODUCT_BUNDLE, data.getBundleExtra(Constants.PRODUCT_BUNDLE));
+            intent.putExtra(Constants.PRODUCT_PARCEL, data.getBundleExtra(Constants.PRODUCT_PARCEL));
 
             startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
         }

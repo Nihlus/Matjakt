@@ -60,8 +60,6 @@
     <string name="debug_noInternet">Ingen internetuppkoppling :(</string>
     <string name="dialog_loadingStoresAndPrices">Laddar lokala butiker och priser…</string>
     <string name="ui_editPriceHint">Nytt pris</string>
-    <string name="dialog_insertingPrice">Uppdaterar prisdatabas…</string>
-    <string name="dialog_insertingStore">Uppdaterar butiksdatabas…</string>
     <string name="ui_dialog_addprice">Lägg till nytt pris</string>
     <string name="ui_addStoreTitle">Lägg till ny butik</string>
     <string name="ui_editStoreChainHint">Kedja (ACME)</string>
@@ -78,7 +76,6 @@
     <string name="ui_settings_useDarkTheme">Använd ett mörkt tema</string>
     <string name="ui_settings_defaultMaximumStoreDistance">10</string>
     <string name="ui_settings_defaultPreferredStoreDistance">2</string>
-    <string name="hello_blank_fragment">Hej tomt fragment</string>
     <string name="ui_price_storeHint">Butik</string>
     <string name="ui_price_isoffer">Priset är ett tidsbegränsat erbjudande</string>
     <string name="ui_pricelist_isoffer">Erbjudande</string>
@@ -108,4 +105,5 @@
     <string name="dialog_mightBeByWeight_body">Den här produkten verkar säljas efter kilopris. Vill du ladda produkten som det?</string>
     <string name="ui_editAmount_circa">Mängd (Ca)</string>
     <string name="ui_editWeightType">Prisenhet:</string>
+    <string name="title_activity_settings">Inställningar</string>
 </resources>

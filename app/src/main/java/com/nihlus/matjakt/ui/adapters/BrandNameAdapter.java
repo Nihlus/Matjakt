@@ -46,7 +46,7 @@ public class BrandNameAdapter extends ArrayAdapter<String>
             @Override
             public boolean onLongClick(final View v)
             {
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(getContext())
                         .setTitle(MainActivity.getStaticContext().getString(R.string.dialog_confirm))
                         .setMessage(MainActivity.getStaticContext().getString(R.string.dialog_deleteEntry))
                         .setPositiveButton(MainActivity.getStaticContext().getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()

@@ -1,8 +1,8 @@
 package com.nihlus.matjakt.database.retrievers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.AsyncTask;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -18,12 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,27 +29,19 @@ import java.util.List;
  */
 public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>>
 {
-    private final Activity ParentActivity;
+    private final ViewProductActivity parentActivity;
     private final EAN ean;
-    private final double latitude;
-    private final double longitude;
+    private final Location location;
 
-    public RetrievePricesTask(Activity activity, EAN ean, double latitude, double longitude)
+    public RetrievePricesTask(ViewProductActivity InParentActivity, EAN InEAN, Location InLocation)
     {
-        this.ParentActivity = activity;
-        this.ean = ean;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.parentActivity = InParentActivity;
+        this.ean = InEAN;
+        this.location = InLocation;
     }
 
     @Override
-    protected void onPreExecute()
-    {
-
-    }
-
-    @Override
-    protected List<MatjaktPrice> doInBackground(Void... nothing)
+    protected List<MatjaktPrice> doInBackground(Void... params)
     {
         List<MatjaktPrice> retrievedPrices = fetchPrices(false);
 
@@ -66,7 +54,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         return retrievedPrices;
     }
 
-    private List<MatjaktPrice> fetchPrices(Boolean bIsExtendedSearch)
+    private List<MatjaktPrice> fetchPrices(Boolean IsExtendedSearch)
     {
         List<MatjaktPrice> retrievedPrices = new ArrayList<>();
 
@@ -74,9 +62,9 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         {
             String rawUrl = Constants.MATJAKT_API_URL + Constants.API_GETPRICES + "?" +
                     Constants.API_PARAM_EAN + "=" + ean.getCode() + "&" +
-                    Constants.API_PARAM_LAT + "=" + String.valueOf(latitude) + "&" +
-                    Constants.API_PARAM_LON + "=" + String.valueOf(longitude) + "&" +
-                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(bIsExtendedSearch));
+                    Constants.API_PARAM_LAT + "=" + String.valueOf(location.getLatitude()) + "&" +
+                    Constants.API_PARAM_LON + "=" + String.valueOf(location.getLongitude()) + "&" +
+                    Constants.API_PARAM_DISTANCE + "=" + String.valueOf(getStoreSearchDistance(IsExtendedSearch));
 
             JSONArray Result = Utility.getRemoteJSONArray(new URL(rawUrl));
             if (Result != null)
@@ -84,7 +72,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
                 for (int i = 0; i < Result.length(); ++i)
                 {
                     MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
-                    newPrice.Store = getStore(newPrice.StoreID, ((ViewProductActivity)ParentActivity).getGoogleApiClient());
+                    newPrice.store = getStore(newPrice.storeID, parentActivity.getGoogleApiClient());
 
                     retrievedPrices.add(newPrice);
                 }
@@ -104,11 +92,11 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
         return retrievedPrices;
     }
 
-    private double getStoreSearchDistance(boolean maxAllowedDistance)
+    private double getStoreSearchDistance(boolean MaxAllowedDistance)
     {
-        SharedPreferences preferences = ParentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences preferences = parentActivity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 
-        if (maxAllowedDistance)
+        if (MaxAllowedDistance)
         {
             return preferences.getFloat(Constants.PREF_MAXSTOREDISTANCE, 2.0f);
         }
@@ -124,50 +112,34 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
     }
 
     @Override
-    protected void onPostExecute(List<MatjaktPrice> retrievedPrices)
+    protected void onPostExecute(List<MatjaktPrice> InRetrievedPrices)
     {
         //update list with the retrieved prices
-        if (ParentActivity instanceof ViewProductActivity)
-        {
-            Collections.sort(retrievedPrices, MatjaktPrice.LOWEST_FIRST);
-            ((ViewProductActivity) ParentActivity).onPricesRetrieved(retrievedPrices);
-        }
+        Collections.sort(InRetrievedPrices, MatjaktPrice.LOWEST_FIRST);
+        parentActivity.onPricesRetrieved(InRetrievedPrices);
     }
 
-    private static MatjaktStore getStore(int id, GoogleApiClient inApiClient)
+    private static MatjaktStore getStore(int InID, GoogleApiClient InAPIClient)
     {
         JSONObject Result = null;
         Place storePlace = null;
         try
         {
             String rawUrl = Constants.MATJAKT_API_URL + Constants.API_GETSTORE + "?" +
-                    Constants.API_PARAM_STOREID + "=" + String.valueOf(id);
+                    Constants.API_PARAM_STOREID + "=" + String.valueOf(InID);
 
-            String responseContent = "";
             URL url = new URL(rawUrl);
-            URLConnection requestConnection = url.openConnection();
+            Result = Utility.getRemoteJSONObject(url);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
+            if (Result != null)
             {
-                responseContent += currentLine;
+                String placeID = Result.getString(Constants.API_PARAM_PLACEID);
+                storePlace = InsertPriceTask.getStorePlaceByID(InAPIClient, placeID);
             }
-
-            Result = new JSONObject(responseContent);
-
-            String placeID = Result.getString(Constants.API_PARAM_PLACEID);
-            storePlace = InsertPriceTask.getStorePlaceByID(inApiClient, placeID);
         }
         catch (MalformedURLException mex)
         {
             mex.printStackTrace();
-        }
-        catch (IOException iex)
-        {
-            iex.printStackTrace();
         }
         catch (JSONException jex)
         {

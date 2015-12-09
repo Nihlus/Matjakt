@@ -36,14 +36,14 @@ public class PriceInfoFragment extends Fragment
         this.currentPrice = price;
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String dateString = df.format(price.Timestamp);
+        String dateString = df.format(price.timestamp);
 
         setDateText(dateString);
 
         if (price.isOffer)
         {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(price.Timestamp);
+            calendar.setTime(price.timestamp);
             calendar.add(Calendar.HOUR, 24);
 
             String expirationString = df.format(calendar.getTime());
@@ -54,7 +54,7 @@ public class PriceInfoFragment extends Fragment
             setExpirationDate(getResources().getString(R.string.ui_expires_never));
         }
 
-        String rawStoreAddress = price.Store.storePlace.getAddress().toString();
+        String rawStoreAddress = price.store.storePlace.getAddress().toString();
         String[] addressParts = rawStoreAddress.split(",");
         setStoreAddress(buildAddressString(addressParts));
     }

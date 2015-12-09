@@ -4,7 +4,6 @@ package com.nihlus.matjakt.ui.adapters;
  * Adapter for the columnar ListView for prices
  */
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +22,16 @@ public class PriceListAdapter extends BaseAdapter
 {
 
     private final ArrayList<MatjaktPrice> list;
-    private final ViewProductActivity ParentActivity;
+    private final ViewProductActivity parentActivity;
     private TextView storeChainText;
     private TextView storeNameText;
     private TextView priceValueText;
 
-    public PriceListAdapter(ViewProductActivity activity, ArrayList<MatjaktPrice> list)
+    public PriceListAdapter(ViewProductActivity InViewProductActivity, ArrayList<MatjaktPrice> InPriceList)
     {
         super();
-        this.ParentActivity = activity;
-        this.list = list;
+        this.parentActivity = InViewProductActivity;
+        this.list = InPriceList;
     }
 
     @Override
@@ -56,7 +55,7 @@ public class PriceListAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        LayoutInflater inflater = ParentActivity.getLayoutInflater();
+        LayoutInflater inflater = parentActivity.getLayoutInflater();
 
         if (convertView == null)
         {
@@ -81,11 +80,11 @@ public class PriceListAdapter extends BaseAdapter
 
         if (map.containsKey(Constants.PRICEMAPID_PRICE))
         {
-            if (ParentActivity.isProductByWeight())
+            if (parentActivity.product.isSoldByWeight())
             {
                 // TODO: Clean this crap up
                 String basePriceString = map.get(Constants.PRICEMAPID_PRICE);
-                String finalPriceString = basePriceString + "/" + ParentActivity.getProductWeightUnit();
+                String finalPriceString = basePriceString + "/" + parentActivity.product.getWeightUnit();
                 priceValueText.setText(finalPriceString);
             }
             else

@@ -25,6 +25,7 @@ import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.database.retrievers.RetrieveProductTask;
+import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.services.GPSService;
 import com.nihlus.matjakt.ui.adapters.PricePagerAdapter;
 
@@ -35,7 +36,7 @@ public class ViewProductActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener
 
 {
-    public Bundle ProductData;
+    public OutpanProduct product;
 
     private GoogleApiClient googleApiClient;
 
@@ -88,7 +89,7 @@ public class ViewProductActivity extends AppCompatActivity
         // Setup main activity content
         setContentView(R.layout.activity_view_product);
         setTitle(getResources().getString(R.string.title_activity_scanned_product));
-        setVisibleProduct(getIntent().getBundleExtra(Constants.PRODUCT_BUNDLE));
+        setVisibleProduct((OutpanProduct)getIntent().getParcelableExtra(Constants.PRODUCT_PARCEL));
 
         // Setup the Google Api
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -107,7 +108,7 @@ public class ViewProductActivity extends AppCompatActivity
     private void onGPSConnected()
     {
         // Load the prices using the available location
-        if (GPS != null)
+        if (GPS != null && product != null)
         {
             showPriceList();
             pricePagerAdapter.getPriceListFragment().loadPricesAsync();
@@ -173,7 +174,7 @@ public class ViewProductActivity extends AppCompatActivity
         {
             Intent intent = new Intent(this, ModifyProductActivity.class);
             intent.putExtra(Constants.MODIFY_INTENT_TYPE, Constants.MODIFY_EXISTING_PRODUCT);
-            intent.putExtra(Constants.PRODUCT_BUNDLE, ProductData);
+            intent.putExtra(Constants.PRODUCT_PARCEL, product);
 
             startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
             return true;
@@ -200,19 +201,19 @@ public class ViewProductActivity extends AppCompatActivity
                  resultCode == RESULT_OK)
         {
             //update from bundle
-            this.ProductData = data.getBundleExtra(Constants.PRODUCT_BUNDLE);
+            this.product = data.getParcelableExtra(Constants.PRODUCT_PARCEL);
 
-            setVisibleProductTitle(getFinalProductString(ProductData));
+            setVisibleProductTitle(product.getCompositeProductTitle());
+            loadPricesAsync();
         }
     }
 
-    public void setVisibleProduct(Bundle InProductBundle)
+    public void setVisibleProduct(OutpanProduct InProduct)
     {
-        if (InProductBundle != null)
+        if (InProduct != null)
         {
-            this.ProductData = InProductBundle;
-
-            setVisibleProductTitle(ProductData.getString(Constants.PRODUCT_NAME));
+            this.product = InProduct;
+            setVisibleProductTitle(product.getCompositeProductTitle());
 
             if (GPS != null)
             {
@@ -220,13 +221,6 @@ public class ViewProductActivity extends AppCompatActivity
                 pricePagerAdapter.getPriceListFragment().loadPricesAsync();
             }
         }
-    }
-
-    private String getFinalProductString(Bundle inProductData)
-    {
-        return inProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
-                inProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE) + " " +
-                inProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE);
     }
 
     private void setVisibleProductTitle(String title)
@@ -274,25 +268,6 @@ public class ViewProductActivity extends AppCompatActivity
         pricePagerAdapter.getPriceListFragment().onPricesRetrieved(prices);
     }
 
-    // TODO: Clean this crap up
-    public boolean isProductByWeight()
-    {
-        return ProductData.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE) && ProductData.getBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE);
-    }
-
-    // TODO: Clean this crap up
-    public String getProductWeightUnit()
-    {
-        if (ProductData.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
-        {
-            return ProductData.getString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE);
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     @SuppressWarnings({"unused", "UnusedParameters"})
     public void onScanButtonClicked(View view)
     {
@@ -305,10 +280,9 @@ public class ViewProductActivity extends AppCompatActivity
         MatjaktPrice currentPrice = pricePagerAdapter.getPriceInfoFragment().getCurrentPrice();
 
         ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment(this,
-                ProductData,
+                product,
                 currentPrice,
-                GPS.getCurrentLocation().getLatitude(),
-                GPS.getCurrentLocation().getLongitude());
+                GPS.getCurrentLocation());
 
         addPriceDialog.show(getFragmentManager(), "PRICEDIALOG");
     }

@@ -1,6 +1,5 @@
 package com.nihlus.matjakt.database.inserters;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -10,14 +9,13 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.retrievers.Utility;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,7 +29,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     private static final int NO_RESULT = -1;
     private static final int NEW_ID = -1;
 
-    private final Activity ParentActivity;
+    private final ViewProductActivity parentActivity;
     private final int IDToModify;
     private final EAN ean;
     private final double Price;
@@ -39,9 +37,9 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     private final String PlaceID;
     private final boolean isOffer;
 
-    public InsertPriceTask(Activity InActivity, EAN InEAN, double InPrice, String InCurrency, String inPlaceID, boolean InIsOffer)
+    public InsertPriceTask(ViewProductActivity InViewProductActivity, EAN InEAN, double InPrice, String InCurrency, String inPlaceID, boolean InIsOffer)
     {
-        this.ParentActivity = InActivity;
+        this.parentActivity = InViewProductActivity;
         this.IDToModify = NEW_ID;
         this.ean = InEAN;
         this.Price = InPrice;
@@ -50,9 +48,9 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
         this.isOffer = InIsOffer;
     }
 
-    public InsertPriceTask(Activity InActivity, int InIDToModify, EAN InEAN, double InPrice, String InCurrency, String inPlaceID, boolean InIsOffer)
+    public InsertPriceTask(ViewProductActivity InViewProductActivity, int InIDToModify, EAN InEAN, double InPrice, String InCurrency, String inPlaceID, boolean InIsOffer)
     {
-        this.ParentActivity = InActivity;
+        this.parentActivity = InViewProductActivity;
         this.IDToModify = InIDToModify;
         this.ean = InEAN;
         this.Price = InPrice;
@@ -62,13 +60,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     }
 
     @Override
-    protected void onPreExecute()
-    {
-
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... nothing)
+    protected Boolean doInBackground(Void... params)
     {
         try
         {
@@ -76,7 +68,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
             if (!isPlaceIDRegisteredByMatjakt(PlaceID))
             {
                 // Take the place ID and put it into the Matjakt database so we can search based on distance
-                registerPlaceID(((ViewProductActivity)ParentActivity).getGoogleApiClient(), PlaceID);
+                registerPlaceID(parentActivity.getGoogleApiClient(), PlaceID);
             }
 
             int StoreID = getStoreIDByPlaceID(PlaceID);
@@ -89,30 +81,14 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
                     Constants.API_PARAM_STORE + "=" + String.valueOf(StoreID) + "&" +
                     Constants.API_PARAM_OFFER + "=" + String.valueOf(isOffer);
 
-            String responseContent = "";
             URL url = new URL(rawUrl);
-            URLConnection requestConnection = url.openConnection();
+            JSONObject Result = Utility.getRemoteJSONObject(url);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
-            {
-                responseContent += currentLine;
-            }
-
-            JSONObject Result = new JSONObject(responseContent);
-
-            return Result.getInt("result") == 0;
+            return Result != null && Result.getInt("result") == 0;
         }
         catch (MalformedURLException mex)
         {
             mex.printStackTrace();
-        }
-        catch (IOException iex)
-        {
-            iex.printStackTrace();
         }
         catch (JSONException jex)
         {
@@ -126,11 +102,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     protected void onPostExecute(Boolean success)
     {
         //update list with the retrieved prices
-        if (ParentActivity instanceof ViewProductActivity)
-        {
-            //send the results
-            ((ViewProductActivity) ParentActivity).loadPricesAsync();
-        }
+        parentActivity.loadPricesAsync();
     }
 
     private static void registerPlaceID(GoogleApiClient apiClient, String InPlaceID)
@@ -166,29 +138,17 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
             String rawUrl = Constants.MATJAKT_API_URL + Constants.API_GETSTORE + "?" +
                     Constants.API_PARAM_PLACEID + "=" + placeID;
 
-            String responseContent = "";
             URL url = new URL(rawUrl);
-            URLConnection requestConnection = url.openConnection();
+            JSONObject Result = Utility.getRemoteJSONObject(url);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(requestConnection.getInputStream()));
-
-            // Read the entire input stream
-            String currentLine;
-            while ((currentLine = br.readLine()) != null)
+            if (Result != null)
             {
-                responseContent += currentLine;
+                storeID = Result.getInt(Constants.API_PARAM_ID);
             }
-
-            JSONObject Result = new JSONObject(responseContent);
-            storeID = Result.getInt(Constants.API_PARAM_ID);
         }
         catch (MalformedURLException mex)
         {
             mex.printStackTrace();
-        }
-        catch (IOException iex)
-        {
-            iex.printStackTrace();
         }
         catch (JSONException jex)
         {
@@ -206,6 +166,7 @@ public class InsertPriceTask extends AsyncTask<Void, Void, Boolean>
     public static Place getStorePlaceByID(GoogleApiClient inApiClient, String placeID)
     {
         Place storePlace = null;
+
         // Load the place from the Google servers
         PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(inApiClient, placeID);
 

@@ -23,30 +23,33 @@ import java.util.Locale;
 public class MatjaktPrice
 {
     public int ID;
-    public String EAN;
-    public double Price;
-    public String Currency;
-    public int StoreID;
-    public MatjaktStore Store;
+    public EAN ean;
+
+    public double price;
+    public String currency;
     public boolean isOffer;
-    public Date Timestamp;
-    public Boolean isAddEntry;
+
+    public int storeID;
+    public MatjaktStore store;
+
+    public Date timestamp;
+    public boolean isAddEntry;
 
     public MatjaktPrice(JSONObject InObject)
     {
         try
         {
             this.ID = InObject.getInt(Constants.API_PARAM_ID);
-            this.EAN = InObject.getString(Constants.API_PARAM_EAN);
-            this.Price = InObject.getDouble(Constants.API_PARAM_PRICE);
-            this.Currency = InObject.getString(Constants.API_PARAM_CURRENCY);
-            this.StoreID = InObject.getInt(Constants.API_PARAM_STORE);
+            this.ean = new EAN(InObject.getString(Constants.API_PARAM_EAN));
+            this.price = InObject.getDouble(Constants.API_PARAM_PRICE);
+            this.currency = InObject.getString(Constants.API_PARAM_CURRENCY);
+            this.storeID = InObject.getInt(Constants.API_PARAM_STORE);
             this.isOffer = InObject.getBoolean(Constants.API_PARAM_OFFER);
 
             this.isAddEntry = false;
 
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            this.Timestamp = formatter.parse(InObject.getString(Constants.API_PARAM_TIMESTAMP));
+            this.timestamp = formatter.parse(InObject.getString(Constants.API_PARAM_TIMESTAMP));
         }
         catch (JSONException jex)
         {
@@ -80,7 +83,7 @@ public class MatjaktPrice
         }
         else
         {
-            hashMap.put(Constants.PRICEMAPID_STORE, Store.storePlace.getName().toString());
+            hashMap.put(Constants.PRICEMAPID_STORE, store.storePlace.getName().toString());
 
             if (isOffer)
             {
@@ -92,12 +95,12 @@ public class MatjaktPrice
                 hashMap.put(Constants.PRICEMAPID_OFFER, "");
             }
 
-            hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(Price, Currency));
+            hashMap.put(Constants.PRICEMAPID_PRICE, getPriceString(price, currency));
 
-            hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(Store.Latitude));
-            hashMap.put(Constants.PRICEMAPID_LON, String.valueOf(Store.Longitude));
+            hashMap.put(Constants.PRICEMAPID_LAT, String.valueOf(store.location.latitude));
+            hashMap.put(Constants.PRICEMAPID_LON, String.valueOf(store.location.longitude));
 
-            hashMap.put(Constants.PRICEMAPID_TIMESTAMP, Timestamp.toString());
+            hashMap.put(Constants.PRICEMAPID_TIMESTAMP, timestamp.toString());
             hashMap.put(Constants.PRICEMAPID_ISADDENTRY, String.valueOf(isAddEntry));
 
         }
@@ -120,7 +123,7 @@ public class MatjaktPrice
         @Override
         public int compare(MatjaktPrice lhs, MatjaktPrice rhs)
         {
-            return Double.compare(rhs.Price, lhs.Price);
+            return Double.compare(rhs.price, lhs.price);
         }
     };
 
@@ -129,7 +132,7 @@ public class MatjaktPrice
         @Override
         public int compare(MatjaktPrice lhs, MatjaktPrice rhs)
         {
-            return Double.compare(lhs.Price, rhs.Price);
+            return Double.compare(lhs.price, rhs.price);
         }
     };
 }

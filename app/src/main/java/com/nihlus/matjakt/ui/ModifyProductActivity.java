@@ -36,8 +36,7 @@ import java.util.HashMap;
 
 public class ModifyProductActivity extends AppCompatActivity
 {
-    private Bundle productData = new Bundle();
-    private EAN productEAN;
+    private OutpanProduct product;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,9 +46,9 @@ public class ModifyProductActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         // Detect if the product is a by-weight product and needs special layout
-        final EAN peekEAN = intent.getBundleExtra(Constants.PRODUCT_BUNDLE).getParcelable(Constants.PRODUCT_EAN);
+        product = intent.getParcelableExtra(Constants.PRODUCT_PARCEL);
 
-        if (peekEAN.isByWeight || isProductByWeight(intent.getBundleExtra(Constants.PRODUCT_BUNDLE)))
+        if (product.isSoldByWeight())
         {
             setContentView(R.layout.activity_modify_product_by_weight);
         }
@@ -58,7 +57,7 @@ public class ModifyProductActivity extends AppCompatActivity
             setContentView(R.layout.activity_modify_product);
         }
 
-        setVisibleProduct(intent.getBundleExtra(Constants.PRODUCT_BUNDLE));
+        setVisibleProduct((OutpanProduct)intent.getParcelableExtra(Constants.PRODUCT_PARCEL));
 
         int modifyType = intent.getIntExtra(Constants.MODIFY_INTENT_TYPE, -1);
         if (modifyType == Constants.INSERT_NEW_PRODUCT)
@@ -109,7 +108,6 @@ public class ModifyProductActivity extends AppCompatActivity
             {
                 //bundle up the data needed by the server
                 Bundle newProductData = new Bundle();
-                newProductData.putParcelable(Constants.PRODUCT_EAN, productEAN);
 
                 EditText brandName = (EditText) findViewById(R.id.brandEdit);
                 newProductData.putString(Constants.PRODUCT_BRAND_ATTRIBUTE, brandName.getText().toString());
@@ -124,7 +122,7 @@ public class ModifyProductActivity extends AppCompatActivity
 
 
                 // Set up by-weight products
-                if (productEAN.isByWeight)
+                if (product.isSoldByWeight())
                 {
                     newProductData.putBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, true);
 
@@ -146,8 +144,11 @@ public class ModifyProductActivity extends AppCompatActivity
                     newProductData.putBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, true);
                 }
 
+                // Create a new product to send to the server
+                OutpanProduct newProduct = new OutpanProduct(product.ean, newProductData);
+
                 //create the task and send it to the server, close the modify activity when done
-                UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProductData);
+                UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProduct);
                 update.execute();
             }
         }
@@ -202,7 +203,7 @@ public class ModifyProductActivity extends AppCompatActivity
         {
             // We didn't change anything, so we canceled the edit
             Intent resultIntent = new Intent();
-            resultIntent.putExtra(Constants.PRODUCT_BUNDLE, productData);
+            resultIntent.putExtra(Constants.PRODUCT_PARCEL, product);
 
             setResult(RESULT_CANCELED, resultIntent);
             finish();
@@ -211,63 +212,61 @@ public class ModifyProductActivity extends AppCompatActivity
         }
     }
 
-    private void setVisibleProduct(Bundle InProductData)
+    private void setVisibleProduct(OutpanProduct InProduct)
     {
         // Replace the member product data
-        this.productData = InProductData;
+        this.product = InProduct;
 
         // Load the data again
-        this.productEAN = productData.getParcelable(Constants.PRODUCT_EAN);
-
-
-        //load input data from the product data
         // Brand
-        if (productData.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        if (product.attributes.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
         {
             EditText brandNameEdit = (EditText) findViewById(R.id.brandEdit);
-            brandNameEdit.setText(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            brandNameEdit.setText(product.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
         }
 
         // Name
-        if (productData.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+        if (product.attributes.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
         {
 
             EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
-            productTitleEdit.setText(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            productTitleEdit.setText(product.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
         }
 
         // Amount
-        if (productData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        if (product.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
         {
             EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
             Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
-            HashMap<String, String> amountValues = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+            HashMap<String, String> amountValues = splitAmountValue(product.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
 
             productAmountEdit.setText(amountValues.get(Constants.SPLITMAP_NUMBER));
             productAmountSpinner.setSelection(getUnitIndex(amountValues.get(Constants.SPLITMAP_UNIT)));
         }
 
         // By weight amount, if applicable
-        if (productEAN.isByWeight || isProductByWeight(productData))
+        if (product.isSoldByWeight())
         {
             Spinner productWeightUnitSpinner = (Spinner) findViewById(R.id.priceWeightUnitSpinner);
-            String weightUnit = productData.getString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE);
+            String weightUnit = product.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE);
 
             productWeightUnitSpinner.setSelection(getUnitIndex(weightUnit));
         }
 
         // Is it organic?
-        if (productData.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+        if (product.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
         {
-            CheckBox isOrganic = (CheckBox)findViewById(R.id.isOrganicCheckbox);
-            isOrganic.setChecked(productData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE, false));
+            CheckBox isOrganicCheckBox = (CheckBox)findViewById(R.id.isOrganicCheckbox);
+            boolean isOrganic = Boolean.valueOf(product.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
+            isOrganicCheckBox.setChecked(isOrganic);
         }
 
         // Is it fairtrade?
-        if (productData.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+        if (product.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
         {
-            CheckBox isFairtrade = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
-            isFairtrade.setChecked(productData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, false));
+            CheckBox isFairtradeCheckBox = (CheckBox)findViewById(R.id.isFairtradeCheckbox);
+            boolean isFairtrade = Boolean.valueOf(product.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
+            isFairtradeCheckBox.setChecked(isFairtrade);
         }
     }
 
@@ -333,42 +332,55 @@ public class ModifyProductActivity extends AppCompatActivity
 
     private boolean haveFieldsChanged()
     {
-        boolean bFieldsHaveChanged = false;
+        boolean fieldsHaveChanged = false;
 
         EditText productBrandEdit = (EditText) findViewById(R.id.brandEdit);
         EditText productTitleEdit = (EditText) findViewById(R.id.productNameEdit);
         EditText productAmountEdit = (EditText) findViewById(R.id.productAmountEdit);
         Spinner productAmountSpinner = (Spinner) findViewById(R.id.amountSpinner);
 
-        if (!productBrandEdit.getText().toString().equals(productData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE)))
+        CheckBox isOrganicCheckBox = (CheckBox) findViewById(R.id.isOrganicCheckbox);
+        CheckBox isFairtradeCheckBox = (CheckBox) findViewById(R.id.isFairtradeCheckbox);
+
+        if (!productBrandEdit.getText().toString().equals(product.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE)))
         {
-            bFieldsHaveChanged = true;
+            fieldsHaveChanged = true;
         }
 
-        if (!productTitleEdit.getText().toString().equals(productData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE)))
+        if (!productTitleEdit.getText().toString().equals(product.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE)))
         {
-            bFieldsHaveChanged = true;
+            fieldsHaveChanged = true;
         }
 
         String productAmount = productAmountEdit.getText().toString() + productAmountSpinner.getSelectedItem().toString();
-        if (!productAmount.equals(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE)))
+        if (!productAmount.equals(product.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE)))
         {
-            bFieldsHaveChanged = true;
+            fieldsHaveChanged = true;
         }
 
-        HashMap<String, String> amountMap = splitAmountValue(productData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+        HashMap<String, String> amountMap = splitAmountValue(product.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
         if (amountMap.size() > 0)
         {
             int indexOfAmountUnit = getUnitIndex(amountMap.get(Constants.SPLITMAP_UNIT));
             if ((productAmountSpinner.getSelectedItemPosition() != indexOfAmountUnit))
             {
-                bFieldsHaveChanged = true;
+                fieldsHaveChanged = true;
             }
         }
 
+        boolean isProductOrganic = Boolean.valueOf(product.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
+        if (isOrganicCheckBox.isChecked() != isProductOrganic)
+        {
+            fieldsHaveChanged = true;
+        }
 
+        boolean isProductFairtrade = Boolean.valueOf(product.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
+        if (isFairtradeCheckBox.isChecked() != isProductFairtrade)
+        {
+            fieldsHaveChanged = true;
+        }
 
-        return bFieldsHaveChanged;
+        return fieldsHaveChanged;
     }
 
     private int getUnitIndex(String InUnit)
@@ -389,11 +401,6 @@ public class ModifyProductActivity extends AppCompatActivity
         }
 
         return 0;
-    }
-
-    private boolean isProductByWeight(Bundle InProductData)
-    {
-        return InProductData.getBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, false) || productEAN.isByWeight;
     }
 
     private void addStoredBrand(String brand)
@@ -436,19 +443,19 @@ public class ModifyProductActivity extends AppCompatActivity
     }
 
     //async posting of the update to the database
-    class UpdateOutpanProduct extends AsyncTask<Void, Void, OutpanProduct>
+    private class UpdateOutpanProduct extends AsyncTask<Void, Void, OutpanProduct>
     {
         private final Activity modifyProductActivity;
-        private final Bundle ProductData;
+        private final OutpanProduct newProduct;
 
         private final ProgressDialog dialog;
 
-        UpdateOutpanProduct(Activity inModifyProductActivity, Bundle InProductData)
+        UpdateOutpanProduct(Activity InParentActivity, OutpanProduct InProductData)
         {
-            this.modifyProductActivity = inModifyProductActivity;
-            this.ProductData = InProductData;
+            this.modifyProductActivity = InParentActivity;
+            this.newProduct = InProductData;
 
-            dialog = new ProgressDialog(inModifyProductActivity);
+            dialog = new ProgressDialog(InParentActivity);
         }
 
         @Override
@@ -456,66 +463,90 @@ public class ModifyProductActivity extends AppCompatActivity
         {
             super.onPreExecute();
             this.dialog.setMessage(getResources().getString(R.string.dialog_updatingProductInfo));
+            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+            {
+                @Override
+                public void onCancel(DialogInterface dialog)
+                {
+                    cancel(true);
+                }
+            });
+
             this.dialog.show();
         }
 
         protected OutpanProduct doInBackground(Void... inputs)
         {
             OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-            EAN productEAN = ProductData.getParcelable(Constants.PRODUCT_EAN);
+            EAN productEAN = newProduct.ean;
+
             api.setProductName(productEAN, getFinalProductString());
 
             api.setProductAttribute(productEAN,
                     Constants.PRODUCT_BRAND_ATTRIBUTE,
-                    ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+                    newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
 
             // Store the brand for autocomplete purposes
-            addStoredBrand(ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE, ""));
+            addStoredBrand(newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
 
             api.setProductAttribute(productEAN,
                     Constants.PRODUCT_TITLE_ATTRIBUTE,
-                    ProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+                    newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
 
 
-            if (ProductData.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
             {
-                boolean isEmpty = splitAmountValue(ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+                boolean isEmpty = splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
                         .get(Constants.SPLITMAP_NUMBER).isEmpty();
 
                 if (!isEmpty)
                 {
                     api.setProductAttribute(productEAN,
                             Constants.PRODUCT_AMOUNT_ATTRIBUTE,
-                            ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+                            newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
                 }
             }
 
-            if (ProductData.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
             {
                 api.setProductAttribute(productEAN,
                         Constants.PRODUCT_BYWEIGHT_ATTRIBUTE,
-                        String.valueOf(ProductData.getBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE)));
+                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE));
             }
 
-            if (ProductData.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
             {
                 api.setProductAttribute(productEAN,
                         Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE,
-                        ProductData.getString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
+                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
             }
 
-            if (ProductData.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
             {
                 api.setProductAttribute(productEAN,
                         Constants.PRODUCT_ORGANIC_ATTRIBUTE,
-                        String.valueOf(ProductData.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+                        newProduct.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
+            }
+            else
+            {
+                // Remove the attribute by setting it to empty
+                api.setProductAttribute(productEAN,
+                        Constants.PRODUCT_ORGANIC_ATTRIBUTE,
+                        "");
             }
 
-            if (ProductData.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
             {
                 api.setProductAttribute(productEAN,
                         Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
-                        String.valueOf(ProductData.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+                        newProduct.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
+            }
+            else
+            {
+                // Remove the attribute by setting it to empty
+                api.setProductAttribute(productEAN,
+                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
+                        "");
             }
 
             return api.getProduct(productEAN);
@@ -529,7 +560,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 this.dialog.dismiss();
 
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.PRODUCT_BUNDLE, result.getBundle());
+                resultIntent.putExtra(Constants.PRODUCT_PARCEL, result);
 
                 modifyProductActivity.setResult(RESULT_OK, resultIntent);
                 modifyProductActivity.finish();
@@ -545,9 +576,10 @@ public class ModifyProductActivity extends AppCompatActivity
 
         private String getFinalProductString()
         {
-            String productBrand = ProductData.getString(Constants.PRODUCT_BRAND_ATTRIBUTE);
-            String productTitle = ProductData.getString(Constants.PRODUCT_TITLE_ATTRIBUTE);
-            HashMap<String, String> amountValues = splitAmountValue(ProductData.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+            String productBrand = newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE);
+            String productTitle = newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE);
+
+            HashMap<String, String> amountValues = splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
             String productAmount = amountValues.get(Constants.SPLITMAP_NUMBER);
             String productAmountUnit = amountValues.get(Constants.SPLITMAP_UNIT);
 

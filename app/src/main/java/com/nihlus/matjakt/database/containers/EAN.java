@@ -11,6 +11,9 @@ import java.util.ArrayList;
  */
 public class EAN implements Parcelable
 {
+    // Remember to update the parcelable interface if you add more members here.
+    private final String rawEAN;
+
     public enum EANType
     {
         EAN14,
@@ -19,20 +22,9 @@ public class EAN implements Parcelable
         EAN8
     }
 
-    // Remember to update the parcelable interface if you add more members here.
-    private final String rawEAN;
-    public final boolean isByWeight;
-
     public EAN(String InRawEAN)
     {
         this.rawEAN = InRawEAN;
-        this.isByWeight = false;
-    }
-
-    public EAN(String InRawEAN, boolean InIsByWeight)
-    {
-        this.rawEAN = InRawEAN;
-        this.isByWeight = InIsByWeight;
     }
 
     public String getCode()
@@ -71,12 +63,12 @@ public class EAN implements Parcelable
         return eanType.startsWith("2");
     }
 
-    public boolean mayHaveEmbeddedWeight()
+    private boolean mayHaveEmbeddedWeight()
     {
         return rawEAN.startsWith("23");
     }
 
-    public boolean mayHaveEmbeddedPrice()
+    private boolean mayHaveEmbeddedPrice()
     {
         return rawEAN.startsWith("20");
     }
@@ -120,7 +112,7 @@ public class EAN implements Parcelable
             String baseEAN = strippedEAN + "0000";
 
             // Recalculate the checksum and return the final code
-            return new EAN(baseEAN + getChecksum(baseEAN), true);
+            return new EAN(baseEAN + getChecksum(baseEAN));
         }
 
         return null;
@@ -192,14 +184,13 @@ public class EAN implements Parcelable
     public void writeToParcel(Parcel out, int flags)
     {
         out.writeString(rawEAN);
-        out.writeByte((byte) (isByWeight ? 1 : 0));
     }
 
     public static final Parcelable.Creator<EAN> CREATOR = new Parcelable.Creator<EAN>()
     {
         public EAN createFromParcel(Parcel in)
         {
-            return new EAN(in.readString(), in.readByte() != 0);
+            return new EAN(in.readString());
         }
 
         public EAN[] newArray(int size)

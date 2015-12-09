@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.outpan.OutpanProduct;
 
 
 /**
@@ -19,14 +20,14 @@ import com.nihlus.matjakt.database.containers.EAN;
  */
 public class AddProductDialogFragment extends DialogFragment
 {
+    private Activity parentActivity;
     private EAN ean;
-    private Activity ParentActivity;
 
     @SuppressWarnings("ValidFragment")
     public AddProductDialogFragment(Activity InParentActivity, EAN InEAN)
     {
+        this.parentActivity = InParentActivity;
         this.ean = InEAN;
-        this.ParentActivity = InParentActivity;
     }
 
     public AddProductDialogFragment()
@@ -39,11 +40,6 @@ public class AddProductDialogFragment extends DialogFragment
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-
-        //final EditText input = new EditText(getActivity());
-        //input.setInputType(InputType.TYPE_CLASS_TEXT);
-        //builder.setView(input);
-
         builder.setTitle(R.string.dialog_NoProductFound);
         builder.setMessage(R.string.dialog_newProductNameText);
 
@@ -53,14 +49,13 @@ public class AddProductDialogFragment extends DialogFragment
             public void onClick(DialogInterface dialogInterface, int which)
             {
 
-                Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
-                Bundle productBundle = new Bundle();
-                productBundle.putParcelable(Constants.PRODUCT_EAN, ean);
+                Intent intent = new Intent(parentActivity, ModifyProductActivity.class);
+                OutpanProduct newProduct = new OutpanProduct(ean, new Bundle());
 
                 intent.putExtra(Constants.MODIFY_INTENT_TYPE, Constants.INSERT_NEW_PRODUCT);
-                intent.putExtra(Constants.PRODUCT_BUNDLE, productBundle);
+                intent.putExtra(Constants.PRODUCT_PARCEL, newProduct);
 
-                ParentActivity.startActivityForResult(intent, Constants.INSERT_NEW_PRODUCT);
+                parentActivity.startActivityForResult(intent, Constants.INSERT_NEW_PRODUCT);
 
             }
         });

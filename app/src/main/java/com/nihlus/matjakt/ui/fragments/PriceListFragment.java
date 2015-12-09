@@ -13,11 +13,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.R;
-import com.nihlus.matjakt.constants.Constants;
-import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.containers.MatjaktPrice;
 import com.nihlus.matjakt.database.inserters.DeletePriceTask;
 import com.nihlus.matjakt.database.retrievers.RetrievePricesTask;
+import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.services.GPSService;
 import com.nihlus.matjakt.ui.ModifyPriceDialogFragment;
 import com.nihlus.matjakt.ui.ViewProductActivity;
@@ -90,7 +89,7 @@ public class PriceListFragment extends Fragment
 
                 if (!getString(R.string.matjakt_managementkey).isEmpty())
                 {
-                    DeletePriceTask deletePriceTask = new DeletePriceTask(getActivity(), contextPrice,
+                    DeletePriceTask deletePriceTask = new DeletePriceTask((ViewProductActivity)getActivity(), contextPrice,
                             getString(R.string.matjakt_managementkey));
 
                     deletePriceTask.execute();
@@ -107,11 +106,10 @@ public class PriceListFragment extends Fragment
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
                 MatjaktPrice currentPrice = priceListAdapter.getItem(info.position);
 
-                ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment(getActivity(),
-                        ((ViewProductActivity)getActivity()).ProductData,
+                ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment((ViewProductActivity)getActivity(),
+                        ((ViewProductActivity)getActivity()).product,
                         currentPrice,
-                        getGPS().getCurrentLocation().getLatitude(),
-                        getGPS().getCurrentLocation().getLongitude());
+                        getGPS().getCurrentLocation());
 
                 addPriceDialog.show(getActivity().getFragmentManager(), "PRICEDIALOG");
                 return true;
@@ -157,9 +155,8 @@ public class PriceListFragment extends Fragment
     public void loadPricesAsync()
     {
         getSwipeContainer().setRefreshing(true);
-        RetrievePricesTask pricesTask = new RetrievePricesTask(getActivity(), (EAN)getProductData().getParcelable(Constants.PRODUCT_EAN),
-                getGPS().getCurrentLocation().getLatitude(),
-                getGPS().getCurrentLocation().getLongitude());
+        RetrievePricesTask pricesTask = new RetrievePricesTask((ViewProductActivity)getActivity(), getProduct().ean,
+                getGPS().getCurrentLocation());
 
         pricesTask.execute();
     }
@@ -186,10 +183,9 @@ public class PriceListFragment extends Fragment
             if (isAddEntry)
             {
                 // Retrieve the local stores, and then show an add price dialog
-                ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment(getActivity(),
-                        ((ViewProductActivity)getActivity()).ProductData,
-                        getGPS().getCurrentLocation().getLatitude(),
-                        getGPS().getCurrentLocation().getLongitude());
+                ModifyPriceDialogFragment addPriceDialog = new ModifyPriceDialogFragment((ViewProductActivity)getActivity(),
+                        ((ViewProductActivity)getActivity()).product,
+                        getGPS().getCurrentLocation());
 
                 addPriceDialog.show(getActivity().getFragmentManager(), "PRICEDIALOG");
             }
@@ -244,9 +240,9 @@ public class PriceListFragment extends Fragment
         return ((ViewProductActivity)getActivity()).GPS;
     }
 
-    private Bundle getProductData()
+    private OutpanProduct getProduct()
     {
-        return ((ViewProductActivity)getActivity()).ProductData;
+        return ((ViewProductActivity)getActivity()).product;
     }
 
     private SwipeRefreshLayout getSwipeContainer()

@@ -1,6 +1,5 @@
 package com.nihlus.matjakt.database.inserters;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.nihlus.matjakt.constants.Constants;
@@ -17,32 +16,25 @@ import java.net.URLConnection;
  */
 public class DeletePriceTask extends AsyncTask<Void, Void, Boolean>
 {
-    private final Activity ParentActivity;
-    private final MatjaktPrice PriceToDelete;
-    private final String ManagementKey;
+    private final ViewProductActivity parentActivity;
+    private final MatjaktPrice priceToDelete;
+    private final String managementKey;
 
-    public DeletePriceTask(Activity InActivity, MatjaktPrice InPrice, String InManagementKey)
+    public DeletePriceTask(ViewProductActivity InViewProductActivity, MatjaktPrice InPrice, String InManagementKey)
     {
-        this.ParentActivity = InActivity;
-        this.PriceToDelete = InPrice;
-        this.ManagementKey = InManagementKey;
-    }
-
-
-    @Override
-    protected void onPreExecute()
-    {
-
+        this.parentActivity = InViewProductActivity;
+        this.priceToDelete = InPrice;
+        this.managementKey = InManagementKey;
     }
 
     @Override
-    protected Boolean doInBackground(Void... nothing)
+    protected Boolean doInBackground(Void... params)
     {
         try
         {
             String rawUrl = Constants.MATJAKT_API_URL + Constants.API_DELETEPRICE + "?" +
-                    Constants.API_PARAM_ID + "=" + String.valueOf(PriceToDelete.ID) + "&" +
-                    Constants.API_PARAM_KEY + "=" + ManagementKey;
+                    Constants.API_PARAM_ID + "=" + String.valueOf(priceToDelete.ID) + "&" +
+                    Constants.API_PARAM_KEY + "=" + managementKey;
 
             URL url = new URL(rawUrl);
             URLConnection requestConnection = url.openConnection();
@@ -66,10 +58,6 @@ public class DeletePriceTask extends AsyncTask<Void, Void, Boolean>
     protected void onPostExecute(Boolean success)
     {
         //update list with the retrieved prices
-        if (ParentActivity instanceof ViewProductActivity)
-        {
-            //send the results
-            ((ViewProductActivity) ParentActivity).loadPricesAsync();
-        }
+        parentActivity.loadPricesAsync();
     }
 }

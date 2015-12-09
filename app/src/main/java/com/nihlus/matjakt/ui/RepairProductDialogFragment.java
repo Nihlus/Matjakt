@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.outpan.OutpanProduct;
 
 
 /**
@@ -18,21 +19,21 @@ import com.nihlus.matjakt.R;
  */
 public class RepairProductDialogFragment extends DialogFragment
 {
-    private final Activity ParentActivity;
-    private final Bundle ProductData;
+    private final Activity parentActivity;
+    private final OutpanProduct productData;
 
     @SuppressWarnings("ValidFragment")
-    public RepairProductDialogFragment(Activity InParentActivity, Bundle InProductData)
+    public RepairProductDialogFragment(Activity InParentActivity, OutpanProduct InProduct)
     {
-        this.ParentActivity = InParentActivity;
-        this.ProductData = InProductData;
+        this.parentActivity = InParentActivity;
+        this.productData = InProduct;
     }
 
     public RepairProductDialogFragment()
     {
         // Required empty public constructor
-        this.ParentActivity = null;
-        this.ProductData = null;
+        this.parentActivity = null;
+        this.productData = null;
     }
 
     @Override
@@ -60,11 +61,11 @@ public class RepairProductDialogFragment extends DialogFragment
                 //   new UpdateOutpanProduct().execute(userInput);
                 //}
 
-                Intent intent = new Intent(ParentActivity, ModifyProductActivity.class);
+                Intent intent = new Intent(parentActivity, ModifyProductActivity.class);
                 intent.putExtra(Constants.MODIFY_INTENT_TYPE, Constants.MODIFY_EXISTING_PRODUCT);
-                intent.putExtra(Constants.PRODUCT_BUNDLE, ProductData);
+                intent.putExtra(Constants.PRODUCT_PARCEL, productData);
 
-                ParentActivity.startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
+                parentActivity.startActivityForResult(intent, Constants.MODIFY_EXISTING_PRODUCT);
 
             }
         });

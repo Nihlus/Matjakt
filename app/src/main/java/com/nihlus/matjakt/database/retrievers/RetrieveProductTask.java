@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.widget.Toast;
 
 import com.nihlus.matjakt.R;
@@ -23,25 +22,22 @@ import com.nihlus.matjakt.ui.ViewProductActivity;
  */
 public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
 {
-    private final Activity ParentActivity;
-    private EAN ean;
+    private final Activity parentActivity;
+    private final EAN ean;
 
     private OutpanProduct byWeightProduct;
-    private OutpanProduct resultProduct;
-    private EAN resultEAN;
-
     private ProgressDialog progressDialog;
 
-    public RetrieveProductTask(Activity InParentActivity, EAN inEAN)
+    public RetrieveProductTask(Activity InParentActivity, EAN InEAN)
     {
-        this.ParentActivity = InParentActivity;
-        this.ean = inEAN;
+        this.parentActivity = InParentActivity;
+        this.ean = InEAN;
     }
 
     @Override
     protected void onPreExecute()
     {
-        progressDialog = ProgressDialog.show(ParentActivity, "", ParentActivity.getResources().getString(R.string.dialog_RetrievingProduct));
+        progressDialog = ProgressDialog.show(parentActivity, "", parentActivity.getResources().getString(R.string.dialog_RetrievingProduct));
         progressDialog.setCancelable(true);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
         {
@@ -54,7 +50,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
     }
 
     @Override
-    protected OutpanProduct doInBackground(Void... Nothing)
+    protected OutpanProduct doInBackground(Void... params)
     {
         OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
 
@@ -66,6 +62,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
         return api.getProduct(ean);
     }
 
+    // TODO: Clean this crap up
     @Override
     protected void onPostExecute(final OutpanProduct result)
     {
@@ -78,67 +75,68 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
         {
             if (byWeightProduct.isValid())
             {
-                updateViewActivity(byWeightProduct.getBundle());
+                updateViewActivity(byWeightProduct);
             }
             else
             {
-                AlertDialog.Builder isProductAByWeightProductDialog = new AlertDialog.Builder(ParentActivity)
-                        .setTitle(ParentActivity.getString(R.string.dialog_mightBeByWeight))
-                        .setMessage(ParentActivity.getString(R.string.dialog_mightBeByWeight_body))
-                        .setPositiveButton(ParentActivity.getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
+                AlertDialog.Builder isProductAByWeightProductDialog = new AlertDialog.Builder(parentActivity);
+
+                isProductAByWeightProductDialog.setTitle(parentActivity.getString(R.string.dialog_mightBeByWeight));
+                isProductAByWeightProductDialog.setMessage(parentActivity.getString(R.string.dialog_mightBeByWeight_body));
+                isProductAByWeightProductDialog.setPositiveButton(parentActivity.getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (byWeightProduct != null)
                         {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
+                            //launch product view activity
+                            if (!byWeightProduct.isValid())
                             {
-                                if (byWeightProduct != null)
-                                {
-                                    //launch product view activity
-                                    if (!byWeightProduct.isValid())
-                                    {
-                                        addProduct(ean.getEmbeddedPriceEAN());
-                                    }
-                                    else if (!byWeightProduct.isMissingRequiredAttributes())
-                                    {
-                                        repairProduct(byWeightProduct.getBundle());
-                                    }
-                                    else
-                                    {
-                                        updateViewActivity(byWeightProduct.getBundle());
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(ParentActivity, ParentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
-                                }
+                                addProduct(ean.getEmbeddedPriceEAN());
                             }
-                        })
-                        .setNegativeButton(ParentActivity.getString(R.string.dialog_No), new DialogInterface.OnClickListener()
+                            else if (byWeightProduct.isMissingRequiredAttributes())
+                            {
+                                repairProduct(byWeightProduct);
+                            }
+                            else
+                            {
+                                updateViewActivity(byWeightProduct);
+                            }
+                        }
+                        else
                         {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
+                            Toast.makeText(parentActivity, parentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                isProductAByWeightProductDialog.setNegativeButton(parentActivity.getString(R.string.dialog_No), new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (result != null)
+                        {
+                            //launch product view activity
+                            if (!result.isValid())
                             {
-                                if (result != null)
-                                {
-                                    //launch product view activity
-                                    if (!result.isValid())
-                                    {
-                                        addProduct(ean);
-                                    }
-                                    else if (!result.isMissingRequiredAttributes())
-                                    {
-                                        repairProduct(result.getBundle());
-                                    }
-                                    else
-                                    {
-                                        updateViewActivity(result.getBundle());
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(ParentActivity, ParentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
-                                }
+                                addProduct(ean);
                             }
-                        });
+                            else if (result.isMissingRequiredAttributes())
+                            {
+                                repairProduct(result);
+                            }
+                            else
+                            {
+                                updateViewActivity(result);
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(parentActivity, parentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
                 isProductAByWeightProductDialog.show();
             }
@@ -150,47 +148,47 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
             {
                 addProduct(ean);
             }
-            else if (!result.isMissingRequiredAttributes())
+            else if (result.isMissingRequiredAttributes())
             {
-                repairProduct(result.getBundle());
+                repairProduct(result);
             }
             else
             {
-                updateViewActivity(result.getBundle());
+                updateViewActivity(result);
             }
         }
         else
         {
-            Toast.makeText(ParentActivity, ParentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
+            Toast.makeText(parentActivity, parentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void addProduct(EAN InEAN)
     {
         //ask the user if they want to add a new product
-        AddProductDialogFragment dialog = new AddProductDialogFragment(ParentActivity, InEAN);
-        dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
+        AddProductDialogFragment dialog = new AddProductDialogFragment(parentActivity, InEAN);
+        dialog.show(parentActivity.getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
     }
 
-    private void repairProduct(Bundle InProductData)
+    private void repairProduct(OutpanProduct InProduct)
     {
         //broken product, ask if the user wants to edit it
-        RepairProductDialogFragment dialog = new RepairProductDialogFragment(ParentActivity, InProductData);
-        dialog.show(ParentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
+        RepairProductDialogFragment dialog = new RepairProductDialogFragment(parentActivity, InProduct);
+        dialog.show(parentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
     }
 
-    private void updateViewActivity(Bundle InProductData)
+    private void updateViewActivity(OutpanProduct InProduct)
     {
-        if (ParentActivity instanceof ViewProductActivity)
+        if (parentActivity instanceof ViewProductActivity)
         {
-            ((ViewProductActivity) ParentActivity).setVisibleProduct(InProductData);
+            ((ViewProductActivity) parentActivity).setVisibleProduct(InProduct);
         }
         else
         {
             // First scan from MainActivity
-            Intent intent = new Intent(ParentActivity, ViewProductActivity.class);
-            intent.putExtra(Constants.PRODUCT_BUNDLE, InProductData);
-            ParentActivity.startActivity(intent);
+            Intent intent = new Intent(parentActivity, ViewProductActivity.class);
+            intent.putExtra(Constants.PRODUCT_PARCEL, InProduct);
+            parentActivity.startActivity(intent);
         }
     }
 }

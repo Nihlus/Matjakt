@@ -38,7 +38,7 @@
         android:layout_alignParentEnd="true"
         android:lines="1"
         android:singleLine="true"
-        android:layout_toRightOf="@+id/ui_editBrand"
+        android:layout_toEndOf="@+id/ui_editBrand"
         android:layout_alignTop="@+id/ui_editBrand"/>
 
     <TextView
@@ -49,7 +49,7 @@
         android:layout_below="@+id/brandEdit"
         android:text="@string/ui_editName"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginRight="64dp"/>
+        android:layout_marginEnd="64dp"/>
 
     <EditText
         android:id="@+id/productNameEdit"
@@ -62,7 +62,7 @@
         android:layout_alignParentEnd="true"
         android:lines="1"
         android:singleLine="true"
-        android:layout_alignLeft="@+id/brandEdit"/>
+        android:layout_alignStart="@+id/brandEdit"/>
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
         android:id="@+id/ui_editAmount"
         android:layout_below="@+id/productNameEdit"
         android:layout_alignParentStart="false"
-        android:layout_marginRight="64dp"/>
+        android:layout_marginEnd="64dp"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -105,8 +105,8 @@
         android:maxLines="1"
         android:lines="1"
         android:singleLine="true"
-        android:layout_alignLeft="@+id/productNameEdit"
-        android:layout_toLeftOf="@+id/amountSpinner"/>
+        android:layout_alignStart="@+id/productNameEdit"
+        android:layout_toStartOf="@+id/amountSpinner"/>
 
     <Spinner
         android:layout_width="wrap_content"
@@ -127,8 +127,8 @@
         android:entries="@array/ui_amount_types"
         android:spinnerMode="dialog"
         android:layout_below="@+id/productAmountEdit"
-        android:layout_alignLeft="@+id/productAmountEdit"
-        android:layout_alignRight="@+id/amountSpinner"/>
+        android:layout_alignStart="@+id/productAmountEdit"
+        android:layout_alignEnd="@+id/amountSpinner"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -37,14 +37,14 @@ public class OutpanAPI2
     }
 
     //Unofficial API, does not return an object.
-    public void setProductName(EAN InEAN, String newName)
+    public void setProductName(EAN InEAN, String InNewName)
     {
         try
         {
             URL requestURL = new URL(Constants.OutpanLegacyAPI_EditName +
                     "?apikey=" + URLParameterEncoder.encode(APIKey) +
                     "&barcode=" + URLParameterEncoder.encode(InEAN.getCode()) +
-                    "&name=" + URLParameterEncoder.encode(newName));
+                    "&name=" + URLParameterEncoder.encode(InNewName));
 
             URLConnection uc = requestURL.openConnection();
             uc.getInputStream();
@@ -63,15 +63,15 @@ public class OutpanAPI2
     }
 
     //Unofficial API, does not return an object.
-    public void setProductAttribute(EAN InEAN, String attributeKey, String attributeValue)
+    public void setProductAttribute(EAN InEAN, String InAttributeKey, String InAttributeValue)
     {
         try
         {
             URL requestURL = new URL(Constants.OutpanLegacyAPI_EditAttribute +
                     "?apikey=" + URLParameterEncoder.encode(APIKey) +
                     "&barcode=" + URLParameterEncoder.encode(InEAN.getCode()) +
-                    "&attr_name=" + URLParameterEncoder.encode(attributeKey) +
-                    "&attr_val=" + URLParameterEncoder.encode(attributeValue));
+                    "&attr_name=" + URLParameterEncoder.encode(InAttributeKey) +
+                    "&attr_val=" + URLParameterEncoder.encode(InAttributeValue));
 
             URLConnection uc = requestURL.openConnection();
             uc.getInputStream();
