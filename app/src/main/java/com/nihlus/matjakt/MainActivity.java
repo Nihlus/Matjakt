@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity
         {
             // We inserted a new product
             Intent intent = new Intent(this, ViewProductActivity.class);
-            intent.putExtra(Constants.PRODUCT_PARCEL, data.getBundleExtra(Constants.PRODUCT_PARCEL));
+            intent.putExtra(Constants.PRODUCT_PARCEL, data.getParcelableExtra(Constants.PRODUCT_PARCEL));
 
             startActivityForResult(intent, Constants.VIEW_EXISTING_PRODUCT);
         }

@@ -20,20 +20,27 @@ import java.util.Iterator;
 /**
  * Created by Jarl on 2015-08-21.
  *
- * Represents a response object from the Outpan database.
+ * Represents a product from the Outpan database.
  */
-
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class OutpanProduct implements Parcelable
 {
     public EAN ean;
     public URL outpanURL;
     public String name;
-    public HashMap<String, String> attributes;
-    public ArrayList<String> images;
-    public ArrayList<String> videos;
-    public ArrayList<String> categories;
+    public HashMap<String, String> attributes = new HashMap<>();
+    public ArrayList<String> images = new ArrayList<>();
+    public ArrayList<String> videos = new ArrayList<>();
+    public ArrayList<String> categories = new ArrayList<>();
 
+    /**
+     * Creates a new Outpan product from a retrieved JSON object. Used for initializing products
+     * retrieved from the database.
+     *
+     * This constructor will fail if the input object contains an explicit error field.
+     *
+     * @param InJSON The JSON to be turned into a product.
+     */
     public OutpanProduct(JSONObject InJSON)
     {
         try
@@ -65,7 +72,13 @@ public class OutpanProduct implements Parcelable
         }
     }
 
-    // Constructor for deserialization when doing parcellation and packaging data to send to the database
+    /**
+     * Creates a new Outpan product from an EAN and a bundle of product data. Used for deserialization
+     * when creating parcels, and for packaging up data to be sent to the database.
+     *
+     * @param InEAN     The EAN of the product
+     * @param InBundle  The data to be contained in the product, such as brand or name.
+     */
     public OutpanProduct(EAN InEAN, Bundle InBundle)
     {
         this.ean = InEAN;
@@ -125,6 +138,12 @@ public class OutpanProduct implements Parcelable
         }
     }
 
+    /**
+     * Gets the composite title in the form of "Brand Title Amount". Used as a shorthand to be
+     * displayed to the user.
+     *
+     * @return The composite title.
+     */
     public String getCompositeProductTitle()
     {
         return attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE) + " " +
@@ -132,6 +151,11 @@ public class OutpanProduct implements Parcelable
                 attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE);
     }
 
+    /**
+     * Gets the unit of the product's by-weight price. Usually g (grams) or kg (kilograms)
+     *
+     * @return The by-weight price unit.
+     */
     public String getWeightUnit()
     {
         if (attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
@@ -144,6 +168,12 @@ public class OutpanProduct implements Parcelable
         }
     }
 
+    /**
+     * Gets a bundle containing the actual data of the product, as well as the name and EAN.
+     * Used for parcel serialization and deserialization.
+     *
+     * @return A bundle with all of the product's data in it.
+     */
     private Bundle getBundle()
     {
         Bundle productData = new Bundle();
@@ -257,11 +287,23 @@ public class OutpanProduct implements Parcelable
         return !(nameIsEmpty || nameContainsNull);
     }
 
+
+    /**
+     * Checks if the database returned an error instead of a valid JSON object.
+     *
+     * @param InJSON The JSON to check.
+     * @return Whether or not the JSON contains an error message.
+     */
     private boolean isErrorMessage(JSONObject InJSON)
     {
         return InJSON.has("error");
     }
 
+    /**
+     * Checks if the product is being sold by weight instead of having a fixed price.
+     *
+     * @return Whether or not the product is sold by weight.
+     */
     public boolean isSoldByWeight()
     {
         if (attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
@@ -274,6 +316,23 @@ public class OutpanProduct implements Parcelable
         }
     }
 
+    /**
+     * Sets whether or not the product is sold by weight.
+     *
+     * @param InIsSoldByWeight If the product is sold by weight or not.
+     */
+    public void setIsSoldByWeight(boolean InIsSoldByWeight)
+    {
+        attributes.put(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, String.valueOf(InIsSoldByWeight));
+    }
+
+    /**
+     * Helper function that retrieves all Outpan attributes from a given JSON object (usually the
+     * attributes sub-object.
+     *
+     * @param InJSON The JSON to be turned into a HashMap
+     * @return A HashMap representing the product attributes.
+     */
     private static HashMap<String, String> getAttributesFromJSON(JSONObject InJSON)
     {
         HashMap<String, String> outMap = new HashMap<>();
@@ -303,6 +362,13 @@ public class OutpanProduct implements Parcelable
         return outMap;
     }
 
+    /**
+     * Helper function that turns a JSON array into an ArrayList. Used for transforming JSON arrays
+     * into Outpan lists of videos, images, and categories.
+     *
+     * @param InJSON The JSON to be turned into an ArrayList.
+     * @return An ArrayList containing all the values in the JSON array.
+     */
     private static ArrayList<String> getStringListFromJSON(JSONArray InJSON)
     {
         ArrayList<String> outList = new ArrayList<>();

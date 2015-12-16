@@ -20,6 +20,7 @@ import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.ui.ModifyProductActivity;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -119,5 +120,27 @@ public class BrandNameAdapter extends ArrayAdapter<String>
             editor.putString(Constants.PREF_BRANDARRAY, brandArray.toString());
             editor.apply();
         }
+    }
+
+    public static ArrayList<String> getStoredBrands()
+    {
+        ArrayList<String> brands = new ArrayList<>();
+        try
+        {
+            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            JSONArray brandArray = new JSONArray(preferences.getString(Constants.PREF_BRANDARRAY, "[]"));
+
+            for (int i = 0; i < brandArray.length(); i++)
+            {
+                brands.add(brandArray.getString(i));
+            }
+        }
+        catch (JSONException jex)
+        {
+            // TODO: Create global exception handler
+            jex.printStackTrace();
+        }
+
+        return brands;
     }
 }

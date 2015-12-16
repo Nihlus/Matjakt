@@ -12,16 +12,35 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * @author Jarl Gullberg - jarl.gullberg@gmail.com
+ *
+ * This class connects to the Outpan product database, and allows reading and writing of product data
+ * there. A valid API key must be retrieved from Outpan.com before this class can be used.
+ */
 public class OutpanAPI2
 {
     private final String APIKey;
 
+    /**
+     * Initializes a new instance of the Outpan API.
+     *
+     * @param InAPIKey The API key to be used for the connection.
+     */
     @SuppressWarnings("SameParameterValue")
     public OutpanAPI2(String InAPIKey)
     {
         this.APIKey = InAPIKey;
     }
 
+    /**
+     * Retrieves a product from the database by its EAN code. The product may be invalid (i.e,
+     * missing data) if the EAN has never been scanned before or doesn't have any data attached
+     * to it.
+     *
+     * @param InEAN The EAN of the product to be retrieved.
+     * @return A product object representing the product in the Outpan database
+     */
     public OutpanProduct getProduct(EAN InEAN)
     {
         OutpanProduct OutProduct = null;
@@ -36,7 +55,13 @@ public class OutpanAPI2
         return OutProduct;
     }
 
-    //Unofficial API, does not return an object.
+    /**
+     * Sets the name of a product in the database, identified by its EAN code. If the product
+     * already has a name, it will be replaced.
+     *
+     * @param InEAN The EAN of the product.
+     * @param InNewName The new name of the product.
+     */
     public void setProductName(EAN InEAN, String InNewName)
     {
         try
@@ -62,7 +87,16 @@ public class OutpanAPI2
         }
     }
 
-    //Unofficial API, does not return an object.
+    /**
+     * Sets an attribute on a product in the database, identified by its EAN code. If the attribute
+     * already exists, it will be replaced.
+     *
+     * If you want to delete attributes, use {@link #deleteProductAttribute(EAN, String)} instead.
+     *
+     * @param InEAN The EAN of the product.
+     * @param InAttributeKey The key of the attribute. Must be a valid string.
+     * @param InAttributeValue The new value of the attribute.
+     */
     public void setProductAttribute(EAN InEAN, String InAttributeKey, String InAttributeValue)
     {
         try
@@ -89,6 +123,26 @@ public class OutpanAPI2
         }
     }
 
+    /**
+     * Helper function to delete attributes on a product, identified by its EAN code.
+     * Passes an empty attributes value to {@link #setProductAttribute(EAN, String, String)},
+     * deleting the attribute.
+     *
+     * @param InEAN The EAN of the product.
+     * @param InAttributeKey The key of the attribute. Must be a valid string.
+     */
+    public void deleteProductAttribute(EAN InEAN, String InAttributeKey)
+    {
+        setProductAttribute(InEAN, InAttributeKey, "");
+    }
+
+    /**
+     * Creates a complete request URL from a given input EAN, allowing the API to retrieve a product
+     * from the database.
+     *
+     * @param InEAN The EAN of the product.
+     * @return A valid API URL to a product.
+     */
     private URL buildRequestURL(EAN InEAN)
     {
         URL OutURL = null;

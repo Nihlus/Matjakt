@@ -82,7 +82,7 @@ public class PriceListAdapter extends BaseAdapter
         {
             if (parentActivity.product.isSoldByWeight())
             {
-                // TODO: Clean this crap up
+                // TODO: Turn this into something a little more visually appealing
                 String basePriceString = map.get(Constants.PRICEMAPID_PRICE);
                 String finalPriceString = basePriceString + "/" + parentActivity.product.getWeightUnit();
                 priceValueText.setText(finalPriceString);

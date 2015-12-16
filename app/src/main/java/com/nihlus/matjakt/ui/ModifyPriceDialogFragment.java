@@ -143,6 +143,7 @@ public class ModifyPriceDialogFragment extends DialogFragment
 
                 ArrayList<Integer> filterTypes = new ArrayList<>();
                 filterTypes.add(Place.TYPE_ESTABLISHMENT);
+                filterTypes.add(Place.TYPE_GAS_STATION);
 
                 AutocompleteFilter filter = AutocompleteFilter.create(filterTypes);
                 LatLngBounds bounds = getLatLngBoundsFromLocation(location,

@@ -23,20 +23,20 @@ import android.widget.Toast;
 import com.nihlus.matjakt.MainActivity;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
+import com.nihlus.matjakt.database.inserters.ModifyProductTask;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.ui.adapters.BrandNameAdapter;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ModifyProductActivity extends AppCompatActivity
 {
-    private OutpanProduct product;
+    public OutpanProduct product;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -91,7 +91,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 }
             });
 
-            ArrayAdapter<String> autocompleteAdapter = new BrandNameAdapter(this, getStoredBrands());
+            ArrayAdapter<String> autocompleteAdapter = new BrandNameAdapter(this, BrandNameAdapter.getStoredBrands());
             brandEdit.setAdapter(autocompleteAdapter);
 
         }
@@ -148,15 +148,13 @@ public class ModifyProductActivity extends AppCompatActivity
                 OutpanProduct newProduct = new OutpanProduct(product.ean, newProductData);
 
                 //create the task and send it to the server, close the modify activity when done
-                UpdateOutpanProduct update = new UpdateOutpanProduct(this, newProduct);
-                update.execute();
+                ModifyProductTask modifyProduct = new ModifyProductTask(this, newProduct);
+                modifyProduct.execute();
             }
         }
         else
         {
             // We didn't change anything, so we canceled the edit
-
-
             setResult(RESULT_CANCELED);
             finish();
         }
@@ -245,7 +243,7 @@ public class ModifyProductActivity extends AppCompatActivity
         }
 
         // By weight amount, if applicable
-        if (product.isSoldByWeight())
+        if (product.isSoldByWeight() && product.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
         {
             Spinner productWeightUnitSpinner = (Spinner) findViewById(R.id.priceWeightUnitSpinner);
             String weightUnit = product.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE);
@@ -270,7 +268,7 @@ public class ModifyProductActivity extends AppCompatActivity
         }
     }
 
-    private HashMap<String, String> splitAmountValue(String inString)
+    public HashMap<String, String> splitAmountValue(String inString)
     {
         HashMap<String, String> list = new HashMap<>();
 
@@ -403,9 +401,9 @@ public class ModifyProductActivity extends AppCompatActivity
         return 0;
     }
 
-    private void addStoredBrand(String brand)
+    public void addStoredBrand(String brand)
     {
-        ArrayList<String> storedBrands = getStoredBrands();
+        ArrayList<String> storedBrands = BrandNameAdapter.getStoredBrands();
         if (!storedBrands.contains(brand) && !brand.isEmpty())
         {
             storedBrands.add(brand);
@@ -416,176 +414,6 @@ public class ModifyProductActivity extends AppCompatActivity
 
             editor.putString(Constants.PREF_BRANDARRAY, brandArray.toString());
             editor.apply();
-        }
-    }
-
-    // TODO: Refactor this and merge with BrandNameAdapter#getStoredBrands()
-    private ArrayList<String> getStoredBrands()
-    {
-        ArrayList<String> brands = new ArrayList<>();
-        try
-        {
-            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-            JSONArray brandArray = new JSONArray(preferences.getString(Constants.PREF_BRANDARRAY, "[]"));
-
-            for (int i = 0; i < brandArray.length(); i++)
-            {
-                brands.add(brandArray.getString(i));
-            }
-        }
-        catch (JSONException jex)
-        {
-            // TODO: Create global exception handler
-            jex.printStackTrace();
-        }
-
-        return brands;
-    }
-
-    //async posting of the update to the database
-    private class UpdateOutpanProduct extends AsyncTask<Void, Void, OutpanProduct>
-    {
-        private final Activity modifyProductActivity;
-        private final OutpanProduct newProduct;
-
-        private final ProgressDialog dialog;
-
-        UpdateOutpanProduct(Activity InParentActivity, OutpanProduct InProductData)
-        {
-            this.modifyProductActivity = InParentActivity;
-            this.newProduct = InProductData;
-
-            dialog = new ProgressDialog(InParentActivity);
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            this.dialog.setMessage(getResources().getString(R.string.dialog_updatingProductInfo));
-            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener()
-            {
-                @Override
-                public void onCancel(DialogInterface dialog)
-                {
-                    cancel(true);
-                }
-            });
-
-            this.dialog.show();
-        }
-
-        protected OutpanProduct doInBackground(Void... inputs)
-        {
-            OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
-            EAN productEAN = newProduct.ean;
-
-            api.setProductName(productEAN, getFinalProductString());
-
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_BRAND_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-
-            // Store the brand for autocomplete purposes
-            addStoredBrand(newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_TITLE_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
-
-
-            if (newProduct.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-            {
-                boolean isEmpty = splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-                        .get(Constants.SPLITMAP_NUMBER).isEmpty();
-
-                if (!isEmpty)
-                {
-                    api.setProductAttribute(productEAN,
-                            Constants.PRODUCT_AMOUNT_ATTRIBUTE,
-                            newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-                }
-            }
-
-            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
-            {
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_BYWEIGHT_ATTRIBUTE,
-                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE));
-            }
-
-            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
-            {
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE,
-                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
-            }
-
-            if (newProduct.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-            {
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_ORGANIC_ATTRIBUTE,
-                        newProduct.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
-            }
-            else
-            {
-                // Remove the attribute by setting it to empty
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_ORGANIC_ATTRIBUTE,
-                        "");
-            }
-
-            if (newProduct.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-            {
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
-                        newProduct.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
-            }
-            else
-            {
-                // Remove the attribute by setting it to empty
-                api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
-                        "");
-            }
-
-            return api.getProduct(productEAN);
-        }
-
-        protected void onPostExecute(OutpanProduct result)
-        {
-            super.onPostExecute(result);
-            if (this.dialog.isShowing() && result != null)
-            {
-                this.dialog.dismiss();
-
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.PRODUCT_PARCEL, result);
-
-                modifyProductActivity.setResult(RESULT_OK, resultIntent);
-                modifyProductActivity.finish();
-            }
-            else
-            {
-                modifyProductActivity.setResult(RESULT_CANCELED);
-                this.dialog.dismiss();
-
-                Toast.makeText(modifyProductActivity, getResources().getString(R.string.prompt_productUpdateFailed), Toast.LENGTH_LONG).show();
-            }
-        }
-
-        private String getFinalProductString()
-        {
-            String productBrand = newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE);
-            String productTitle = newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE);
-
-            HashMap<String, String> amountValues = splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
-            String productAmount = amountValues.get(Constants.SPLITMAP_NUMBER);
-            String productAmountUnit = amountValues.get(Constants.SPLITMAP_UNIT);
-
-            return productBrand + " " +
-                    productTitle + " " +
-                    productAmount + productAmountUnit;
         }
     }
 }

@@ -96,9 +96,7 @@
     <string name="ui_dialog_editprice">Redigera Pris</string>
     <string name="ui_general_delete">Radera</string>
     <string name="management_unauthorized">Hoppsan! Du har inte tillstånd att göra det där :(</string>
-    <string name="ui_preview_someaddress">Någon Address</string>
-    <string name="ui_preview_somedate">Något Datum</string>
-    <string name="ui_preview_someexpirationdate">Något Utgångsdatum</string>
+    <string name="ui_preview_noselection">Inget valt</string>
     <string name="ui_content_poweredbygoogle">Powered by Google</string>'
     <string name="dialog_deleteEntry">Vill du radera det här förslaget?</string>
     <string name="dialog_mightBeByWeight">Möjlig kilopris-produkt</string>

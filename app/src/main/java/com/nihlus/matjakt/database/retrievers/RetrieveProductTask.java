@@ -13,8 +13,7 @@ import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.outpan.OutpanAPI2;
 import com.nihlus.matjakt.outpan.OutpanProduct;
-import com.nihlus.matjakt.ui.AddProductDialogFragment;
-import com.nihlus.matjakt.ui.RepairProductDialogFragment;
+import com.nihlus.matjakt.ui.ModifyProductDialogFragment;
 import com.nihlus.matjakt.ui.ViewProductActivity;
 
 /**
@@ -57,6 +56,10 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
         if (ean.isInternalCode())
         {
             byWeightProduct = api.getProduct(ean.getEmbeddedPriceEAN());
+            if (byWeightProduct != null)
+            {
+                byWeightProduct.setIsSoldByWeight(true);
+            }
         }
 
         return api.getProduct(ean);
@@ -93,7 +96,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
                             //launch product view activity
                             if (!byWeightProduct.isValid())
                             {
-                                addProduct(ean.getEmbeddedPriceEAN());
+                                addProduct(byWeightProduct);
                             }
                             else if (byWeightProduct.isMissingRequiredAttributes())
                             {
@@ -120,7 +123,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
                             //launch product view activity
                             if (!result.isValid())
                             {
-                                addProduct(ean);
+                                addProduct(result);
                             }
                             else if (result.isMissingRequiredAttributes())
                             {
@@ -146,7 +149,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
             //launch product view activity
             if (!result.isValid())
             {
-                addProduct(ean);
+                addProduct(result);
             }
             else if (result.isMissingRequiredAttributes())
             {
@@ -163,17 +166,17 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
         }
     }
 
-    private void addProduct(EAN InEAN)
+    private void addProduct(OutpanProduct InTemplateProduct)
     {
         //ask the user if they want to add a new product
-        AddProductDialogFragment dialog = new AddProductDialogFragment(parentActivity, InEAN);
+        ModifyProductDialogFragment dialog = new ModifyProductDialogFragment(parentActivity, InTemplateProduct, false);
         dialog.show(parentActivity.getFragmentManager(), Constants.DIALOG_ADDPRODUCTFRAGMENT_ID);
     }
 
-    private void repairProduct(OutpanProduct InProduct)
+    private void repairProduct(OutpanProduct InTemplateProduct)
     {
         //broken product, ask if the user wants to edit it
-        RepairProductDialogFragment dialog = new RepairProductDialogFragment(parentActivity, InProduct);
+        ModifyProductDialogFragment dialog = new ModifyProductDialogFragment(parentActivity, InTemplateProduct, true);
         dialog.show(parentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
     }
 
