@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2015 Google Inc. All Rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-// Modified by Jarl Gullberg
-
 
 package com.nihlus.matjakt.ui.adapters;
 
@@ -44,10 +41,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by jarl on 11/27/15.
- * Provides auto completion for local stores
- */
 public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePrediction>
     implements Filterable
 {
