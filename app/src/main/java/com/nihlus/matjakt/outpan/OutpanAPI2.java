@@ -143,10 +143,10 @@ public class OutpanAPI2
                         }
                     }
                 }
-            }
-            else
-            {
-                throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+                else
+                {
+                    throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+                }
             }
         }
         catch (MalformedURLException mex)
@@ -231,10 +231,10 @@ public class OutpanAPI2
                         }
                     }
                 }
-            }
-            else
-            {
-                throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+                else
+                {
+                    throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+                }
             }
         }
         catch (MalformedURLException mex)
@@ -327,7 +327,7 @@ public class OutpanAPI2
                 }
 
                 sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                sb.append(URLEncoder.encode("=", "UTF-8"));
+                sb.append("=");
                 sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
             }
         }

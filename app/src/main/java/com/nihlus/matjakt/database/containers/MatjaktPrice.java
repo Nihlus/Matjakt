@@ -22,7 +22,8 @@
 
 package com.nihlus.matjakt.database.containers;
 
-import com.nihlus.matjakt.MainActivity;
+import android.content.Context;
+
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
 
@@ -44,6 +45,8 @@ import java.util.Locale;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class MatjaktPrice
 {
+    private Context context;
+
     public int ID;
     public EAN ean;
 
@@ -57,7 +60,7 @@ public class MatjaktPrice
     public Date timestamp;
     public boolean isAddEntry;
 
-    public MatjaktPrice(JSONObject InObject)
+    public MatjaktPrice(JSONObject InObject, Context inContext)
     {
         try
         {
@@ -83,14 +86,14 @@ public class MatjaktPrice
         }
     }
 
-    public MatjaktPrice()
+    public MatjaktPrice(Context inContext)
     {
-
+        this.context = inContext;
     }
 
-    public static MatjaktPrice getAddPriceEntry()
+    public static MatjaktPrice getAddPriceEntry(Context inContext)
     {
-        MatjaktPrice addEntry = new MatjaktPrice();
+        MatjaktPrice addEntry = new MatjaktPrice(inContext);
         addEntry.isAddEntry = true;
         return addEntry;
     }
@@ -101,7 +104,7 @@ public class MatjaktPrice
 
         if (isAddEntry)
         {
-            hashMap.put(Constants.PRICEMAPID_STORE, MainActivity.getStaticContext().getResources().getString(R.string.ui_price_addnewprice));
+            hashMap.put(Constants.PRICEMAPID_STORE, context.getResources().getString(R.string.ui_price_addnewprice));
         }
         else
         {
@@ -109,7 +112,7 @@ public class MatjaktPrice
 
             if (isOffer)
             {
-                hashMap.put(Constants.PRICEMAPID_OFFER, MainActivity.getStaticContext().getResources().
+                hashMap.put(Constants.PRICEMAPID_OFFER, context.getResources().
                         getString(R.string.ui_pricelist_isoffer));
             }
             else

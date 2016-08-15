@@ -38,7 +38,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.nihlus.matjakt.MainActivity;
 import com.nihlus.matjakt.R;
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.inserters.ModifyProductTask;
@@ -107,7 +106,7 @@ public class ModifyProductActivity extends AppCompatActivity
                 }
             });
 
-            ArrayAdapter<String> autocompleteAdapter = new BrandNameAdapter(this, BrandNameAdapter.getStoredBrands());
+            ArrayAdapter<String> autocompleteAdapter = new BrandNameAdapter(this, BrandNameAdapter.getStoredBrands(getApplicationContext()));
             brandEdit.setAdapter(autocompleteAdapter);
 
         }
@@ -419,13 +418,13 @@ public class ModifyProductActivity extends AppCompatActivity
 
     public void addStoredBrand(String brand)
     {
-        ArrayList<String> storedBrands = BrandNameAdapter.getStoredBrands();
+        ArrayList<String> storedBrands = BrandNameAdapter.getStoredBrands(getApplicationContext());
         if (!storedBrands.contains(brand) && !brand.isEmpty())
         {
             storedBrands.add(brand);
             JSONArray brandArray = new JSONArray(storedBrands);
 
-            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
 
             editor.putString(Constants.PREF_BRANDARRAY, brandArray.toString());

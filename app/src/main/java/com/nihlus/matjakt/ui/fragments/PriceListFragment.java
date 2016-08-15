@@ -244,7 +244,7 @@ public class PriceListFragment extends Fragment
 
     private void addPlusItem()
     {
-        priceList.add(MatjaktPrice.getAddPriceEntry());
+        priceList.add(MatjaktPrice.getAddPriceEntry(getContext()));
         resetListViewAdapter();
     }
 

@@ -22,6 +22,8 @@
 
 package com.nihlus.matjakt;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,9 +35,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,14 +55,12 @@ import com.nihlus.matjakt.ui.ViewProductActivity;
 import java.util.Currency;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends Activity
 {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
     private ActionBarDrawerToggle drawerToggle;
-
-    private static Context context;
 
     /// GPS Service Binding ///
 
@@ -104,7 +102,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        context = this;
 
         setContentView(R.layout.activity_main);
 
@@ -143,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupLeftDrawer()
     {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if (actionBar != null)
         {
             actionBar.setDisplayShowHomeEnabled(true);
@@ -337,10 +334,5 @@ public class MainActivity extends AppCompatActivity
     {
         // Will fail if there's no network available
         ProductScan.initiate(this);
-    }
-
-    public static Context getStaticContext()
-    {
-        return context;
     }
 }

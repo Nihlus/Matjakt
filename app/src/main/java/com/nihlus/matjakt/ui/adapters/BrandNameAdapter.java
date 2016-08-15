@@ -36,9 +36,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
-import com.nihlus.matjakt.MainActivity;
-import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.ui.ModifyProductActivity;
 
 import org.json.JSONArray;
@@ -49,7 +48,6 @@ import java.util.ArrayList;
 @SuppressWarnings("UnusedAssignment")
 public class BrandNameAdapter extends ArrayAdapter<String>
 {
-
     private ArrayList<String> brands;
 
     public BrandNameAdapter(Context context, ArrayList<String> values)
@@ -70,9 +68,9 @@ public class BrandNameAdapter extends ArrayAdapter<String>
             public boolean onLongClick(final View v)
             {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(MainActivity.getStaticContext().getString(R.string.dialog_confirm))
-                        .setMessage(MainActivity.getStaticContext().getString(R.string.dialog_deleteEntry))
-                        .setPositiveButton(MainActivity.getStaticContext().getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
+                        .setTitle(getContext().getString(R.string.dialog_confirm))
+                        .setMessage(getContext().getString(R.string.dialog_deleteEntry))
+                        .setPositiveButton(getContext().getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -83,7 +81,7 @@ public class BrandNameAdapter extends ArrayAdapter<String>
                                 deleteStoredBrand(text.getText().toString());
                             }
                         })
-                        .setNegativeButton(MainActivity.getStaticContext().getString(R.string.dialog_No), new DialogInterface.OnClickListener()
+                        .setNegativeButton(getContext().getString(R.string.dialog_No), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -136,7 +134,7 @@ public class BrandNameAdapter extends ArrayAdapter<String>
             brands = inBrands;
             JSONArray brandArray = new JSONArray(inBrands);
 
-            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences preferences = getContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
 
             editor.putString(Constants.PREF_BRANDARRAY, brandArray.toString());
@@ -144,12 +142,12 @@ public class BrandNameAdapter extends ArrayAdapter<String>
         }
     }
 
-    public static ArrayList<String> getStoredBrands()
+    public static ArrayList<String> getStoredBrands(Context context)
     {
         ArrayList<String> brands = new ArrayList<>();
         try
         {
-            SharedPreferences preferences = MainActivity.getStaticContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences preferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
             JSONArray brandArray = new JSONArray(preferences.getString(Constants.PREF_BRANDARRAY, "[]"));
 
             for (int i = 0; i < brandArray.length(); i++)

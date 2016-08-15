@@ -93,7 +93,7 @@ public class RetrievePricesTask extends AsyncTask<Void, Void, List<MatjaktPrice>
             {
                 for (int i = 0; i < Result.length(); ++i)
                 {
-                    MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i));
+                    MatjaktPrice newPrice = new MatjaktPrice(Result.getJSONObject(i), parentActivity);
                     newPrice.store = getStore(newPrice.storeID, parentActivity.getGoogleApiClient());
 
                     retrievedPrices.add(newPrice);
