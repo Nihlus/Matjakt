@@ -23,16 +23,29 @@
 package com.nihlus.matjakt.outpan;
 
 
+import android.accounts.NetworkErrorException;
+
 import com.nihlus.matjakt.constants.Constants;
 import com.nihlus.matjakt.database.containers.EAN;
 import com.nihlus.matjakt.database.retrievers.Utility;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * @author Jarl Gullberg - jarl.gullberg@gmail.com
@@ -42,19 +55,6 @@ import java.net.URLConnection;
  */
 public class OutpanAPI2
 {
-    private final String APIKey;
-
-    /**
-     * Initializes a new instance of the Outpan API.
-     *
-     * @param InAPIKey The API key to be used for the connection.
-     */
-    @SuppressWarnings("SameParameterValue")
-    public OutpanAPI2(String InAPIKey)
-    {
-        this.APIKey = InAPIKey;
-    }
-
     /**
      * Retrieves a product from the database by its EAN code. The product may be invalid (i.e,
      * missing data) if the EAN has never been scanned before or doesn't have any data attached
@@ -67,7 +67,7 @@ public class OutpanAPI2
     {
         OutpanProduct OutProduct = null;
 
-        JSONObject responseObject = Utility.getRemoteJSONObject(buildRequestURL(InEAN));
+        JSONObject responseObject = Utility.getRemoteJSONObject(buildRequestURL(InEAN, OutpanRequestType.Product));
 
         if (responseObject != null)
         {
@@ -84,18 +84,70 @@ public class OutpanAPI2
      * @param InEAN The EAN of the product.
      * @param InNewName The new name of the product.
      */
-    public void setProductName(EAN InEAN, String InNewName)
+    public void setProductName(EAN InEAN, String InNewName) throws NetworkErrorException
     {
         try
         {
-            URL requestURL = new URL(Constants.OutpanLegacyAPI_EditName +
-                    "?apikey=" + URLParameterEncoder.encode(APIKey) +
-                    "&barcode=" + URLParameterEncoder.encode(InEAN.getCode()) +
-                    "&name=" + URLParameterEncoder.encode(InNewName));
+            URL requestURL = buildRequestURL(InEAN, OutpanRequestType.Name);
+            HttpsURLConnection connection = (HttpsURLConnection)requestURL.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-            URLConnection uc = requestURL.openConnection();
-            uc.getInputStream();
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put("name", InNewName);
 
+            try(OutputStream os = connection.getOutputStream())
+            {
+                try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8")))
+                {
+                    bw.write(getPostDataParameterString(parameters));
+                    bw.flush();
+                }
+            }
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode != HttpsURLConnection.HTTP_OK)
+            {
+                if (responseCode == HttpsURLConnection.HTTP_BAD_REQUEST)
+                {
+                    // Read the error object
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8")))
+                    {
+                        String responseContent = "";
+                        String currentLine;
+
+                        while ((currentLine = br.readLine()) != null)
+                        {
+                            responseContent += currentLine;
+                        }
+
+                        if (!responseContent.isEmpty())
+                        {
+                            try
+                            {
+                                JSONObject jsonErrorObject = new JSONObject(responseContent);
+
+                                OutpanError error = new OutpanError(jsonErrorObject);
+
+                                if (error.ErrorType == OutpanError.OutpanErrorType.Unknown)
+                                {
+                                    throw new NetworkErrorException("The server responded with an unknown error code.");
+                                }
+                            }
+                            catch (JSONException jex)
+                            {
+                                jex.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+            }
         }
         catch (MalformedURLException mex)
         {
@@ -119,19 +171,71 @@ public class OutpanAPI2
      * @param InAttributeKey The key of the attribute. Must be a valid string.
      * @param InAttributeValue The new value of the attribute.
      */
-    public void setProductAttribute(EAN InEAN, String InAttributeKey, String InAttributeValue)
+    public void setProductAttribute(EAN InEAN, String InAttributeKey, String InAttributeValue) throws NetworkErrorException
     {
         try
         {
-            URL requestURL = new URL(Constants.OutpanLegacyAPI_EditAttribute +
-                    "?apikey=" + URLParameterEncoder.encode(APIKey) +
-                    "&barcode=" + URLParameterEncoder.encode(InEAN.getCode()) +
-                    "&attr_name=" + URLParameterEncoder.encode(InAttributeKey) +
-                    "&attr_val=" + URLParameterEncoder.encode(InAttributeValue));
+            URL requestURL = buildRequestURL(InEAN, OutpanRequestType.Attribute);
+            HttpsURLConnection connection = (HttpsURLConnection)requestURL.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
 
-            URLConnection uc = requestURL.openConnection();
-            uc.getInputStream();
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put("name", InAttributeKey);
+            parameters.put("value", InAttributeValue);
 
+            try(OutputStream os = connection.getOutputStream())
+            {
+                try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8")))
+                {
+                    bw.write(getPostDataParameterString(parameters));
+                    bw.flush();
+                }
+            }
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode != HttpsURLConnection.HTTP_OK)
+            {
+                if (responseCode == HttpsURLConnection.HTTP_BAD_REQUEST)
+                {
+                    // Read the error object
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8")))
+                    {
+                        String responseContent = "";
+                        String currentLine;
+
+                        while ((currentLine = br.readLine()) != null)
+                        {
+                            responseContent += currentLine;
+                        }
+
+                        if (!responseContent.isEmpty())
+                        {
+                            try
+                            {
+                                JSONObject jsonErrorObject = new JSONObject(responseContent);
+
+                                OutpanError error = new OutpanError(jsonErrorObject);
+
+                                if (error.ErrorType == OutpanError.OutpanErrorType.Unknown)
+                                {
+                                    throw new NetworkErrorException("The server responded with an unknown error code.");
+                                }
+                            }
+                            catch (JSONException jex)
+                            {
+                                jex.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new NetworkErrorException("The server responded with a response code other than HTTP_OK or HTTP_BAD_REQUEST.");
+            }
         }
         catch (MalformedURLException mex)
         {
@@ -153,7 +257,7 @@ public class OutpanAPI2
      * @param InEAN The EAN of the product.
      * @param InAttributeKey The key of the attribute. Must be a valid string.
      */
-    public void deleteProductAttribute(EAN InEAN, String InAttributeKey)
+    public void deleteProductAttribute(EAN InEAN, String InAttributeKey) throws NetworkErrorException
     {
         setProductAttribute(InEAN, InAttributeKey, "");
     }
@@ -165,10 +269,31 @@ public class OutpanAPI2
      * @param InEAN The EAN of the product.
      * @return A valid API URL to a product.
      */
-    private URL buildRequestURL(EAN InEAN)
+    private URL buildRequestURL(EAN InEAN, OutpanRequestType requestType)
     {
         URL OutURL = null;
-        String rawURL = Constants.OutpanBaseURLv2 + InEAN.getCode() + "?apikey=" + Constants.OutpanAPIKey;
+        String rawURL = Constants.OutpanBaseURLv2 + InEAN.getCode();
+
+        switch (requestType)
+        {
+
+            case Attribute:
+            {
+                rawURL += "/attribute";
+                break;
+            }
+            case Name:
+            {
+                rawURL += "/name";
+                break;
+            }
+            case Product:
+            {
+                break;
+            }
+        }
+
+        rawURL += "?apikey=" + Constants.OutpanAPIKey;
 
         try
         {
@@ -181,5 +306,43 @@ public class OutpanAPI2
         }
 
         return OutURL;
+    }
+
+    private String getPostDataParameterString(HashMap<String, String> parameters)
+    {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+
+        try
+        {
+            for (Map.Entry<String, String> entry : parameters.entrySet())
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    sb.append("&");
+                }
+
+                sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                sb.append(URLEncoder.encode("=", "UTF-8"));
+                sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            }
+        }
+        catch (UnsupportedEncodingException uex)
+        {
+            uex.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+    private enum OutpanRequestType
+    {
+        Attribute,
+        Name,
+        Product
     }
 }

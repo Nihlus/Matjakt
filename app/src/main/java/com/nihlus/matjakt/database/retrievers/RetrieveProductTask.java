@@ -73,7 +73,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
     @Override
     protected OutpanProduct doInBackground(Void... params)
     {
-        OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
+        OutpanAPI2 api = new OutpanAPI2();
 
         if (ean.isInternalCode())
         {

@@ -22,6 +22,7 @@
 
 package com.nihlus.matjakt.database.inserters;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -72,74 +73,81 @@ public class ModifyProductTask extends AsyncTask<Void, Void, OutpanProduct>
 
     protected OutpanProduct doInBackground(Void... inputs)
     {
-        OutpanAPI2 api = new OutpanAPI2(Constants.OutpanAPIKey);
+        OutpanAPI2 api = new OutpanAPI2();
         EAN productEAN = newProduct.ean;
 
-        api.setProductName(productEAN, getFinalProductString());
-
-        api.setProductAttribute(productEAN,
-                Constants.PRODUCT_BRAND_ATTRIBUTE,
-                newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-
-        // Store the brand for autocomplete purposes
-        modifyProductActivity.addStoredBrand(newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
-
-        api.setProductAttribute(productEAN,
-                Constants.PRODUCT_TITLE_ATTRIBUTE,
-                newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
-
-
-        if (newProduct.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        try
         {
-            boolean isEmpty = modifyProductActivity.splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
-                    .get(Constants.SPLITMAP_NUMBER).isEmpty();
+            api.setProductName(productEAN, getFinalProductString());
 
-            if (!isEmpty)
+            api.setProductAttribute(productEAN,
+                    Constants.PRODUCT_BRAND_ATTRIBUTE,
+                    newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+
+            // Store the brand for autocomplete purposes
+            modifyProductActivity.addStoredBrand(newProduct.attributes.get(Constants.PRODUCT_BRAND_ATTRIBUTE));
+
+            api.setProductAttribute(productEAN,
+                    Constants.PRODUCT_TITLE_ATTRIBUTE,
+                    newProduct.attributes.get(Constants.PRODUCT_TITLE_ATTRIBUTE));
+
+
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+            {
+                boolean isEmpty = modifyProductActivity.splitAmountValue(newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+                        .get(Constants.SPLITMAP_NUMBER).isEmpty();
+
+                if (!isEmpty)
+                {
+                    api.setProductAttribute(productEAN,
+                            Constants.PRODUCT_AMOUNT_ATTRIBUTE,
+                            newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+                }
+            }
+
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
             {
                 api.setProductAttribute(productEAN,
-                        Constants.PRODUCT_AMOUNT_ATTRIBUTE,
-                        newProduct.attributes.get(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+                        Constants.PRODUCT_BYWEIGHT_ATTRIBUTE,
+                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE));
+            }
+
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
+            {
+                api.setProductAttribute(productEAN,
+                        Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE,
+                        newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
+            }
+
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            {
+                api.setProductAttribute(productEAN,
+                        Constants.PRODUCT_ORGANIC_ATTRIBUTE,
+                        newProduct.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
+            }
+            else if (modifyProductActivity.product.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+            {
+                // Remove the attribute by setting it to empty
+                api.deleteProductAttribute(productEAN,
+                        Constants.PRODUCT_ORGANIC_ATTRIBUTE);
+            }
+
+            if (newProduct.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            {
+                api.setProductAttribute(productEAN,
+                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
+                        newProduct.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
+            }
+            else if (modifyProductActivity.product.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+            {
+                // Remove the attribute by setting it to empty
+                api.deleteProductAttribute(productEAN,
+                        Constants.PRODUCT_FAIRTRADE_ATTRIBUTE);
             }
         }
-
-        if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
+        catch (NetworkErrorException nex)
         {
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_BYWEIGHT_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE));
-        }
-
-        if (newProduct.attributes.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
-        {
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
-        }
-
-        if (newProduct.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-        {
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_ORGANIC_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_ORGANIC_ATTRIBUTE));
-        }
-        else if (modifyProductActivity.product.attributes.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
-        {
-            // Remove the attribute by setting it to empty
-            api.deleteProductAttribute(productEAN,
-                    Constants.PRODUCT_ORGANIC_ATTRIBUTE);
-        }
-
-        if (newProduct.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-        {
-            api.setProductAttribute(productEAN,
-                    Constants.PRODUCT_FAIRTRADE_ATTRIBUTE,
-                    newProduct.attributes.get(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE));
-        }
-        else if (modifyProductActivity.product.attributes.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
-        {
-            // Remove the attribute by setting it to empty
-            api.deleteProductAttribute(productEAN,
-                    Constants.PRODUCT_FAIRTRADE_ATTRIBUTE);
+            nex.printStackTrace();
         }
 
         return api.getProduct(productEAN);
