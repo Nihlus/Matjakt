@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         {
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+            //actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 
             actionBar.setHomeButtonEnabled(true);
         }
