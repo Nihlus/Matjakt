@@ -37,7 +37,6 @@ public final class Constants
 
     public static final String SHARED_PREFERENCES = "MATJAKTPREFS";
     public static final String PREF_HASSTARTEDBEFORE = "bHasStartedBefore";
-    public static final String PREF_USEDARKTHEME = "bUseDarkTheme";
     public static final String PREF_PREFERREDSTOREDISTANCE = "preferredStoreDistance";
     public static final String PREF_MAXSTOREDISTANCE ="maxStoreDistance";
     public static final String PREF_USERCURRENCY = "userCurrency";
@@ -68,8 +67,6 @@ public final class Constants
 
     public static final String OutpanAPIKey = "6ce3d3614125cd1976dedca9b48e69e5";
     public static final String OutpanBaseURLv2 = "https://api.outpan.com/v2/products/";
-    public static final String OutpanLegacyAPI_EditName = "http://www.outpan.com/api/edit-name.php";
-    public static final String OutpanLegacyAPI_EditAttribute = "http://www.outpan.com/api/edit-attr.php";
 
     public static final String MATJAKT_API_URL = "http://directorate.asuscomm.com/api/v1/";
     public static final String API_GETSTORE = "matjakt_getstore.php";
@@ -95,6 +92,7 @@ public final class Constants
     public static final String PRICEMAPID_STORE = "STORE";
     public static final String PRICEMAPID_OFFER = "EXTRA";
     public static final String PRICEMAPID_PRICE = "PRICE";
+    public static final String PRICEMAPID_ADDRESS = "CITY";
     public static final String PRICEMAPID_LAT = "LAT";
     public static final String PRICEMAPID_LON = "LON";
     public static final String PRICEMAPID_TIMESTAMP = "NIXTIME";
@@ -146,7 +144,6 @@ public final class Constants
 
     public static final int DRAWERITEM_SCAN = 0;
     public static final int DRAWERITEM_SETTINGS = 1;
-    public static final int DRAWERITEM_ABOUT = 2;
-    public static final int DRAWERITEM_BUGREPORT = 3;
-    public static final int DRAWERITEM_REQUESTFEATURE = 4;
+    public static final int DRAWERITEM_BUGREPORT = 2;
+    public static final int DRAWERITEM_REQUESTFEATURE = 3;
 }

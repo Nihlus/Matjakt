@@ -23,7 +23,6 @@
     <string-array name="ui_sidebar_menu_items">
         <item>Skanna</item>
         <item>Inställningar</item>
-        <item>Om</item>
         <item>Rapportera bugg</item>
         <item>Skicka funktionsförslag</item>
     </string-array>

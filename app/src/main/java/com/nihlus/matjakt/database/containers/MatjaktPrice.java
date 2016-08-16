@@ -127,7 +127,7 @@ public class MatjaktPrice
 
             hashMap.put(Constants.PRICEMAPID_TIMESTAMP, timestamp.toString());
             hashMap.put(Constants.PRICEMAPID_ISADDENTRY, String.valueOf(isAddEntry));
-
+            hashMap.put(Constants.PRICEMAPID_ADDRESS, store.storePlace.getAddress().toString());
         }
 
         return hashMap;

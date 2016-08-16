@@ -18,6 +18,7 @@ package com.nihlus.matjakt.ui.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 import android.view.View;
@@ -79,8 +80,9 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
         return resultList.get(position);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(int position, View convertView, @NonNull ViewGroup parent)
     {
         View row = super.getView(position, convertView, parent);
 
@@ -98,6 +100,7 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<AutocompletePredictio
         return row;
     }
 
+    @NonNull
     @Override
     public Filter getFilter()
     {

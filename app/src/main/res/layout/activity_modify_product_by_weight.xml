@@ -37,7 +37,6 @@
         android:maxLines="1"
         android:layout_alignParentEnd="true"
         android:lines="1"
-        android:singleLine="true"
         android:layout_toEndOf="@+id/ui_editBrand"
         android:layout_alignTop="@+id/ui_editBrand"/>
 
@@ -61,7 +60,6 @@
         android:maxLines="1"
         android:layout_alignParentEnd="true"
         android:lines="1"
-        android:singleLine="true"
         android:layout_alignStart="@+id/brandEdit"/>
 
     <CheckBox
@@ -104,7 +102,6 @@
         android:hint="@string/ui_weightHint"
         android:maxLines="1"
         android:lines="1"
-        android:singleLine="true"
         android:layout_alignStart="@+id/productNameEdit"
         android:layout_toStartOf="@+id/amountSpinner"/>
 

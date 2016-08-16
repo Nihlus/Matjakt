@@ -234,7 +234,7 @@ public class PriceListFragment extends Fragment
 
     private void addPriceItem(MatjaktPrice entry)
     {
-        if (priceListAdapter != null && priceList != null)
+        if (priceListAdapter != null)
         {
             priceList.add(entry);
 

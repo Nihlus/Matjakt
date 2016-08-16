@@ -61,7 +61,6 @@
     <string-array name="ui_sidebar_menu_items">
         <item>Scan</item>
         <item>Settings</item>
-        <item>About</item>
         <item>Bug Report</item>
         <item>Feature Request</item>
     </string-array>
@@ -110,4 +109,5 @@
     <string name="dialog_mightBeByWeight_body">This product might be sold by weight, instead of using a fixed price. Would you like to view it as one?</string>
     <string name="ui_editAmount_circa">Amount (Ca)</string>
     <string name="ui_editWeightType">Price Unit:</string>
+    <string name="ui_settings_generalHint">Change general settings (currency, favorites, etc.)</string>
 </resources>

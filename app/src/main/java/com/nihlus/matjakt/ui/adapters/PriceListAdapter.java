@@ -44,6 +44,7 @@ public class PriceListAdapter extends BaseAdapter
     private TextView storeChainText;
     private TextView storeNameText;
     private TextView priceValueText;
+    private TextView storeAddressText;
 
     public PriceListAdapter(ViewProductActivity InViewProductActivity, ArrayList<MatjaktPrice> InPriceList)
     {
@@ -83,6 +84,7 @@ public class PriceListAdapter extends BaseAdapter
             storeChainText = (TextView) convertView.findViewById(R.id.chain);
             storeNameText = (TextView) convertView.findViewById(R.id.extra);
             priceValueText = (TextView) convertView.findViewById(R.id.price);
+            storeAddressText = (TextView) convertView.findViewById(R.id.address);
         }
 
         HashMap<String, String> map = list.get(position).getHashMap();
@@ -109,6 +111,11 @@ public class PriceListAdapter extends BaseAdapter
             {
                 priceValueText.setText(map.get(Constants.PRICEMAPID_PRICE));
             }
+        }
+
+        if (map.containsKey(Constants.PRICEMAPID_ADDRESS))
+        {
+            storeAddressText.setText(map.get(Constants.PRICEMAPID_ADDRESS));
         }
 
         return convertView;

@@ -45,13 +45,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.nihlus.matjakt.R;
+import com.nihlus.matjakt.constants.Constants;
 
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Set;
 
-/**
- * Created by jarl on 12/5/15.
- * Allows the user to tune the app settings.
- */
 public class SettingsActivity extends PreferenceActivity
 {
     @Override
@@ -119,17 +119,12 @@ public class SettingsActivity extends PreferenceActivity
     {
         final String locationPreferenceName = LocationPreferencesFragment.class.getName();
         final String generalPreferenceName = GeneralPreferencesFragment.class.getName();
-        final String appearancePreferenceName = AppearancePreferencesFragment.class.getName();
 
         if (fragmentName.equals(locationPreferenceName))
         {
             return true;
         }
         else if (fragmentName.equals(generalPreferenceName))
-        {
-            return true;
-        }
-        else if (fragmentName.equals(appearancePreferenceName))
         {
             return true;
         }
@@ -148,6 +143,35 @@ public class SettingsActivity extends PreferenceActivity
             PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences_general, false);
             addPreferencesFromResource(R.xml.preferences_general);
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+            final ListPreference currencyPreference = (ListPreference)findPreference("userCurrency");
+
+            ArrayList<String> availableCurrencies = getCurrencyList();
+            currencyPreference.setEntries(availableCurrencies.toArray(new CharSequence[availableCurrencies.size()]));
+            currencyPreference.setEntryValues(availableCurrencies.toArray(new CharSequence[availableCurrencies.size()]));
+
+            String storedUserCurrency = getUserCurrency();
+            currencyPreference.setDefaultValue(storedUserCurrency);
+            currencyPreference.setValue(storedUserCurrency);
+        }
+
+        private ArrayList<String> getCurrencyList()
+        {
+            ArrayList<String> outList = new ArrayList<>();
+
+            Set<Currency> Currencies = Currency.getAvailableCurrencies();
+            for (Currency c : Currencies)
+            {
+                outList.add(c.getCurrencyCode());
+            }
+
+            return outList;
+        }
+
+        private String getUserCurrency()
+        {
+            SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            return preferences.getString(Constants.PREF_USERCURRENCY, "");
         }
 
         @Override
@@ -192,50 +216,22 @@ public class SettingsActivity extends PreferenceActivity
             addPreferencesFromResource(R.xml.preferences_location);
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
+            EditTextPreference preferredDistance = (EditTextPreference)findPreference("preferredStoreDistance");
+            EditTextPreference maxDistance = (EditTextPreference)findPreference("maxStoreDistance");
+
+            String storedPreferredDistanceValue = getDistanceValue(Constants.PREF_PREFERREDSTOREDISTANCE);
+            String storedMaxDistanceValue = getDistanceValue(Constants.PREF_MAXSTOREDISTANCE);
+            preferredDistance.setDefaultValue(storedPreferredDistanceValue);
+            preferredDistance.setText(storedPreferredDistanceValue);
+
+            maxDistance.setDefaultValue(storedMaxDistanceValue);
+            maxDistance.setText(storedMaxDistanceValue);
         }
 
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+        private String getDistanceValue(String InKey)
         {
-            updatePreference(findPreference(key));
-        }
-
-        @Override
-        public void onResume()
-        {
-            super.onResume();
-
-            for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i)
-            {
-                Preference preference = getPreferenceScreen().getPreference(i);
-                if (preference instanceof PreferenceGroup)
-                {
-                    PreferenceGroup preferenceGroup = (PreferenceGroup)preference;
-                    for (int j = 0; j < preferenceGroup.getPreferenceCount(); ++j)
-                    {
-                        updatePreference(preferenceGroup.getPreference(j));
-                    }
-                }
-                else
-                {
-                    updatePreference(preference);
-                }
-            }
-        }
-    }
-
-    public static class AppearancePreferencesFragment extends PreferenceFragment
-            implements SharedPreferences.OnSharedPreferenceChangeListener
-    {
-        @Override
-        public void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-
-            PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences_appearance, false);
-            addPreferencesFromResource(R.xml.preferences_appearance);
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-
+            SharedPreferences preferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+            return String.valueOf(preferences.getFloat(InKey, 0));
         }
 
         @Override

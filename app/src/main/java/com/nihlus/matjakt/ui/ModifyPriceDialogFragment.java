@@ -138,12 +138,9 @@ public class ModifyPriceDialogFragment extends DialogFragment
                         priceEdit.setText(String.valueOf(priceToEdit.price));
                     }
 
-                    TextView storeEdit = (AutoCompleteTextView)view.findViewById(R.id.storeEntry);
-                    if (storeEdit != null)
-                    {
-                        storeEdit.setText(priceToEdit.store.storePlace.getName());
-                        selectedPlaceID = priceToEdit.store.placeID;
-                    }
+                    autoCompleteStoreText.setText(priceToEdit.store.storePlace.getName());
+                    selectedPlaceID = priceToEdit.store.placeID;
+
 
                     CheckBox offerCheck = (CheckBox)view.findViewById(R.id.isOfferCheckbox);
                     if (offerCheck != null)

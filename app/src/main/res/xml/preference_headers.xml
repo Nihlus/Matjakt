@@ -2,14 +2,11 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header android:fragment="com.nihlus.matjakt.ui.SettingsActivity$GeneralPreferencesFragment"
-            android:title="@string/ui_settings_general"/>
+            android:title="@string/ui_settings_general"
+            android:summary="@string/ui_settings_generalHint"/>
 
     <header android:fragment="com.nihlus.matjakt.ui.SettingsActivity$LocationPreferencesFragment"
             android:title="@string/ui_settings_location"
             android:summary="@string/ui_settings_locationHint" />
-
-    <header android:fragment="com.nihlus.matjakt.ui.SettingsActivity$AppearancePreferencesFragment"
-            android:title="@string/ui_settings_appearance"
-            android:summary="@string/ui_settings_appearanceHint" />
 
 </preference-headers>
