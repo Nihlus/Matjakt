@@ -430,7 +430,7 @@ public class OutpanProduct implements Parcelable
     {
         public OutpanProduct createFromParcel(Parcel in)
         {
-            Bundle inBundle = in.readBundle();
+            Bundle inBundle = in.readBundle(getClass().getClassLoader());
 
             inBundle.setClassLoader(EAN.class.getClassLoader());
             EAN productEAN = inBundle.getParcelable(Constants.PRODUCT_EAN);

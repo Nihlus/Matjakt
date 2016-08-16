@@ -140,25 +140,18 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        if (result != null)
+                        //launch product view activity
+                        if (!result.isValid())
                         {
-                            //launch product view activity
-                            if (!result.isValid())
-                            {
-                                addProduct(result);
-                            }
-                            else if (result.isMissingRequiredAttributes())
-                            {
-                                repairProduct(result);
-                            }
-                            else
-                            {
-                                updateViewActivity(result);
-                            }
+                            addProduct(result);
+                        }
+                        else if (result.isMissingRequiredAttributes())
+                        {
+                            repairProduct(result);
                         }
                         else
                         {
-                            Toast.makeText(parentActivity, parentActivity.getResources().getString(R.string.ui_warning_noresult), Toast.LENGTH_SHORT).show();
+                            updateViewActivity(result);
                         }
                     }
                 });
