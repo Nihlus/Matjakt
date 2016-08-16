@@ -2,7 +2,8 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.nihlus.matjakt.ui.MainSettingsFragment">
+             tools:context="com.nihlus.matjakt.ui.MainSettingsFragment"
+             android:layout_margin="16dp">
 
 
     <TextView
@@ -35,7 +36,7 @@
         android:layout_toEndOf="@+id/textView6"
         android:layout_marginStart="48dp"
         android:hint="@string/ui_settings_defaultPreferredStoreDistance"
-        android:singleLine="true"/>
+        android:maxLines="1" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/preferredStoreDistanceText"
         android:hint="@string/ui_settings_defaultMaximumStoreDistance"
-        android:singleLine="true"/>
+        android:maxLines="1" />
 
     <TextView
         android:layout_width="wrap_content"

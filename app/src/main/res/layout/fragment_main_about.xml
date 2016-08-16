@@ -2,7 +2,8 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.nihlus.matjakt.ui.MainAboutFragment">
+             tools:context="com.nihlus.matjakt.ui.MainAboutFragment"
+             android:layout_margin="16dp">
 
     <TextView
         android:layout_width="wrap_content"

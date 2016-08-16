@@ -22,8 +22,6 @@
 
 package com.nihlus.matjakt;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,7 +33,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,7 +55,7 @@ import com.nihlus.matjakt.ui.ViewProductActivity;
 import java.util.Currency;
 import java.util.Locale;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
@@ -123,6 +123,7 @@ public class MainActivity extends Activity
         unbindGPS();
     }
 
+
     @Override
     public void onBackPressed()
     {
@@ -130,6 +131,7 @@ public class MainActivity extends Activity
         Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content_frame);
         if (fragmentCount <= 1 || currentFragment instanceof MainActivityFragment)
         {
+            getFragmentManager().popBackStack();
             super.onBackPressed();
         }
         else
@@ -140,12 +142,12 @@ public class MainActivity extends Activity
 
     private void setupLeftDrawer()
     {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
         {
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            //actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 
             actionBar.setHomeButtonEnabled(true);
         }
@@ -165,16 +167,18 @@ public class MainActivity extends Activity
                     @Override
                     public void onDrawerClosed(View drawerView)
                     {
+                        super.onDrawerClosed(drawerView);
                         invalidateOptionsMenu();
                     }
 
                     @Override
                     public void onDrawerOpened(View drawerView)
                     {
+                        super.onDrawerOpened(drawerView);
                         invalidateOptionsMenu();
                     }
                 };
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
 
         drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, menuItems));
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener()
