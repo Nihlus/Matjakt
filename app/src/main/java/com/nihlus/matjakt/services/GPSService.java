@@ -22,9 +22,11 @@
 
 package com.nihlus.matjakt.services;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,6 +34,7 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 
 public class GPSService extends Service
 {
@@ -89,24 +92,30 @@ public class GPSService extends Service
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Retrieve and request network location updates
-        Location networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (networkLocation != null && isBetterLocation(networkLocation))
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
-            currentLocation = networkLocation;
+            Location networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (networkLocation != null && isBetterLocation(networkLocation))
+            {
+                currentLocation = networkLocation;
+            }
+
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, TEN_METERS, locationListener);
         }
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TEN_SECONDS, TEN_METERS, locationListener);
-
 
         // Retrieve Request updates for the best available provider based on accuracy
-        Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (gpsLocation != null && isBetterLocation(gpsLocation))
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
-            currentLocation = gpsLocation;
+            Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (gpsLocation != null && isBetterLocation(gpsLocation))
+            {
+                currentLocation = gpsLocation;
+            }
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+            locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), TEN_SECONDS, TEN_METERS, locationListener);
         }
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        locationManager.requestLocationUpdates(locationManager.getBestProvider(criteria, true), TEN_SECONDS, TEN_METERS, locationListener);
     }
 
     // The service is started
@@ -120,7 +129,11 @@ public class GPSService extends Service
     @Override
     public void onDestroy()
     {
-        locationManager.removeUpdates(locationListener);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            locationManager.removeUpdates(locationListener);
+        }
     }
 
     @Override
