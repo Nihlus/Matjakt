@@ -61,21 +61,21 @@ public class OutpanProduct implements Parcelable
      *
      * This constructor will fail if the input object contains an explicit error field.
      *
-     * @param InJSON The JSON to be turned into a product.
+     * @param inJSON The JSON to be turned into a product.
      */
-    public OutpanProduct(JSONObject InJSON)
+    public OutpanProduct(JSONObject inJSON)
     {
         try
         {
-            if (!isErrorMessage(InJSON))
+            if (!isErrorMessage(inJSON))
             {
-                this.ean = new EAN(InJSON.getString(Constants.PRODUCTKEY_EAN));
-                this.outpanURL = new URL(InJSON.getString(Constants.PRODUCTKEY_OUTPANURL));
-                this.name = InJSON.getString(Constants.PRODUCTKEY_NAME);
-                this.attributes = getAttributesFromJSON(InJSON.getJSONObject(Constants.PRODUCTKEY_ATTRIBUTES));
-                this.images = getStringListFromJSON(InJSON.getJSONArray(Constants.PRODUCTKEY_IMAGES));
-                this.videos = getStringListFromJSON(InJSON.getJSONArray(Constants.PRODUCTKEY_VIDEOS));
-                this.categories = getStringListFromJSON(InJSON.getJSONArray(Constants.PRODUCTKEY_CATEGORIES));
+                this.ean = new EAN(inJSON.getString(Constants.PRODUCTKEY_EAN));
+                this.outpanURL = new URL(inJSON.getString(Constants.PRODUCTKEY_OUTPANURL));
+                this.name = inJSON.getString(Constants.PRODUCTKEY_NAME);
+                this.attributes = getAttributesFromJSON(inJSON.getJSONObject(Constants.PRODUCTKEY_ATTRIBUTES));
+                this.images = getStringListFromJSON(inJSON.getJSONArray(Constants.PRODUCTKEY_IMAGES));
+                this.videos = getStringListFromJSON(inJSON.getJSONArray(Constants.PRODUCTKEY_VIDEOS));
+                this.categories = getStringListFromJSON(inJSON.getJSONArray(Constants.PRODUCTKEY_CATEGORIES));
             }
             else
             {
@@ -98,65 +98,65 @@ public class OutpanProduct implements Parcelable
      * Creates a new Outpan product from an EAN and a bundle of product data. Used for deserialization
      * when creating parcels, and for packaging up data to be sent to the database.
      *
-     * @param InEAN     The EAN of the product
-     * @param InBundle  The data to be contained in the product, such as brand or name.
+     * @param inEAN     The EAN of the product
+     * @param inBundle  The data to be contained in the product, such as brand or name.
      */
-    public OutpanProduct(EAN InEAN, Bundle InBundle)
+    public OutpanProduct(EAN inEAN, Bundle inBundle)
     {
-        this.ean = InEAN;
+        this.ean = inEAN;
         this.attributes = new HashMap<>();
         this.categories = new ArrayList<>();
         this.videos = new ArrayList<>();
         this.categories = new ArrayList<>();
 
-        if (InBundle.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_BRAND_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_BRAND_ATTRIBUTE, InBundle.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
+            this.attributes.put(Constants.PRODUCT_BRAND_ATTRIBUTE, inBundle.getString(Constants.PRODUCT_BRAND_ATTRIBUTE));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_TITLE_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_TITLE_ATTRIBUTE, InBundle.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
+            this.attributes.put(Constants.PRODUCT_TITLE_ATTRIBUTE, inBundle.getString(Constants.PRODUCT_TITLE_ATTRIBUTE));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_AMOUNT_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_AMOUNT_ATTRIBUTE, InBundle.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
+            this.attributes.put(Constants.PRODUCT_AMOUNT_ATTRIBUTE, inBundle.getString(Constants.PRODUCT_AMOUNT_ATTRIBUTE));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, String.valueOf(InBundle.getBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE)));
+            this.attributes.put(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, String.valueOf(inBundle.getBoolean(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE)));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE, InBundle.getString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
+            this.attributes.put(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE, inBundle.getString(Constants.PRODUCT_BYWEIGHT_UNIT_ATTRIBUTE));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_ORGANIC_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(InBundle.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
+            this.attributes.put(Constants.PRODUCT_ORGANIC_ATTRIBUTE, String.valueOf(inBundle.getBoolean(Constants.PRODUCT_ORGANIC_ATTRIBUTE)));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
+        if (inBundle.containsKey(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE))
         {
-            this.attributes.put(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(InBundle.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
+            this.attributes.put(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE, String.valueOf(inBundle.getBoolean(Constants.PRODUCT_FAIRTRADE_ATTRIBUTE)));
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_IMAGES_LIST))
+        if (inBundle.containsKey(Constants.PRODUCT_IMAGES_LIST))
         {
-            this.images = InBundle.getStringArrayList(Constants.PRODUCT_IMAGES_LIST);
+            this.images = inBundle.getStringArrayList(Constants.PRODUCT_IMAGES_LIST);
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_VIDEOS_LIST))
+        if (inBundle.containsKey(Constants.PRODUCT_VIDEOS_LIST))
         {
-            this.videos = InBundle.getStringArrayList(Constants.PRODUCT_VIDEOS_LIST);
+            this.videos = inBundle.getStringArrayList(Constants.PRODUCT_VIDEOS_LIST);
         }
 
-        if (InBundle.containsKey(Constants.PRODUCT_CATEGORIES_LIST))
+        if (inBundle.containsKey(Constants.PRODUCT_CATEGORIES_LIST))
         {
-            this.categories = InBundle.getStringArrayList(Constants.PRODUCT_CATEGORIES_LIST);
+            this.categories = inBundle.getStringArrayList(Constants.PRODUCT_CATEGORIES_LIST);
         }
     }
 
@@ -266,12 +266,12 @@ public class OutpanProduct implements Parcelable
         return productData;
     }
 
-    // TODO: Maybe merge with isValid() ?
+    // TODO: Maybe merge with hasBeenEnteredIntoDatabase() ?
     public boolean isMissingRequiredAttributes()
     {
         boolean isMissingRequiredAttributes = false;
 
-        if (!isValid())
+        if (!hasBeenEnteredIntoDatabase())
         {
             isMissingRequiredAttributes = true;
         }
@@ -300,7 +300,7 @@ public class OutpanProduct implements Parcelable
     }
 
     // TODO: Make this a proper, complete validation
-    public boolean isValid()
+    public boolean hasBeenEnteredIntoDatabase()
     {
         //if name is empty or says null, return false
         boolean nameIsEmpty = name.isEmpty();
@@ -343,7 +343,7 @@ public class OutpanProduct implements Parcelable
      *
      * @param InIsSoldByWeight If the product is sold by weight or not.
      */
-    public void setIsSoldByWeight(boolean InIsSoldByWeight)
+    public void setHasVariableWeight(boolean InIsSoldByWeight)
     {
         attributes.put(Constants.PRODUCT_BYWEIGHT_ATTRIBUTE, String.valueOf(InIsSoldByWeight));
     }

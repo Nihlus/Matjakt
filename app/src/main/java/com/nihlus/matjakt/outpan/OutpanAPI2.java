@@ -60,14 +60,14 @@ public class OutpanAPI2
      * missing data) if the EAN has never been scanned before or doesn't have any data attached
      * to it.
      *
-     * @param InEAN The EAN of the product to be retrieved.
+     * @param inEAN The EAN of the product to be retrieved.
      * @return A product object representing the product in the Outpan database
      */
-    public OutpanProduct getProduct(EAN InEAN)
+    public OutpanProduct getProduct(EAN inEAN)
     {
         OutpanProduct OutProduct = null;
 
-        JSONObject responseObject = Utility.getRemoteJSONObject(buildRequestURL(InEAN, OutpanRequestType.Product));
+        JSONObject responseObject = Utility.getRemoteJSONObject(buildRequestURL(inEAN, OutpanRequestType.Product));
 
         if (responseObject != null)
         {
@@ -81,21 +81,21 @@ public class OutpanAPI2
      * Sets the name of a product in the database, identified by its EAN code. If the product
      * already has a name, it will be replaced.
      *
-     * @param InEAN The EAN of the product.
-     * @param InNewName The new name of the product.
+     * @param inEAN The EAN of the product.
+     * @param inNewName The new name of the product.
      */
-    public void setProductName(EAN InEAN, String InNewName) throws NetworkErrorException
+    public void setProductName(EAN inEAN, String inNewName) throws NetworkErrorException
     {
         try
         {
-            URL requestURL = buildRequestURL(InEAN, OutpanRequestType.Name);
+            URL requestURL = buildRequestURL(inEAN, OutpanRequestType.Name);
             HttpsURLConnection connection = (HttpsURLConnection)requestURL.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             HashMap<String, String> parameters = new HashMap<>();
-            parameters.put("name", InNewName);
+            parameters.put("name", inNewName);
 
             try(OutputStream os = connection.getOutputStream())
             {
@@ -167,23 +167,23 @@ public class OutpanAPI2
      *
      * If you want to delete attributes, use {@link #deleteProductAttribute(EAN, String)} instead.
      *
-     * @param InEAN The EAN of the product.
-     * @param InAttributeKey The key of the attribute. Must be a valid string.
-     * @param InAttributeValue The new value of the attribute.
+     * @param inEAN The EAN of the product.
+     * @param inAttributeKey The key of the attribute. Must be a valid string.
+     * @param inAttributeValue The new value of the attribute.
      */
-    public void setProductAttribute(EAN InEAN, String InAttributeKey, String InAttributeValue) throws NetworkErrorException
+    public void setProductAttribute(EAN inEAN, String inAttributeKey, String inAttributeValue) throws NetworkErrorException
     {
         try
         {
-            URL requestURL = buildRequestURL(InEAN, OutpanRequestType.Attribute);
+            URL requestURL = buildRequestURL(inEAN, OutpanRequestType.Attribute);
             HttpsURLConnection connection = (HttpsURLConnection)requestURL.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             HashMap<String, String> parameters = new HashMap<>();
-            parameters.put("name", InAttributeKey);
-            parameters.put("value", InAttributeValue);
+            parameters.put("name", inAttributeKey);
+            parameters.put("value", inAttributeValue);
 
             try(OutputStream os = connection.getOutputStream())
             {
@@ -254,25 +254,26 @@ public class OutpanAPI2
      * Passes an empty attributes value to {@link #setProductAttribute(EAN, String, String)},
      * deleting the attribute.
      *
-     * @param InEAN The EAN of the product.
-     * @param InAttributeKey The key of the attribute. Must be a valid string.
+     * @param inEAN The EAN of the product.
+     * @param inAttributeKey The key of the attribute. Must be a valid string.
      */
-    public void deleteProductAttribute(EAN InEAN, String InAttributeKey) throws NetworkErrorException
+    public void deleteProductAttribute(EAN inEAN, String inAttributeKey) throws NetworkErrorException
     {
-        setProductAttribute(InEAN, InAttributeKey, "");
+        setProductAttribute(inEAN, inAttributeKey, "");
     }
 
     /**
      * Creates a complete request URL from a given input EAN, allowing the API to retrieve a product
      * from the database.
      *
-     * @param InEAN The EAN of the product.
+     * @param inEAN The EAN of the product.
+     * @param requestType The type of request URL to build.
      * @return A valid API URL to a product.
      */
-    private URL buildRequestURL(EAN InEAN, OutpanRequestType requestType)
+    private URL buildRequestURL(EAN inEAN, OutpanRequestType requestType)
     {
         URL OutURL = null;
-        String rawURL = Constants.OutpanBaseURLv2 + InEAN.getCode();
+        String rawURL = Constants.OutpanBaseURLv2 + inEAN.getCode();
 
         switch (requestType)
         {
@@ -308,6 +309,12 @@ public class OutpanAPI2
         return OutURL;
     }
 
+    /**
+     * Creates a HTTP POST request body from a set of key-value pairs.
+     *
+     * @param parameters A HashMap containing the parameters as key-value pairs.
+     * @return A POST body string.
+     */
     private String getPostDataParameterString(HashMap<String, String> parameters)
     {
         StringBuilder sb = new StringBuilder();
@@ -339,6 +346,9 @@ public class OutpanAPI2
         return sb.toString();
     }
 
+    /**
+     * Different types of requests the API can perform.
+     */
     private enum OutpanRequestType
     {
         Attribute,

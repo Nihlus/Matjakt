@@ -79,7 +79,7 @@ public class EAN implements Parcelable
         }
     }
 
-    public boolean isInternalCode()
+    public boolean isVariableWeightEAN()
     {
         String eanType = this.rawEAN.substring(0, 2);
         return eanType.startsWith("2");
@@ -122,10 +122,10 @@ public class EAN implements Parcelable
         return 0;
     }
 
-    public EAN getEmbeddedPriceEAN()
+    public EAN getVariableWeightBaseEAN()
     {
         // Only allow this for EAN13 products
-        if (getType() == EANType.EAN13 && isInternalCode())
+        if (getType() == EANType.EAN13 && isVariableWeightEAN())
         {
             // Get the country code + product number
             String strippedEAN = this.rawEAN.substring(0, 8);

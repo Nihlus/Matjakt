@@ -46,12 +46,12 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
     private final Activity parentActivity;
     private final EAN ean;
 
-    private OutpanProduct byWeightProduct;
+    private OutpanProduct variableWeightProduct;
     private ProgressDialog progressDialog;
 
-    public RetrieveProductTask(Activity InParentActivity, EAN InEAN)
+    public RetrieveProductTask(Activity inParentActivity, EAN InEAN)
     {
-        this.parentActivity = InParentActivity;
+        this.parentActivity = inParentActivity;
         this.ean = InEAN;
     }
 
@@ -75,12 +75,12 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
     {
         OutpanAPI2 api = new OutpanAPI2();
 
-        if (ean.isInternalCode())
+        if (ean.isVariableWeightEAN())
         {
-            byWeightProduct = api.getProduct(ean.getEmbeddedPriceEAN());
-            if (byWeightProduct != null)
+            variableWeightProduct = api.getProduct(ean.getVariableWeightBaseEAN());
+            if (variableWeightProduct != null)
             {
-                byWeightProduct.setIsSoldByWeight(true);
+                variableWeightProduct.setHasVariableWeight(true);
             }
         }
 
@@ -89,44 +89,44 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
 
     // TODO: Clean this crap up
     @Override
-    protected void onPostExecute(final OutpanProduct result)
+    protected void onPostExecute(final OutpanProduct product)
     {
         if (progressDialog.isShowing())
         {
             progressDialog.dismiss();
         }
 
-        if (byWeightProduct != null && ean.isInternalCode() && !result.isValid())
+        if (variableWeightProduct != null && ean.isVariableWeightEAN() && !product.hasBeenEnteredIntoDatabase())
         {
-            if (byWeightProduct.isValid())
+            if (variableWeightProduct.hasBeenEnteredIntoDatabase())
             {
-                updateViewActivity(byWeightProduct);
+                sendProductInformationToInterface(variableWeightProduct);
             }
             else
             {
-                AlertDialog.Builder isProductAByWeightProductDialog = new AlertDialog.Builder(parentActivity);
+                AlertDialog.Builder doesProductHaveVariableWeightDialog = new AlertDialog.Builder(parentActivity);
 
-                isProductAByWeightProductDialog.setTitle(parentActivity.getString(R.string.dialog_mightBeByWeight));
-                isProductAByWeightProductDialog.setMessage(parentActivity.getString(R.string.dialog_mightBeByWeight_body));
-                isProductAByWeightProductDialog.setPositiveButton(parentActivity.getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
+                doesProductHaveVariableWeightDialog.setTitle(parentActivity.getString(R.string.dialog_mightBeByWeight));
+                doesProductHaveVariableWeightDialog.setMessage(parentActivity.getString(R.string.dialog_mightBeByWeight_body));
+                doesProductHaveVariableWeightDialog.setPositiveButton(parentActivity.getString(R.string.dialog_Yes), new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        if (byWeightProduct != null)
+                        if (variableWeightProduct != null)
                         {
                             //launch product view activity
-                            if (!byWeightProduct.isValid())
+                            if (!variableWeightProduct.hasBeenEnteredIntoDatabase())
                             {
-                                addProduct(byWeightProduct);
+                                addProduct(variableWeightProduct);
                             }
-                            else if (byWeightProduct.isMissingRequiredAttributes())
+                            else if (variableWeightProduct.isMissingRequiredAttributes())
                             {
-                                repairProduct(byWeightProduct);
+                                repairProduct(variableWeightProduct);
                             }
                             else
                             {
-                                updateViewActivity(byWeightProduct);
+                                sendProductInformationToInterface(variableWeightProduct);
                             }
                         }
                         else
@@ -135,44 +135,44 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
                         }
                     }
                 });
-                isProductAByWeightProductDialog.setNegativeButton(parentActivity.getString(R.string.dialog_No), new DialogInterface.OnClickListener()
+                doesProductHaveVariableWeightDialog.setNegativeButton(parentActivity.getString(R.string.dialog_No), new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
                         //launch product view activity
-                        if (!result.isValid())
+                        if (!product.hasBeenEnteredIntoDatabase())
                         {
-                            addProduct(result);
+                            addProduct(product);
                         }
-                        else if (result.isMissingRequiredAttributes())
+                        else if (product.isMissingRequiredAttributes())
                         {
-                            repairProduct(result);
+                            repairProduct(product);
                         }
                         else
                         {
-                            updateViewActivity(result);
+                            sendProductInformationToInterface(product);
                         }
                     }
                 });
 
-                isProductAByWeightProductDialog.show();
+                doesProductHaveVariableWeightDialog.show();
             }
         }
-        else if (result != null)
+        else if (product != null)
         {
             //launch product view activity
-            if (!result.isValid())
+            if (!product.hasBeenEnteredIntoDatabase())
             {
-                addProduct(result);
+                addProduct(product);
             }
-            else if (result.isMissingRequiredAttributes())
+            else if (product.isMissingRequiredAttributes())
             {
-                repairProduct(result);
+                repairProduct(product);
             }
             else
             {
-                updateViewActivity(result);
+                sendProductInformationToInterface(product);
             }
         }
         else
@@ -195,7 +195,7 @@ public class RetrieveProductTask extends AsyncTask<Void, Integer, OutpanProduct>
         dialog.show(parentActivity.getFragmentManager(), Constants.DIALOG_REPAIRPRODUCTFRAGMENT_ID);
     }
 
-    private void updateViewActivity(OutpanProduct InProduct)
+    private void sendProductInformationToInterface(OutpanProduct InProduct)
     {
         if (parentActivity instanceof ViewProductActivity)
         {

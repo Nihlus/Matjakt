@@ -45,9 +45,6 @@ public final class Constants
     public static final String PREF_BRANDARRAY = "brandArray";
 
     public static final String MODIFY_INTENT_TYPE = "INTENT";
-    public static final String SCANFRAGMENT_ID = "SCANFRAGMENT";
-    public static final String SETTINGSFRAGMENT_ID = "SETTINGSFRAGMENT";
-    public static final String ABOUTFRAGMENT_ID = "ABOUTFRAGMENT";
     public static final String DIALOG_ADDPRODUCTFRAGMENT_ID = "ADD_PRODUCT_DIALOG";
     public static final String DIALOG_REPAIRPRODUCTFRAGMENT_ID = "REPAIR_PRODUCT_DIALOG";
 

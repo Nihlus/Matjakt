@@ -171,8 +171,8 @@ public class MainActivity extends AppCompatActivity
                     case Constants.DRAWERITEM_SCAN:
                     {
                         onScanButtonClicked(null);
-                        drawerLayout.closeDrawer(drawerList);
 
+                        drawerLayout.closeDrawer(drawerList);
                         break;
                     }
                     case Constants.DRAWERITEM_SETTINGS:
@@ -257,7 +257,6 @@ public class MainActivity extends AppCompatActivity
             {
                 //retrieve data and show it to the user if the product exists
                 new RetrieveProductTask(this, new EAN(result.getContents())).execute();
-
             }
         }
         else if (requestCode == Constants.MODIFY_EXISTING_PRODUCT ||
